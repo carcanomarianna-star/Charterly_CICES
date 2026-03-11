@@ -7429,7 +7429,15 @@ const CICES_GENERAL = [
     ]}
 ];
 
-const CICES_CORE = [
+
+const CICES_SECTORS = {
+  geospatial: {
+    label: "Geospatial Engineering",
+    desc: "For those focused on measurement, data capture, and mapping.",
+    cores: {
+      geospatial_core: {
+        label: "Core Geospatial Engineering",
+        comps: [
   { id:"GECORE01", name:"Project Specification & Brief",
     activities:[
       {ref:"A",std:"E",desc:"Interpret, define and understand project specifications and briefs for geospatial work."},
@@ -7472,9 +7480,10 @@ const CICES_CORE = [
       {ref:"B",std:"E",desc:"Identification, assessment and mitigation of risks arising from geospatial data quality issues."},
       {ref:"C",std:"K",desc:"Communication of spatial data risk and uncertainty to clients and stakeholders."}
     ]}
-];
-
-const CICES_SPECIALIST = {
+]
+      }
+    },
+    specialisms: {
   GEES: {
     label:"Specialist Engineering Surveying",
     comps:[
@@ -7618,7 +7627,44 @@ const CICES_SPECIALIST = {
           {ref:"M",std:"K",desc:"Airborne and terrestrial laser measurement systems."}
         ]}
     ]}
+}
+  },
+  commercial: {
+    label: "Commercial Management",
+    desc: "Focused on the financial, legal, and managerial aspects of civil engineering.",
+    cores: {
+      qs: { label: "Quantity Surveying", comps: [] },
+      cost_eng: { label: "Cost Engineering", comps: [] },
+      estimating: { label: "Estimating", comps: [] },
+      planning: { label: "Planning", comps: [] },
+      project_controls: { label: "Project Controls", comps: [] },
+      project_management: { label: "Project Management", comps: [] },
+      construction_law: { label: "Construction Law", comps: [] }
+    },
+    specialisms: {
+      qs: { label: "Quantity Surveying", comps: [] },
+      cost_eng: { label: "Cost Engineering", comps: [] },
+      estimating: { label: "Estimating", comps: [] },
+      planning: { label: "Planning", comps: [] },
+      project_controls: { label: "Project Controls", comps: [] },
+      project_management: { label: "Project Management", comps: [] },
+      construction_law: { label: "Construction Law", comps: [] }
+    }
+  },
+  digital: {
+    label: "Digital Civil Engineering",
+    desc: "For those working in BIM, data analytics, and digital twin management.",
+    cores: {
+      digital_core: { label: "Digital Civil Engineering Surveyor", comps: [] }
+    },
+    specialisms: {
+      bim: { label: "BIM Modeller", comps: [] },
+      data_analyst: { label: "Data Analyst", comps: [] },
+      info_management: { label: "Information Management (Digital)", comps: [] }
+    }
+  }
 };
+
 
 // Grade ordering A < K < E < B
 const CICES_GRADE_ORDER = {A:0,K:1,E:2,B:3};
@@ -7654,9 +7700,25 @@ function cicesCompProgress(allComps) {
 }
 
 function cicesGetAllComps() {
-  const sp = S.sel.cicesSpecialism;
-  const specComps = sp && CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].comps : [];
-  return [...CICES_GENERAL, ...CICES_CORE, ...specComps];
+  const sectorKey = S.sel.cicesSector;
+  const coreKey = S.sel.cicesCore;
+  const spKey = S.sel.cicesSpecialism;
+
+  if (!sectorKey || !CICES_SECTORS[sectorKey]) return CICES_GENERAL;
+  const sector = CICES_SECTORS[sectorKey];
+
+  // Find core comps
+  // If no coreKey is selected but there is only one core option (e.g. geospatial), auto-use it
+  let coreComps = [];
+  const coreKeys = Object.keys(sector.cores);
+  const activeCoreKey = coreKey && sector.cores[coreKey] ? coreKey : (coreKeys.length === 1 ? coreKeys[0] : null);
+  if (activeCoreKey) {
+    coreComps = sector.cores[activeCoreKey].comps || [];
+  }
+
+  const specComps = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].comps || [] : [];
+
+  return [...CICES_GENERAL, ...coreComps, ...specComps];
 }
 
 function buildCicesOptStdBadge(std) {
@@ -7727,33 +7789,111 @@ function toggleCicesSidebarSection(hdrEl, sectionId) {
 }
 
 function r1Cices(C) {
-  const sp = S.sel.cicesSpecialism;
-  const specs = [
-    {key:"GEES", label:"Specialist Engineering Surveying", codes:"GEES01–04", desc:"Engineering surveys, setting out and dimensional control for construction projects."},
-    {key:"GELS", label:"Specialist Land Surveying", codes:"GELS01–04", desc:"Topographic surveys, instrument use, geometric principles and data deliverables."},
-    {key:"GEUS", label:"Specialist Utilities & Subsurface Mapping", codes:"GEUS01–04", desc:"Utility surveys, GPR, electromagnetic methods, PAS 128/256 and subsurface mapping."},
-    {key:"GES3", label:"Specialist GE — Photogrammetry & Remote Sensing", codes:"GES3", desc:"Photogrammetry, remote sensing, photographic interpretation and digital surface models."}
-  ];
-  C.innerHTML = `<div class="page-centre"><div class="panel">
-    <h1 class="page-title">Select Your Specialisation</h1>
-    <p class="sub" style="margin-bottom:20px">All MCInstCES candidates complete the <strong>General (GEN01–13)</strong> and <strong>Core Geospatial Engineering (GECORE01–07)</strong> competencies. Select your specialist pathway below — these additional competencies will be added on top.</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
-      ${specs.map(s => `
-        <div class="cices-specialism-card${sp===s.key?' selected':''}" onclick="selCicesSpecialism('${s.key}')">
-          <div class="sp-code">${s.codes}</div>
-          <div class="sp-name">${s.label}</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">${s.desc}</div>
-          ${sp===s.key?`<div style="margin-top:8px"><span class="badge badge-green">✓ Selected</span></div>`:''}
-        </div>`).join('')}
-    </div>
-    ${sp ? `<div class="panel-acc" style="padding:12px 16px;border-radius:8px;font-size:12px;color:var(--cices);margin-bottom:20px">
-      ✓ Pathway set: <strong>${CICES_SPECIALIST[sp].label}</strong> — your competency log will include General + Core + this specialism.
-    </div>` : ''}
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goStep(0)">← Back</button>
-      <button class="btn btn-primary" style="background:var(--cices);border:none" ${!sp?'disabled':''} onclick="S.activeSection='competencies';goStep(3)">Continue to Submission Documents →</button>
-    </div>
-  </div></div>`;
+  const sectorKey = S.sel.cicesSector;
+  const coreKey = S.sel.cicesCore;
+  const spKey = S.sel.cicesSpecialism;
+
+  let html = `<div class="page-centre"><div class="panel">
+    <h1 class="page-title">Select Your Pathway</h1>
+    <p class="sub" style="margin-bottom:20px">All MCInstCES candidates complete the General (GEN01-13) competencies. Select your sector, core, and specialist pathways below.</p>`;
+
+  // 1. Sector Selection
+  html += `<div style="margin-bottom:24px">
+    <h2 class="section-title" style="font-size:16px;color:var(--cices)">1. Select Sector</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-top:10px">`;
+
+  Object.keys(CICES_SECTORS).forEach(sk => {
+    const s = CICES_SECTORS[sk];
+    const isSel = sectorKey === sk;
+    html += `<div class="cices-specialism-card${isSel?' selected':''}" onclick="selCicesSector('${sk}')">
+      <div class="sp-name">${s.label}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">${s.desc}</div>
+      ${isSel?'<div style="margin-top:8px"><span class="badge badge-green">✓ Selected</span></div>':''}
+    </div>`;
+  });
+  html += `</div></div>`;
+
+  // 2. Core Selection (only if sector is chosen and has multiple cores)
+  if (sectorKey && CICES_SECTORS[sectorKey]) {
+    const sector = CICES_SECTORS[sectorKey];
+    const coreKeys = Object.keys(sector.cores);
+
+    if (coreKeys.length > 1) {
+      html += `<div style="margin-bottom:24px;animation:fadeUp .2s ease">
+        <h2 class="section-title" style="font-size:16px;color:var(--cices)">2. Select Core Competency</h2>
+        <p class="sub" style="margin-bottom:10px">Choose the core competency set that matches your focus area.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px">`;
+
+      coreKeys.forEach(ck => {
+        const c = sector.cores[ck];
+        const isSel = coreKey === ck;
+        html += `<div class="cices-specialism-card${isSel?' selected':''}" onclick="selCicesCore('${ck}')">
+          <div class="sp-name">${c.label}</div>
+          ${isSel?'<div style="margin-top:8px"><span class="badge badge-green">✓ Selected</span></div>':''}
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  // 3. Specialism Selection
+  const activeCoreKey = coreKey || (sectorKey && Object.keys(CICES_SECTORS[sectorKey].cores).length === 1 ? Object.keys(CICES_SECTORS[sectorKey].cores)[0] : null);
+
+  if (sectorKey && activeCoreKey) {
+    const sector = CICES_SECTORS[sectorKey];
+    const spKeys = Object.keys(sector.specialisms);
+
+    if (spKeys.length > 0) {
+      html += `<div style="margin-bottom:24px;animation:fadeUp .2s ease">
+        <h2 class="section-title" style="font-size:16px;color:var(--cices)">${Object.keys(sector.cores).length > 1 ? '3' : '2'}. Select Specialist Pathway</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-top:10px">`;
+
+      spKeys.forEach(sk => {
+        const sp = sector.specialisms[sk];
+        const isSel = spKey === sk;
+        html += `<div class="cices-specialism-card${isSel?' selected':''}" onclick="selCicesSpecialism('${sk}')">
+          <div class="sp-name">${sp.label}</div>
+          ${isSel?'<div style="margin-top:8px"><span class="badge badge-green">✓ Selected</span></div>':''}
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+  }
+
+  const canProceed = sectorKey && activeCoreKey && (Object.keys(CICES_SECTORS[sectorKey].specialisms).length === 0 || spKey);
+
+  if (canProceed) {
+    const sectorLabel = CICES_SECTORS[sectorKey].label;
+    const coreLabel = CICES_SECTORS[sectorKey].cores[activeCoreKey].label;
+    const spLabel = spKey ? CICES_SECTORS[sectorKey].specialisms[spKey].label : null;
+    html += `<div class="panel-acc" style="padding:12px 16px;border-radius:8px;font-size:12px;color:var(--cices);margin-bottom:20px;animation:fadeUp .2s ease">
+      ✓ Pathway set: <strong>${sectorLabel}</strong> ➔ <strong>${coreLabel}</strong> ${spLabel ? '➔ <strong>' + spLabel + '</strong>' : ''}
+    </div>`;
+  }
+
+  html += `<div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep(0)">← Back</button>
+    <button class="btn btn-primary" style="background:var(--cices);border:none" ${!canProceed?'disabled':''} onclick="S.activeSection='competencies';goStep(3)">Continue to Submission Documents →</button>
+  </div></div></div>`;
+
+  C.innerHTML = html;
+}
+
+function selCicesSector(key) {
+  if (S.sel.cicesSector !== key) {
+    S.sel.cicesSector = key;
+    S.sel.cicesCore = null; // reset core
+    S.sel.cicesSpecialism = null; // reset specialism
+    saveState();
+  }
+  render();
+}
+
+function selCicesCore(key) {
+  S.sel.cicesCore = key;
+  S.sel.cicesSpecialism = null; // reset specialism just in case they don't match
+  saveState();
+  render();
 }
 
 function selCicesSpecialism(key) {
@@ -7764,23 +7904,34 @@ function selCicesSpecialism(key) {
 
 // ─── CICES Step 2: Competency Tickbox ─────────────────────────────────────────
 function r2Cices(C) {
-  const sp = S.sel.cicesSpecialism;
-  if (!sp) {
+  const sectorKey = S.sel.cicesSector;
+  const coreKey = S.sel.cicesCore;
+  const spKey = S.sel.cicesSpecialism;
+
+  if (!sectorKey) {
     C.innerHTML = `<div class="page-centre"><div class="panel">
-      <p>Please go back and select a specialist pathway first.</p>
+      <p>Please go back and select a pathway first.</p>
       <div class="btn-row"><button class="btn btn-ghost" onclick="goStep(1)">← Back to Pathway</button></div>
     </div></div>`;
     return;
   }
 
+  const sector = CICES_SECTORS[sectorKey];
+  const activeCoreKey = coreKey || (Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
+
+  const coreComps = activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].comps : [];
+  const coreLabel = activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].label : "Core";
+
+  const specComps = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].comps : [];
+  const specLabel = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].label : "Specialism";
+  const specCodes = specComps.map(c=>c.id).join(', ');
+
   const allComps = cicesGetAllComps();
   const {total, met} = cicesCompProgress(allComps);
   const pct = total ? Math.round((met/total)*100) : 0;
-  const specComps = CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].comps : [];
-  const specLabel = CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].label : sp;
-  const specCodes = specComps.map(c=>c.id).join(', ');
 
-  // If called from step 3 (Competencies tab), inject tab bar + use full-width layout
+  const sp = spKey; // mapping for old variable if used lower down
+// If called from step 3 (Competencies tab), inject tab bar + use full-width layout
   if (S.step === 3) {
     const entries  = S.cpd || [];
     const dcvWords = cw(S.detailedCV||"");
@@ -7816,12 +7967,12 @@ function r2Cices(C) {
       </div>
       <div class="cices-sidebar-group">
         <div class="cices-sidebar-group-hdr" onclick="toggleCicesSidebarSection(this,'cices-section-core')">
-          <span class="cices-sidebar-group-label">Core Geospatial</span>
-          <span class="cices-sidebar-group-meta">GECORE01–07</span>
+          <span class="cices-sidebar-group-label">${coreLabel}</span>
+          <span class="cices-sidebar-group-meta">${coreComps.map(c=>c.id).join(", ")}</span>
           <span class="cices-sidebar-group-chevron">▼</span>
         </div>
         <div class="cices-sidebar-group-body">
-          ${CICES_CORE.map(c=>`<div class="cices-sidebar-item" onclick="document.getElementById('cgrp-${c.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${c.id} <span style="color:var(--text);font-size:10px">${c.name}</span></div>`).join('')}
+          ${coreComps.map(c=>`<div class="cices-sidebar-item" onclick="document.getElementById('cgrp-${c.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${c.id} <span style="color:var(--text);font-size:10px">${c.name}</span></div>`).join('')}
         </div>
       </div>
       <div class="cices-sidebar-group">
@@ -7869,7 +8020,7 @@ function r2Cices(C) {
     progDiv.className = "panel cices-progress-wrap";
     progDiv.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:14px;font-weight:600;color:var(--cices)">MCInstCES Competency Log — ${CICES_SPECIALIST[sp].label}</div>
+        <div style="font-size:14px;font-weight:600;color:var(--cices)">MCInstCES Competency Log — ${sector.label} / ${specLabel || coreLabel}</div>
         <span class="badge ${met===total&&total>0?'badge-green':'badge-muted'}">${pct}% at optimum standard</span>
       </div>
       <div style="background:var(--border);border-radius:6px;height:8px;margin-bottom:6px">
@@ -7887,13 +8038,13 @@ function r2Cices(C) {
     const coreDiv2 = document.createElement("div");
     coreDiv2.className = "panel cices-comp-section";
     coreDiv2.id = "cices-section-core";
-    coreDiv2.innerHTML = `<div class="cices-comp-section-title">Core Geospatial Engineering Competencies — GECORE01–GECORE07 (All pathways)</div>${CICES_CORE.map(c => buildCicesCompGroup(c)).join('')}`;
+    coreDiv2.innerHTML = `<div class="cices-comp-section-title">${coreLabel} Competencies</div>${coreComps.map(c => buildCicesCompGroup(c)).join('')}`;
     compMain.appendChild(coreDiv2);
 
     const specDiv2 = document.createElement("div");
     specDiv2.className = "panel cices-comp-section";
     specDiv2.id = "cices-section-spec";
-    specDiv2.innerHTML = `<div class="cices-comp-section-title">Specialist Competencies — ${CICES_SPECIALIST[sp].label}</div>${CICES_SPECIALIST[sp].comps.map(c => buildCicesCompGroup(c)).join('')}`;
+    specDiv2.innerHTML = `<div class="cices-comp-section-title">Specialist Competencies — ${specLabel}</div>${specComps.map(c => buildCicesCompGroup(c)).join('')}`;
     compMain.appendChild(specDiv2);
 
     // ── Guidance panel ──────────────────────────────────────────────────
@@ -7952,12 +8103,12 @@ function r2Cices(C) {
 
     <div class="cices-sidebar-group">
       <div class="cices-sidebar-group-hdr" onclick="toggleCicesSidebarSection(this,'cices-section-core')">
-        <span class="cices-sidebar-group-label">Core Geospatial</span>
-        <span class="cices-sidebar-group-meta">GECORE01–07</span>
+        <span class="cices-sidebar-group-label">${coreLabel}</span>
+          <span class="cices-sidebar-group-meta">${coreComps.map(c=>c.id).join(", ")}</span>
         <span class="cices-sidebar-group-chevron">▼</span>
       </div>
       <div class="cices-sidebar-group-body">
-        ${CICES_CORE.map(c=>`<div class="cices-sidebar-item" onclick="document.getElementById('cgrp-${c.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${c.id} <span style="color:var(--text);font-size:10px">${c.name}</span></div>`).join('')}
+        ${coreComps.map(c=>`<div class="cices-sidebar-item" onclick="document.getElementById('cgrp-${c.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${c.id} <span style="color:var(--text);font-size:10px">${c.name}</span></div>`).join('')}
       </div>
     </div>
 
@@ -7996,7 +8147,7 @@ function r2Cices(C) {
   progDiv.className = "panel cices-progress-wrap";
   progDiv.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div style="font-size:14px;font-weight:600;color:var(--cices)">MCInstCES Competency Log — ${CICES_SPECIALIST[sp].label}</div>
+      <div style="font-size:14px;font-weight:600;color:var(--cices)">MCInstCES Competency Log — ${sector.label} / ${specLabel || coreLabel}</div>
       <span class="badge ${met===total&&total>0?'badge-green':'badge-muted'}">${pct}% at optimum standard</span>
     </div>
     <div style="background:var(--border);border-radius:6px;height:8px;margin-bottom:6px">
@@ -8017,16 +8168,15 @@ function r2Cices(C) {
   const coreDiv = document.createElement("div");
   coreDiv.className = "panel cices-comp-section";
   coreDiv.id = "cices-section-core";
-  coreDiv.innerHTML = `<div class="cices-comp-section-title">Core Geospatial Engineering Competencies — GECORE01–GECORE07 (All pathways)</div>
-    ${CICES_CORE.map(c => buildCicesCompGroup(c)).join('')}`;
+  coreDiv.innerHTML = `<div class="cices-comp-section-title">${coreLabel} Competencies</div>
+    ${coreComps.map(c => buildCicesCompGroup(c)).join('')}`;
   main.appendChild(coreDiv);
 
   // Specialist section
   const specDiv = document.createElement("div");
   specDiv.className = "panel cices-comp-section";
   specDiv.id = "cices-section-spec";
-  specDiv.innerHTML = `<div class="cices-comp-section-title">Specialist Competencies — ${CICES_SPECIALIST[sp].label}</div>
-    ${CICES_SPECIALIST[sp].comps.map(c => buildCicesCompGroup(c)).join('')}`;
+  specDiv.innerHTML = `<div class="cices-comp-section-title">Specialist Competencies — ${specLabel}</div>${specComps.map(c => buildCicesCompGroup(c)).join('')}`;
   main.appendChild(specDiv);
 
   // Navigation
@@ -8895,7 +9045,16 @@ function insertCompRef(compId) {
 }
 
 function r4Cices(C) {
-  const sp = S.sel.cicesSpecialism;
+  const sectorKey = S.sel.cicesSector;
+  const coreKey = S.sel.cicesCore;
+  const spKey = S.sel.cicesSpecialism;
+
+  const sector = CICES_SECTORS[sectorKey];
+  const activeCoreKey = coreKey || (sector && Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
+  const coreComps = sector && activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].comps : [];
+  const coreLabel = sector && activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].label : "Core";
+
+  const sp = spKey;
   const allComps = cicesGetAllComps();
   const erText   = S.experienceReport || "";
   const ern      = cw(erText);
@@ -8904,8 +9063,8 @@ function r4Cices(C) {
   const cpdN     = (S.cpd||[]).length;
   const dcvWords = cw(S.detailedCV||"");
   const cicesP   = cicesCompProgress(allComps);
-  const specComps = CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].comps : [];
-  const specLabel = CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].label : "Specialist";
+  const specComps = sector && spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].comps : [];
+  const specLabel = sector && spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].label : "Specialist";
 
   // ── 3-column layout ────────────────────────────────────────────────────
   const layout = document.createElement("div");
@@ -8942,7 +9101,7 @@ function r4Cices(C) {
       <span style="display:inline-block;background:var(--cices);color:#fff;border-radius:3px;padding:0 5px;font-size:9px;font-family:'DM Mono',monospace;font-weight:700">FILLED</span> = already referenced.
     </div>
     ${buildERRefGroup("General", allComps.filter(c=>c.id.startsWith("GEN")))}
-    ${buildERRefGroup("Core Geospatial", allComps.filter(c=>c.id.startsWith("GECORE")))}
+    ${buildERRefGroup(coreLabel, coreComps)}
     ${buildERRefGroup(specLabel, specComps)}
     ${(()=>{
       const figs = S.erAppendices||[];
