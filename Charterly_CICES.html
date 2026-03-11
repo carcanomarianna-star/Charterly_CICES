@@ -3248,7 +3248,7 @@ function renderCPDForm_CICES(container) {
       <div class="field-row" style="margin-bottom:12px">
         <div class="field-group">
           <label class="field-label">Date <span class="req">*</span></label>
-          <input id="cpd_date" class="field-input" type="text" value="${esc(v('startDate'))}" placeholder="e.g. 10 January 2025">
+          <input id="cpd_date" class="field-input" type="date" value="${esc(v('startDate'))}">
           <span class="field-hint">Full date of activity</span>
         </div>
         <div class="field-group">
@@ -3680,7 +3680,7 @@ function renderCPDForm(container) {
         </div>
         <div class="field-group">
           <label class="field-label">Start Date</label>
-          <input id="cpd_date" class="field-input" type="text" value="${esc(v('startDate'))}" placeholder="01-Jan-2025">
+          <input id="cpd_date" class="field-input" type="date" value="${esc(v('startDate'))}">
           <span class="field-hint">Format: DD-Mon-YYYY</span>
         </div>
       </div>
@@ -3993,7 +3993,7 @@ function rCV(C) {
         </div>
         <div class="field-group">
           <label class="field-label">Date To</label>
-          <input id="cv_dateTo" class="field-input" type="text" value="${v('dateTo')}" placeholder="YYYY-MM-DD or Present">
+          <input id="cv_dateTo" class="field-input" type="date" value="${v('dateTo')}">
         </div>
       </div>
       <hr class="form-divider">
@@ -4257,7 +4257,7 @@ function rCVCices(C) {
         </div>
         <div class="field-group">
           <label class="field-label">Date To</label>
-          <input id="cv_dateTo" class="field-input" type="text" value="${v('dateTo')}" placeholder="YYYY-MM-DD or Present">
+          <input id="cv_dateTo" class="field-input" type="date" value="${v('dateTo')}">
         </div>
       </div>
       <hr class="form-divider">
