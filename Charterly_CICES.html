@@ -4140,8 +4140,9 @@ function rCVCices(C) {
   const cpdN      = (S.cpd||[]).length;
   const erWords   = cw(S.experienceReport||"");
   const cicesP    = cicesCompProgress(allComps);
-  const specComps = CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].comps : [];
-  const specLabel = CICES_SPECIALIST[sp] ? CICES_SPECIALIST[sp].label : "Specialist";
+  const sector = S.sel.cicesSector ? CICES_SECTORS[S.sel.cicesSector] : null;
+  const specComps = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].comps : [];
+  const specLabel = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].label : "Specialist";
 
   // ── 3-column layout ────────────────────────────────────────────────────
   const layout = document.createElement("div");
