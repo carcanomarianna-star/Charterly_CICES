@@ -3515,7 +3515,7 @@ function rCPD_CICES(C) {
       <div class="field-row" style="margin-bottom:0">
         <div class="field-group">
           <label class="field-label">Start Date</label>
-          <input id="cplan_start" class="field-input" type="text" placeholder="e.g. Jan-25">
+          <input id="cplan_start" class="field-input" type="date">
         </div>
         <div class="field-group">
           <label class="field-label">Time Scale</label>
@@ -3989,11 +3989,11 @@ function rCV(C) {
       <div class="field-row" style="margin-bottom:0">
         <div class="field-group">
           <label class="field-label">Date From</label>
-          <input id="cv_dateFrom" class="field-input" type="text" value="${v('dateFrom')}" placeholder="MM/YYYY">
+          <input id="cv_dateFrom" class="field-input" type="date" value="${v('dateFrom')}">
         </div>
         <div class="field-group">
           <label class="field-label">Date To</label>
-          <input id="cv_dateTo" class="field-input" type="text" value="${v('dateTo')}" placeholder="MM/YYYY or Present">
+          <input id="cv_dateTo" class="field-input" type="text" value="${v('dateTo')}" placeholder="YYYY-MM-DD or Present">
         </div>
       </div>
       <hr class="form-divider">
@@ -4253,11 +4253,11 @@ function rCVCices(C) {
       <div class="field-row" style="margin-bottom:0">
         <div class="field-group">
           <label class="field-label">Date From</label>
-          <input id="cv_dateFrom" class="field-input" type="text" value="${v('dateFrom')}" placeholder="MM/YYYY">
+          <input id="cv_dateFrom" class="field-input" type="date" value="${v('dateFrom')}">
         </div>
         <div class="field-group">
           <label class="field-label">Date To</label>
-          <input id="cv_dateTo" class="field-input" type="text" value="${v('dateTo')}" placeholder="MM/YYYY or Present">
+          <input id="cv_dateTo" class="field-input" type="text" value="${v('dateTo')}" placeholder="YYYY-MM-DD or Present">
         </div>
       </div>
       <hr class="form-divider">
@@ -9137,7 +9137,7 @@ function renderERAppendixGrid() {
 
 function erUpdateFigCaption(id, val) {
   const fig = (S.erAppendices||[]).find(a => a.id === id);
-  if (fig) { fig.caption = val; saveState(); render(); }
+  if (fig) { fig.caption = val; saveState(); /* removed render() to prevent input focus loss */ }
 }
 
 function handleERAppendixUpload(input) {
