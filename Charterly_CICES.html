@@ -7633,8 +7633,312 @@ const CICES_SECTORS = {
     label: "Commercial Management",
     desc: "Focused on the financial, legal, and managerial aspects of civil engineering.",
     cores: {
-      qs: { label: "Quantity Surveying", comps: [] },
-      cost_eng: { label: "Cost Engineering", comps: [] },
+      qs: { label: "Quantity Surveying", comps: [
+  {
+    "id": "CMQS01",
+    "name": "Financial and commercial processes in civil engineering",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Management of budgets for civil engineering works. Cost forecasting, management and control processes including the use of contract programmes, change and risk registers."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Profitability forecasts, cost/budget/value comparisons and cash flow."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Value engineering techniques and their importance in achieving cost effective and safe design, construction and maintenance solutions, including transfer or acceptance of risk, design and performance obligations as a result."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Design, adaption and continual improvement of processes, procedures, and tools to enable the monitoring and management of key commercial drivers e.g., change, cost, and cash flow."
+      }
+    ]
+  },
+  {
+    "id": "CMQS02",
+    "name": "Contract Administration",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Supply chain procurement including selection of appropriate forms of contract and management."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Administration of contracts and / or subcontracts including payment mechanisms and resolution of contentious issues."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "The principles of insurance and liability. The common types of insurance available for usage on civil engineering projects."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Identification, recording, notification and negotiation of change in accordance with the contract. Evaluation of change."
+      }
+    ]
+  },
+  {
+    "id": "CMQS03",
+    "name": "Contract documentation",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Standard forms of contract, contract selection, how they deal with key provisions including the rights and obligations of the Parties."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Determination of the scope of work through interpretation of the contract documents – contract provisions, specifications, drawing."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "The purposes of and differences between Preambles, Pricing Schedules, Bills of Quantities, Activity Schedules and Schedules of Rates."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Risk and opportunities identification, analysis and management."
+      }
+    ]
+  },
+  {
+    "id": "CMQS04",
+    "name": "The principles of contract law and their application within the context of civil engineering",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Contract and other civil law principles applicable to the jurisdiction."
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Statute law relevant to civil engineering works."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Advice on contractual matters and formulating contractual correspondence."
+      },
+      {
+        "ref": "D",
+        "std": "K",
+        "desc": "Dispute avoidance and resolution – processes available and procedures that apply."
+      }
+    ]
+  },
+  {
+    "id": "CMQS05",
+    "name": "Planning and programme in the management of civil engineering works",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Various types of programmes used in civil engineering."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Use of the programmes for planning and monitoring the works."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Use of programmes for analysis and demonstration of delay and disruption and entitlement to extensions of time."
+      },
+      {
+        "ref": "D",
+        "std": "K",
+        "desc": "Use of programmes to support budget and risk management on a project."
+      }
+    ]
+  },
+  {
+    "id": "CMQS06",
+    "name": "Techniques and technologies employed in civil engineering works",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "K",
+        "desc": "Techniques and technologies, their impact on sustainable, security minded and safe working practices with particular emphasis on stakeholder involvement in projects with which personally involved."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "The utilisation of labour, plant, equipment, materials and sub-contractors."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Building Information Modelling (BIM) including the security implication of this and similar management tools."
+      }
+    ]
+  }
+] },
+      cost_eng: { label: "Cost Engineering", comps: [
+  {
+    "id": "CMCE01",
+    "name": "Financial and commercial processes in civil engineering",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Management of budgets for civil engineering works. Cost forecasting, management and control processes including the use of contract programmes change and risk registers."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Profitability forecasts, cost/budget/value comparisons and cash flow."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Value engineering techniques and their importance in achieving cost effective and safe design, construction and maintenance solutions, including transfer or acceptance of risk, design and performance obligations as a result."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Design / adaption and continual improvement of processes, procedures, and tools to enable the monitoring and management of key commercial drivers e.g. change, cost, risk, certification etc including a facility to check and audit."
+      }
+    ]
+  },
+  {
+    "id": "CMCE02",
+    "name": "Contract Administration",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Supply chain procurement including selection of appropriate forms of contract and management."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Administration of contracts and / or subcontracts including payment mechanisms and resolution of contentious issues."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "The principles of insurance and liability. The common types of insurance available for usage on civil engineering projects."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Identification, recording, notification and negotiation of change in accordance with the contract. Evaluation of change."
+      }
+    ]
+  },
+  {
+    "id": "CMCE03",
+    "name": "Contract documentation",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Standard forms of contract, contract selection, how they deal with key provisions including the rights and obligations of the Parties."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Determination of the scope of work through interpretation of the contract documents – contract provisions, specifications, drawing."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "The purposes of and differences between Preambles, Pricing Schedules, Bills of Quantities, Activity Schedules and Schedules of Rates."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Risk and opportunities identification, analysis and management."
+      }
+    ]
+  },
+  {
+    "id": "CMCE04",
+    "name": "The principles of contract law and their application within the context of civil engineering",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Contract and other civil law principles applicable to the jurisdiction."
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Statute law relevant to civil engineering works."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Advice on contractual matters and formulating contractual correspondence."
+      },
+      {
+        "ref": "D",
+        "std": "K",
+        "desc": "Dispute avoidance and resolution – processes available and procedures that apply."
+      }
+    ]
+  },
+  {
+    "id": "CMCE05",
+    "name": "Planning and programme in the management of civil engineering works",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Various types of programmes used in civil engineering."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Use of the programmes for planning and monitoring the works."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Use of programmes for analysis and demonstration of delay and disruption and entitlement to extensions of time."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Use of programmes to support budget and risk management on a project."
+      }
+    ]
+  },
+  {
+    "id": "CMCE06",
+    "name": "Techniques and technologies employed in civil engineering works",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Techniques and technologies, their impact on sustainable, security minded and safe working practices with particular emphasis on stakeholder involvement in projects with which personally involved."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "The utilisation of labour, plant, equipment, materials and sub-contractors."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Building Information Modelling (BIM) including the security implication of this and similar management tools."
+      }
+    ]
+  }
+] },
       estimating: { label: "Estimating", comps: [] },
       planning: { label: "Planning", comps: [] },
       project_controls: { label: "Project Controls", comps: [] },
