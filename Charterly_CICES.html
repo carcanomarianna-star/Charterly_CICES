@@ -7313,16 +7313,14 @@ function r0(C) {
         <span class="badge badge-cices">Geospatial Pathway</span>
       </div>
     </div>
-    <div class="btn-row">
-      <button class="btn btn-primary" ${!S.body?'disabled':''} onclick="confirmBodyAndContinue()">Continue →</button>
-    </div>
+
   </div></div>`;
 }
 function selBody(b) {
   S.body=b;
   document.body.className = (b==="RICS"?"rics-mode":b==="CICES"?"cices-mode":"") + (isRPQRoute()?" rpq-mode":"");
   saveState();
-  render();
+  confirmBodyAndContinue();
 }
 function confirmBodyAndContinue() {
   if (!S.body) return;
