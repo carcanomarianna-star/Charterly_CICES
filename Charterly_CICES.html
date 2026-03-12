@@ -7608,6 +7608,7 @@ const CICES_SECTORS = {
     ]},
   GES3: {
     label:"Specialist GE — Photogrammetry & Remote Sensing",
+    standalone: true,
     comps:[
       { id:"GES3", name:"Photogrammetry and Remote Sensing",
         activities:[
@@ -7647,7 +7648,8 @@ const CICES_SECTORS = {
       planning: { label: "Planning", comps: [] },
       project_controls: { label: "Project Controls", comps: [] },
       project_management: { label: "Project Management", comps: [] },
-      construction_law: { label: "Construction Law", comps: [] }
+      construction_law: { label: "Construction Law", comps: [] },
+      procurement_engineering: { label: "Procurement Engineering", standalone: true, comps: [] }
     }
   },
   digital: {
@@ -7710,8 +7712,11 @@ function cicesGetAllComps() {
   // If no coreKey is selected but there is only one core option (e.g. geospatial), auto-use it
   let coreComps = [];
   const coreKeys = Object.keys(sector.cores);
+  const specDef = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey] : null;
+  const isStandalone = specDef && specDef.standalone;
+
   const activeCoreKey = coreKey && sector.cores[coreKey] ? coreKey : (coreKeys.length === 1 ? coreKeys[0] : null);
-  if (activeCoreKey) {
+  if (activeCoreKey && !isStandalone) {
     coreComps = sector.cores[activeCoreKey].comps || [];
   }
 
@@ -7812,20 +7817,26 @@ function r1Cices(C) {
   });
   html += `</div></div>`;
 
-  // 2. Core Selection (only if sector is chosen and has multiple cores)
+  // Check if current specialism is standalone
+  let isStandalone = false;
+  if (sectorKey && spKey && CICES_SECTORS[sectorKey].specialisms[spKey] && CICES_SECTORS[sectorKey].specialisms[spKey].standalone) {
+    isStandalone = true;
+  }
+
+  // 2. Core Selection (only if sector is chosen and has multiple cores, and not standalone)
   if (sectorKey && CICES_SECTORS[sectorKey]) {
     const sector = CICES_SECTORS[sectorKey];
     const coreKeys = Object.keys(sector.cores);
 
     if (coreKeys.length > 1) {
-      html += `<div style="margin-bottom:24px;animation:fadeUp .2s ease">
+      html += `<div style="margin-bottom:24px;animation:fadeUp .2s ease; ${isStandalone ? 'opacity:0.4;pointer-events:none;' : ''}">
         <h2 class="section-title" style="font-size:16px;color:var(--cices)">2. Select Core Competency</h2>
-        <p class="sub" style="margin-bottom:10px">Choose the core competency set that matches your focus area.</p>
+        <p class="sub" style="margin-bottom:10px">${isStandalone ? 'Not required for your selected Specialism.' : 'Choose the core competency set that matches your focus area.'}</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px">`;
 
       coreKeys.forEach(ck => {
         const c = sector.cores[ck];
-        const isSel = coreKey === ck;
+        const isSel = coreKey === ck && !isStandalone;
         html += `<div class="cices-specialism-card${isSel?' selected':''}" onclick="selCicesCore('${ck}')">
           <div class="sp-name">${c.label}</div>
           ${isSel?'<div style="margin-top:8px"><span class="badge badge-green">✓ Selected</span></div>':''}
@@ -7836,9 +7847,7 @@ function r1Cices(C) {
   }
 
   // 3. Specialism Selection
-  const activeCoreKey = coreKey || (sectorKey && Object.keys(CICES_SECTORS[sectorKey].cores).length === 1 ? Object.keys(CICES_SECTORS[sectorKey].cores)[0] : null);
-
-  if (sectorKey && activeCoreKey) {
+  if (sectorKey) {
     const sector = CICES_SECTORS[sectorKey];
     const spKeys = Object.keys(sector.specialisms);
 
@@ -7852,6 +7861,7 @@ function r1Cices(C) {
         const isSel = spKey === sk;
         html += `<div class="cices-specialism-card${isSel?' selected':''}" onclick="selCicesSpecialism('${sk}')">
           <div class="sp-name">${sp.label}</div>
+          ${sp.standalone ? '<div style="font-size:10px;color:var(--muted);margin-top:4px">No core required</div>' : ''}
           ${isSel?'<div style="margin-top:8px"><span class="badge badge-green">✓ Selected</span></div>':''}
         </div>`;
       });
@@ -7859,14 +7869,15 @@ function r1Cices(C) {
     }
   }
 
-  const canProceed = sectorKey && activeCoreKey && (Object.keys(CICES_SECTORS[sectorKey].specialisms).length === 0 || spKey);
+  const activeCoreKey = coreKey || (sectorKey && Object.keys(CICES_SECTORS[sectorKey].cores).length === 1 ? Object.keys(CICES_SECTORS[sectorKey].cores)[0] : null);
+  const canProceed = sectorKey && (isStandalone || (activeCoreKey && (Object.keys(CICES_SECTORS[sectorKey].specialisms).length === 0 || spKey)));
 
   if (canProceed) {
     const sectorLabel = CICES_SECTORS[sectorKey].label;
-    const coreLabel = CICES_SECTORS[sectorKey].cores[activeCoreKey].label;
+    const coreLabel = (isStandalone || !activeCoreKey) ? null : CICES_SECTORS[sectorKey].cores[activeCoreKey].label;
     const spLabel = spKey ? CICES_SECTORS[sectorKey].specialisms[spKey].label : null;
     html += `<div class="panel-acc" style="padding:12px 16px;border-radius:8px;font-size:12px;color:var(--cices);margin-bottom:20px;animation:fadeUp .2s ease">
-      ✓ Pathway set: <strong>${sectorLabel}</strong> ➔ <strong>${coreLabel}</strong> ${spLabel ? '➔ <strong>' + spLabel + '</strong>' : ''}
+      ✓ Pathway set: <strong>${sectorLabel}</strong> ${coreLabel ? '➔ <strong>' + coreLabel + '</strong>' : ''} ${spLabel ? '➔ <strong>' + spLabel + '</strong>' : ''}
     </div>`;
   }
 
@@ -7890,7 +7901,7 @@ function selCicesSector(key) {
 
 function selCicesCore(key) {
   S.sel.cicesCore = key;
-  S.sel.cicesSpecialism = null; // reset specialism just in case they don't match
+  // Do not reset specialism here, so they can pick specialism first and then core if they want
   saveState();
   render();
 }
@@ -7919,7 +7930,8 @@ function r2Cices(C) {
   const activeCoreKey = coreKey || (Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
 
   const coreComps = activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].comps : [];
-  const coreLabel = activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].label : "Core";
+  const isStandalone = spKey && sector.specialisms[spKey] && sector.specialisms[spKey].standalone;
+  const coreLabel = (activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].label : null;
 
   const specComps = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].comps : [];
   const specLabel = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].label : "Specialism";
@@ -8034,11 +8046,13 @@ function r2Cices(C) {
     genDiv2.innerHTML = `<div class="cices-comp-section-title">General Competencies — GEN01–GEN13 (All pathways)</div>${CICES_GENERAL.map(c => buildCicesCompGroup(c)).join('')}`;
     compMain.appendChild(genDiv2);
 
+    if (coreLabel) {
     const coreDiv2 = document.createElement("div");
     coreDiv2.className = "panel cices-comp-section";
     coreDiv2.id = "cices-section-core";
     coreDiv2.innerHTML = `<div class="cices-comp-section-title">${coreLabel} Competencies</div>${coreComps.map(c => buildCicesCompGroup(c)).join('')}`;
     compMain.appendChild(coreDiv2);
+  }
 
     const specDiv2 = document.createElement("div");
     specDiv2.className = "panel cices-comp-section";
@@ -8164,12 +8178,14 @@ function r2Cices(C) {
   main.appendChild(genDiv);
 
   // Core section
-  const coreDiv = document.createElement("div");
-  coreDiv.className = "panel cices-comp-section";
-  coreDiv.id = "cices-section-core";
-  coreDiv.innerHTML = `<div class="cices-comp-section-title">${coreLabel} Competencies</div>
-    ${coreComps.map(c => buildCicesCompGroup(c)).join('')}`;
-  main.appendChild(coreDiv);
+  if (coreLabel) {
+    const coreDiv = document.createElement("div");
+    coreDiv.className = "panel cices-comp-section";
+    coreDiv.id = "cices-section-core";
+    coreDiv.innerHTML = `<div class="cices-comp-section-title">${coreLabel} Competencies</div>
+      ${coreComps.map(c => buildCicesCompGroup(c)).join('')}`;
+    main.appendChild(coreDiv);
+  }
 
   // Specialist section
   const specDiv = document.createElement("div");
@@ -9051,7 +9067,8 @@ function r4Cices(C) {
   const sector = CICES_SECTORS[sectorKey];
   const activeCoreKey = coreKey || (sector && Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
   const coreComps = sector && activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].comps : [];
-  const coreLabel = sector && activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].label : "Core";
+  const isStandalone = spKey && sector.specialisms[spKey] && sector.specialisms[spKey].standalone;
+  const coreLabel = (activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].label : null;
 
   const sp = spKey;
   const allComps = cicesGetAllComps();
@@ -9100,7 +9117,7 @@ function r4Cices(C) {
       <span style="display:inline-block;background:var(--cices);color:#fff;border-radius:3px;padding:0 5px;font-size:9px;font-family:'DM Mono',monospace;font-weight:700">FILLED</span> = already referenced.
     </div>
     ${buildERRefGroup("General", allComps.filter(c=>c.id.startsWith("GEN")))}
-    ${buildERRefGroup(coreLabel, coreComps)}
+    ${coreLabel ? buildERRefGroup(coreLabel, coreComps) : ''}
     ${buildERRefGroup(specLabel, specComps)}
     ${(()=>{
       const figs = S.erAppendices||[];
