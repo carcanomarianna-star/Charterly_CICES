@@ -574,7 +574,7 @@
   }
   .cices-sidebar-group-hdr:hover { background:#c8ddd0; }
   .cices-sidebar-group-label { font-size:11px; font-weight:600; color:var(--cices); flex:1; }
-  .cices-sidebar-group-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); }
+  .cices-sidebar-group-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--muted); margin-left:auto; }
   .cices-sidebar-group-chevron { font-size:9px; color:var(--cices); transition:transform .2s; }
   .cices-sidebar-group-hdr.collapsed-hdr .cices-sidebar-group-chevron { transform:rotate(-90deg); }
   .cices-sidebar-group-body { padding:4px 0 2px 8px; }
@@ -4141,6 +4141,10 @@ function rCVCices(C) {
   const erWords   = cw(S.experienceReport||"");
   const cicesP    = cicesCompProgress(allComps);
   const sector = S.sel.cicesSector ? CICES_SECTORS[S.sel.cicesSector] : null;
+  const activeCoreKey = S.sel.cicesCore || (sector && Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
+  const isStandalone = sp && sector.specialisms[sp] && sector.specialisms[sp].standalone;
+  const coreComps = (sector && activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].comps : [];
+  const coreLabel = (sector && activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].label : null;
   const specComps = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].comps : [];
   const specLabel = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].label : "Specialist";
 
@@ -4179,7 +4183,7 @@ function rCVCices(C) {
       <span style="display:inline-block;background:var(--cices);color:#fff;border-radius:3px;padding:0 5px;font-size:9px;font-family:'DM Mono',monospace;font-weight:700">FILLED</span> = already referenced.
     </div>
     ${buildDCVRefGroup("General", allComps.filter(c=>c.id.startsWith("GEN")))}
-    ${buildDCVRefGroup("Core Geospatial", allComps.filter(c=>c.id.startsWith("GECORE")))}
+    ${coreLabel ? buildDCVRefGroup(coreLabel, coreComps) : ''}
     ${buildDCVRefGroup(specLabel, specComps)}`;
   layout.appendChild(refSide);
 
@@ -7940,7 +7944,179 @@ const CICES_SECTORS = {
   }
 ] },
       estimating: { label: "Estimating", comps: [] },
-      planning: { label: "Planning", comps: [] },
+      planning: { label: "Planning", comps: [
+  {
+    "id": "CMPL_C01",
+    "name": "CM Core 1 Planning",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Management of budgets for civil engineering works. Cost forecasting, management and control processes including the use of contract programmes."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Forecasts value / budget / cost comparisons and cash flow."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Value engineering techniques and their importance in achieving cost effective and safe design, construction and maintenance solutions."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Management of processes, procedures, and tools to enable the monitoring and management of key commercial drivers e.g. change, cost, risk, certification etc. including a facility to check and audit."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Management of change and risk management for civil engineering works."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_C02",
+    "name": "CM Core 2 Planning",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Supply chain procurement including selection of appropriate forms of contract and defined programme deliverables."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Administration of contracts and / or subcontracts including payment mechanisms and resolution of contentious issues, final accounts agreement and management."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "The principles of insurance and liability. The common types of insurance available for usage on civil engineering projects, including professional indemnity insurance and warranties."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Identification, recording, notification and negotiation of change in accordance with the contract. Evaluation of change through analysis of rates or compensation methods, and agreement of the effects of change."
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Legislation and its applicability to civil engineering works (e.g. Working Rule Agreement / CDM / Environmental / HGCRA)."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_C03",
+    "name": "CM Core 3 Planning",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Standard forms of contract, contract selection, how they deal with key provisions including the rights and obligations of the Parties."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Determination of the scope of the work through interpretation of the contract documents – contract provisions, specifications, drawing, schedules, technical etc."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "The purposes of and differences between Preambles, Pricing Schedules, Bills of Quantities, Activity Schedules and Schedules of Rates."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Risk and opportunities identification, analysis and management."
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "The preparation and interpretation of estimates and tender submissions."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_C04",
+    "name": "CM Core 4 Planning",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "K",
+        "desc": "Contract and other civil law principles applicable to the jurisdiction."
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Statute law relevant to civil engineering works."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Advice on contractual matters and formulating contractual correspondence."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Dispute avoidance and resolution – processes available and procedures that apply."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_C05",
+    "name": "CM Core 5 Planning",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Various types of contractual programmes used in civil engineering and their presentation to various project stake holders."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Use of robust project planning techniques for work delivery, managed and shared using programmes, for structured work sequence validation and progress verification."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Use of programmes for analysis and demonstration of change and disruption and mitigation for progress recovery / entitlement to extensions of time."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Use of programmes by project teams to deliver to budget with informed risk based decision making."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Use of process and procedures for capturing progress of the works and incorporation of data into the programme."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_C06",
+    "name": "CM Core 6 Planning",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Research of new techniques and technologies, their impact on sustainability, safe working practices with particular emphasis on stakeholder engagement."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Capture of resource levelling of labour, plant, equipment, materials and sub-contractors allocated in short term look ahead programmes and their reconciliation to that planned."
+      },
+      {
+        "ref": "C",
+        "std": "A",
+        "desc": "Building Information Modelling (BIM), including the implementation of information sharing with management tools and systems."
+      }
+    ]
+  }
+] },
       project_controls: { label: "Project Controls", comps: [] },
       project_management: { label: "Project Management", comps: [] },
       construction_law: { label: "Construction Law", comps: [] }
@@ -7949,7 +8125,137 @@ const CICES_SECTORS = {
       qs: { label: "Quantity Surveying", comps: [] },
       cost_eng: { label: "Cost Engineering", comps: [] },
       estimating: { label: "Estimating", comps: [] },
-      planning: { label: "Planning", comps: [] },
+      planning: { label: "Planning", comps: [
+  {
+    "id": "CMPL_S01",
+    "name": "Producing the Programme Determine the requirements of the project/programme by analytical means and produce a robust programme to reflect these requirements",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Analyse project documentation and other requirements, understand scope, identify all deliverables and their constraints."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Identify any client and/or third party input and establish connectivity and/or limitations on scheme delivery to provide a fully integrated programme."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Identify supplier’s deliverables. Review and understand constraints of their programmes and establish agreed delivery commitments, commercially and in project programmes."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Produce a compliant programme which provides a robust representation of the activities required and the application of programme integrity checks."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Identification of key programme components i.e. Time Risk allowances, terminal, free and total float, Critical and near-critical paths, resources and production outputs."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_S02",
+    "name": "Resource and Cost Loaded Programmes Determine the impact of any resource constraints on a programme and use this to produce resource and cost loaded profiles",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Integration of planned resources and / or costs for tasks in the programme, or other control systems, including the management of impact upon the time and resource."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Identify and evaluate resource constraints in a programme, and its incorporation into the logic network. Produce resource profile(s), and compare with budgeted resource allocation."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Manage robust nature of stakeholder interface and supply chain programmes using activity outputs and confidence level for delivery."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_S03",
+    "name": "Planning & Programme Controls Monitor and record progress to satisfy project/programme management and reporting requirements",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Understand and implement procedures / processes to record and monitor progress against the programme including procedures for short term planning, including supplementing with specific project requirements."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Analyse elemental progress against the programme and highlight any areas of concern. Identify reasons for variance to the plan and recommend appropriate action."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Analyse any changes in critical path, and sub-critical paths to determine the variance to the plan in accordance with contractual obligations. Identify reasons for variance to the plan and recommend appropriate action."
+      },
+      {
+        "ref": "D",
+        "std": "K",
+        "desc": "Understand procedures for Earned Value (EV) strategy and assessment of the project/programme at regular intervals and its use to inform on overall project performance."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Articulation of project performance in a written narrative for contractual requirements and/or management procedures in a project life cycle."
+      },
+      {
+        "ref": "F",
+        "std": "E",
+        "desc": "Identify and evaluate the impact of progress on the resource profile. Evaluate and highlight any variance to the base line allocation, and identify any potential impact on overall resource requirements. Make recommendations appropriate action."
+      },
+      {
+        "ref": "G",
+        "std": "K",
+        "desc": "Understand correlation of progress on the actual and allowed cost profile for project delivery. Methods for identifying variance to the established budget, cost forecast and Key Performance Indicators."
+      },
+      {
+        "ref": "H",
+        "std": "E",
+        "desc": "Identify and analyse change in risk and opportunity in the project working programme taking into account any change in sequence and additional activity."
+      }
+    ]
+  },
+  {
+    "id": "CMPL_S04",
+    "name": "Change Identification and Management The identification of change in the project/programme requirements and the evaluation of potential/actual impact on the programme",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Identify cause of any change event that may potentially have impact on the progress of the works and compliance for notification within the contract."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Analyse and quantify the impact of change on the programme and contribute to its management under the project contract requirements."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Analyse and quantify the impact of change on the programme and contribute to its management under the project contract requirements."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Analyse and quantify the impact of change on the risk, resource or cost profile of a programme, and contribute to its management under the project contract requirements."
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Application of appropriate methods to identify the potential impact of multiple changes in a programme on completion date and / or key dates."
+      }
+    ]
+  }
+] },
       project_controls: { label: "Project Controls", comps: [] },
       project_management: { label: "Project Management", comps: [] },
       construction_law: { label: "Construction Law", comps: [] },
@@ -7964,8 +8270,280 @@ const CICES_SECTORS = {
     },
     specialisms: {
       bim: { label: "BIM Modeller", comps: [] },
-      data_analyst: { label: "Data Analyst", comps: [] },
-      info_management: { label: "Information Management (Digital)", comps: [] }
+      data_analyst: { label: "Data Analyst", comps: [
+  {
+    "id": "DA01",
+    "name": "Problem Identification",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "K",
+        "desc": "Determine if engineering challenges can benefit from data analytics."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Define business need and value that is solvable with data-driven information solutions."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Collaborate with stakeholders to grasp organisational challenges. i.e. existing data sources, their accessibility, validation of the data quality, methods for data retrieval and cleaning and requirements for manual entry of data."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Set clear data science measurable outcomes aligned with success criteria and how that may be embedded into a journey of development through change management"
+      }
+    ]
+  },
+  {
+    "id": "DA02",
+    "name": "Data Strategy and Governance",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Develop and implement data strategies aligned with industry and organisational goals."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Ensure compliance with data governance policies and industry regulations."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Collect and organise data, mindful of privacy and ethical considerations."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Establish clear data science goals and deliverables based on critical success indicators."
+      }
+    ]
+  },
+  {
+    "id": "DA03",
+    "name": "Data Gathering and Information Preparation",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Evaluate implications of data source and resulting information output on strategy, decision-making, and service delivery."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Identify and ensure availability of critical internal and external data sources."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Conduct data quality assessments and implement audit methodologies for integrity."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Utilise data wrangling for complex and low-complexity datasets, including exploratory analysis and data cleaning."
+      }
+    ]
+  },
+  {
+    "id": "DA04",
+    "name": "Analytical Solution Design and Implementation",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Develop data science/analytics solutions based on business and data knowledge."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Select appropriate techniques considering project requirements."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Apply statistical and machine learning techniques effectively."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Optimise project planning, resource allocation, and risk management using data analytics."
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Implement and maintain data infrastructure essential for effective operations and storage."
+      }
+    ]
+  },
+  {
+    "id": "DA05",
+    "name": "Stakeholder Engagement",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Collaborate with internal teams and stakeholders to understand data input and Information output requirements."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Present findings, insights, and recommendations to project leadership and clients."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Communicate complex data concepts clearly and effectively."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Foster strong relationships with stakeholders to ensure project alignment and success."
+      }
+    ]
+  }
+] },
+      info_management: { label: "Information Management (Digital)", comps: [
+  {
+    "id": "IM01",
+    "name": "Information standards",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "K",
+        "desc": "Industry Building Information Management (BIM)/ Information Management (IM) standards and protocols, e.g. UK BIM Framework or alternative National core standards inclusive of ISO 19650"
+      },
+      {
+        "ref": "B",
+        "std": "A",
+        "desc": "Contract requirements related to data and information management relevant to sector. i.e. responsible party of the data and information, intellectual property, copyright issues. Contract examples include NEC, X10 Information Management Protocol Clause"
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Management of Exchange Information Requirements (EIR) for required project deliverables"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Creating and maintaining a BIM Execution Plan as a response to an Exchange Information Requirements (EIR)"
+      }
+    ]
+  },
+  {
+    "id": "IM02",
+    "name": "Information Security",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "K",
+        "desc": "Define and/or recommend and adopt appropriate project standards, methods and procedures"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Support and develop project BIM/IM deliverables with Project Team and stake holders."
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Supporting the cybersecurity impact to BIM processes and configuring systems accordingly"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Creation and maintenance of Project Information Model (PIM) and Asset Information Model (AIM)"
+      }
+    ]
+  },
+  {
+    "id": "IM03",
+    "name": "Information Management",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Configuring and managing a Common Data Environment (CDE) solution; adhering to project specification aspects such as document naming convention, version control, permissions, security, metadata, workflow. Including awareness of the management of the CDE following project completion and handover to meet contract/client requirements"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Information collaboration and workflows of specific processes within the CDE (e.g. Design Review, approval, shared etc)"
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Support supply chain capability and capacity to deliver their digital contract commitments and any assistance that they may need."
+      },
+      {
+        "ref": "D",
+        "std": "A",
+        "desc": "Integration and understanding of interoperability with other software and platforms (GIS, Planning, Commercial, Health & Safety, O&M) to enhance informed decision making"
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Data capture/gathering/collating: Support processes and the definition of software requirements for different data capture and the integration with the project CDE, e.g. design, construction, as-built and handover solutions"
+      }
+    ]
+  },
+  {
+    "id": "IM04",
+    "name": "Utilising BIM data for project delivery",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Managing and data delivery (graphical and non-graphical) techniques and tools for information exchange considering intended use, e.g. visualisation, model federation, setting out, 4D Planning, 5D cost estimating, machine control, field tools where applicable"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Managing graphical and non-graphical data output reporting, e.g. clash detection, material reporting, design change reporting"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Utilising delivery metrics such as the Task Information Delivery Plan (TIDP) and Master Information Delivery Plan (MIDP) for tracking deliverables for project reporting, e.g. PMO, planning, commercial"
+      }
+    ]
+  },
+  {
+    "id": "IM05",
+    "name": "Collaboration",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Communicate with the Client, Customers and stakeholders on the tools and processes for digital delivery and benefits for their use."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Problem solving, benefits and integration of outputs (from platforms/solutions) to support other functions and disciplines, Design Management, Construction Delivery, Planning"
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Collaboration with Risk and Commercial Teams on where software, platforms, processes, tools and outputs can support"
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Collaboration with Surveying and GIS (Geospatial) on where BIM/IM processes, tools and outputs can support"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Capturing and sharing best practice, lessons learnt and knowledge with peers and colleagues"
+      }
+    ]
+  }
+] }
     }
   }
 };
