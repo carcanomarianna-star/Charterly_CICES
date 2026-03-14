@@ -7487,151 +7487,811 @@ const CICES_SECTORS = {
       }
     },
     specialisms: {
-  GEES: {
-    label:"Specialist Engineering Surveying",
-    comps:[
-      { id:"GEES01", name:"Engineering Surveys / Setting Out",
-        activities:[
-          {ref:"A",std:"E",desc:"Undertake engineering surveys and setting out operations for construction projects."},
-          {ref:"B",std:"E",desc:"Provide reports to clients and third parties on engineering survey results."},
-          {ref:"C",std:"E",desc:"Apply dimensional control for all stages of construction work."}
-        ]},
-      { id:"GEES02", name:"Surveying Instruments — Understanding & Use",
-        activities:[
-          {ref:"A",std:"E",desc:"Total Station — use, checking and adjustment."},
-          {ref:"B",std:"E",desc:"GNSS — static and kinematic methods."},
-          {ref:"C",std:"E",desc:"Theodolites and levels — field operations."},
-          {ref:"D",std:"E",desc:"Instrument checking, adjustment and calibration procedures."},
-          {ref:"E",std:"K",desc:"Different measurement methods appropriate to task and specification."}
-        ]},
-      { id:"GEES03", name:"Application of Geometric Principles",
-        activities:[
-          {ref:"A",std:"E",desc:"Coordinate geometry calculations using manual or computerised methods."},
-          {ref:"B",std:"E",desc:"2D and 3D survey control including intersections, resections and traversing."},
-          {ref:"C",std:"E",desc:"Adjustment of survey measurements; redundant observations; least squares methods."},
-          {ref:"D",std:"E",desc:"Measurement of heights, use of height datums and datum transformations."},
-          {ref:"E",std:"E",desc:"Error propagation and understanding of survey accuracy."}
-        ]},
-      { id:"GEES04", name:"Ability to use ICT in Surveying",
-        activities:[
-          {ref:"A",std:"E",desc:"Transfer of survey data between instrument and computer."},
-          {ref:"B",std:"E",desc:"Electronic processing of coordinate geometry data."},
-          {ref:"C",std:"E",desc:"CAD — general principles, structure, layering and UCS."},
-          {ref:"D",std:"K",desc:"Use of GIS and 3D data in survey workflows."}
-        ]}
-    ]},
-  GELS: {
-    label:"Specialist Land Surveying",
-    comps:[
-      { id:"GELS01", name:"Ability to Undertake Topographic Surveys",
-        activities:[
-          {ref:"A",std:"B",desc:"Site reconnaissance, survey methodology and risk assessment."},
-          {ref:"B",std:"B",desc:"Use of appropriate survey control stations and measurements (e.g. closed traverse)."},
-          {ref:"C",std:"B",desc:"Appropriate positioning and density of survey control relating to specification and purpose."},
-          {ref:"D",std:"B",desc:"Height control — use of different methods (levelling, GNSS)."},
-          {ref:"E",std:"B",desc:"Selection of appropriate equipment and measurement techniques to meet survey specification."},
-          {ref:"F",std:"B",desc:"Production of Survey Control Reports, records and schedules."}
-        ]},
-      { id:"GELS02", name:"Use and Understanding of Surveying Instruments",
-        activities:[
-          {ref:"A",std:"B",desc:"Theodolite / Total Stations."},
-          {ref:"B",std:"B",desc:"GNSS — static and kinematic methods."},
-          {ref:"C",std:"B",desc:"Laser Scanner — static and SLAM."},
-          {ref:"D",std:"B",desc:"Levels: optical, digital and precise."},
-          {ref:"E",std:"B",desc:"Field instrument checking and adjustment."},
-          {ref:"F",std:"E",desc:"Understanding of manufacturer and routine servicing, maintenance and calibration."},
-          {ref:"G",std:"B",desc:"Accessories — checking and adjustment."},
-          {ref:"H",std:"K",desc:"Utility mapping tools (GPR, electromagnetic locators)."},
-          {ref:"I",std:"K",desc:"Photogrammetric survey methods."},
-          {ref:"J",std:"K",desc:"Other methods of measuring distance or position (drone, mobile mapping, etc)."}
-        ]},
-      { id:"GELS03", name:"Application of Geometric Principles",
-        activities:[
-          {ref:"A",std:"B",desc:"Calculating coordinate geometry using manual or computerised methods."},
-          {ref:"B",std:"B",desc:"Use of coordinate reference systems, scales and projections."},
-          {ref:"C",std:"B",desc:"Application of corrections for meteorological and environmental variations."},
-          {ref:"D",std:"B",desc:"Linear, 2D and 3D survey control; intersections, known backsight, resections, traversing, network configurations."},
-          {ref:"E",std:"B",desc:"Adjustment of survey measurements; redundant observations; least squares; residuals; standard errors; error ellipses."},
-          {ref:"F",std:"B",desc:"Measurement of heights, use of height datum, datum transformations, geoid/spheroid separations."},
-          {ref:"G",std:"B",desc:"Error propagation."}
-        ]},
-      { id:"GELS04", name:"Geospatial Data Processing & Production of Deliverables",
-        activities:[
-          {ref:"A",std:"B",desc:"Transfer of survey data between instrument and computer."},
-          {ref:"B",std:"B",desc:"Transfer of survey/design data from computer to instrument for validation/setting out."},
-          {ref:"C",std:"B",desc:"Electronic processing of coordinate geometry data including geometric networks."},
-          {ref:"D",std:"B",desc:"Data processing of captured information and production of deliverables (drafting plans, producing reports)."},
-          {ref:"E",std:"B",desc:"Use and manipulation of digital ground models (DEM/DTM)."},
-          {ref:"F",std:"B",desc:"Point cloud registration and principles of data extraction."},
-          {ref:"G",std:"B",desc:"Data validation and quality control procedures."},
-          {ref:"H",std:"B",desc:"Data management, archiving, versioning, backup and security."},
-          {ref:"I",std:"E",desc:"Data security and legal considerations."}
-        ]}
-    ]},
-  GEUS: {
-    label:"Specialist Utilities & Subsurface Mapping",
-    comps:[
-      { id:"GEUS01", name:"Ability to Carry Out Utility/Subsurface Mapping Surveys",
-        activities:[
-          {ref:"A",std:"B",desc:"Understand relevant specifications and standards (e.g. PAS 128:2022, PAS 256:2017)."},
-          {ref:"B",std:"B",desc:"Obtain, interpret and understand limitations of Statutory Undertakers records and historical data."},
-          {ref:"C",std:"B",desc:"Site reconnaissance and methods of identifying services prior to use of geophysical detection methods."},
-          {ref:"D",std:"B",desc:"Understand applicable licensing requirements and legislation including CDM, HSG47, NRSWA."},
-          {ref:"E",std:"B",desc:"Effective use of electromagnetic methods of locating services (direct connection, induction, sonde, passive modes)."},
-          {ref:"F",std:"B",desc:"Effective use of GPR including post-processing (licensing, technologies, survey methods, data collection and interpretation)."},
-          {ref:"G",std:"B",desc:"Drainage surveys (drainage networks, recording, line & level, mapping methods, health & safety)."},
-          {ref:"H",std:"B",desc:"Methods of permanent recording of utility locations per relevant specifications (e.g. PAS 256:2017)."},
-          {ref:"I",std:"K",desc:"Identify where alternative detection methods may be suitable (geophysical, acoustic, gyroscopic, CCTV)."},
-          {ref:"J",std:"K",desc:"Geotechnical investigations including borehole, trial pit and window sampling operations."}
-        ]},
-      { id:"GEUS02", name:"Use and Understanding of Surveying Instruments",
-        activities:[
-          {ref:"A",std:"E",desc:"Total Stations."},
-          {ref:"B",std:"E",desc:"GNSS — static and kinematic."},
-          {ref:"C",std:"E",desc:"Levels: optical, electronic, digital."},
-          {ref:"D",std:"E",desc:"Instrument checking."},
-          {ref:"E",std:"E",desc:"Instrument adjustment within equipment boundaries and associated checking procedures."},
-          {ref:"F",std:"E",desc:"Accessories — checking and adjustment."},
-          {ref:"G",std:"E",desc:"Other methods of measuring distance (tape, Disto, measuring wheel)."}
-        ]},
-      { id:"GEUS03", name:"Application of Geometric Principles",
-        activities:[
-          {ref:"A",std:"E",desc:"Calculating 3D coordinate geometry using manual or computerised methods."},
-          {ref:"B",std:"E",desc:"2D and 3D survey control; intersections, resections, free station, traverse, network configurations."},
-          {ref:"C",std:"E",desc:"Adjustment of survey measurements; least squares; residuals; standard errors; error ellipses."},
-          {ref:"D",std:"E",desc:"Measurement of heights, use of height datum, datum transformations, geoid/spheroid separations."},
-          {ref:"E",std:"E",desc:"Error propagation."}
-        ]},
-      { id:"GEUS04", name:"Ability to Use ICT in Surveying",
-        activities:[
-          {ref:"A",std:"E",desc:"Transfer of utility survey and/or subsurface mapping data between instrument and computer."},
-          {ref:"B",std:"E",desc:"Electronic processing of utility survey data including GPR data and GNSS data."},
-          {ref:"C",std:"E",desc:"Use and manipulation of 3D utility data with digital ground models."},
-          {ref:"D",std:"E",desc:"CAD — general principles, structure, layering, UCS."}
-        ]}
-    ]},
-  GES3: {
-    label:"Specialist GE — Photogrammetry & Remote Sensing",
-    standalone: true,
-    comps:[
-      { id:"GES3", name:"Photogrammetry and Remote Sensing",
-        activities:[
-          {ref:"A",std:"E",desc:"Principles of photogrammetry, remote sensing and photographic interpretation."},
-          {ref:"B",std:"E",desc:"The work of analytical and digital photogrammetric instrumentation."},
-          {ref:"C",std:"K",desc:"The work of remote sensing systems."},
-          {ref:"D",std:"E",desc:"Commissioning of photography and other remotely sensed imagery (terrestrial, aerial and space)."},
-          {ref:"E",std:"E",desc:"Photo scales and associated accuracies."},
-          {ref:"F",std:"E",desc:"Types of control requirements, methods of acquisition and triangulation."},
-          {ref:"G",std:"E",desc:"Topographic mapping."},
-          {ref:"H",std:"E",desc:"Close range applications."},
-          {ref:"I",std:"E",desc:"Methods of digital surface model generation."},
-          {ref:"J",std:"E",desc:"Production of large-scale engineering plans."},
-          {ref:"K",std:"E",desc:"Rectified imagery, ortho photos and their uses."},
-          {ref:"L",std:"E",desc:"CAD formatting and applications."},
-          {ref:"M",std:"K",desc:"Airborne and terrestrial laser measurement systems."}
-        ]}
-    ]}
-}
+      GEES: { label: "Specialist Engineering Surveying", comps: [] },
+      GELS: { label: "Specialist Land Surveying", comps: [
+  {
+    "id": "GELS01",
+    "name": "Ability to undertake topographic surveys",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Site reconnaissance, survey methodology and risk assessment (see also GEN13B)"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Use of appropriate survey control stations and measurements e.g. closed, well planned traverse"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Appropriate positioning and density of survey control relating to survey specification, survey method, and purpose"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Height control – use of different methods of establishing heights e.g. levelling, GNSS"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Selection of appropriate equipment and measurement techniques to meet survey specification"
+      },
+      {
+        "ref": "F",
+        "std": "B",
+        "desc": "Production of Survey Control Reports, records and schedules"
+      }
+    ]
+  },
+  {
+    "id": "GELS02",
+    "name": "Use and understanding of surveying instruments",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Theodolite / Total Stations"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "GNSS, Static & Kinematic"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Laser Scanner, Static & SLAM"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Levels: Optical, Digital, Precise"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Field instrument checking and adjustment"
+      },
+      {
+        "ref": "F",
+        "std": "E",
+        "desc": "Understanding of manufacturer and routine servicing, maintenance, and calibration"
+      },
+      {
+        "ref": "G",
+        "std": "B",
+        "desc": "Accessories; checking and adjustment"
+      },
+      {
+        "ref": "H",
+        "std": "K",
+        "desc": "Utility Mapping tools (GPR, Electromagnetic Locators)"
+      },
+      {
+        "ref": "I",
+        "std": "K",
+        "desc": "Photogrammetric survey methods"
+      },
+      {
+        "ref": "J",
+        "std": "K",
+        "desc": "Other methods of measuring distance or position (drone, mobile mapping, instrumentation and monitoring, etc)"
+      }
+    ]
+  },
+  {
+    "id": "GELS03",
+    "name": "Application of geometric principles",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Calculating coordinate geometry using manual or computerised methods"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Use of co-ordinate reference systems, scales and projections"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Application of corrections for meteorological and environmental variations"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Linear, 2D and 3D survey control. Intersections, known backsight, resections, free station, rounds of angles, traversing, network and geometric configurations"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Adjustment of survey measurements. Redundant observations. Appropriate adjustment methods (Least Squares. Bowditch), residuals, standard errors, error ellipses"
+      },
+      {
+        "ref": "F",
+        "std": "B",
+        "desc": "Measurement of heights, use of height datum, datum transformations, geoid/spheroid separations"
+      },
+      {
+        "ref": "G",
+        "std": "B",
+        "desc": "Error propagation"
+      }
+    ]
+  },
+  {
+    "id": "GELS04",
+    "name": "Geospatial data processing and production of deliverables",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Transfer of survey data between instrument and computer"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Transfer of survey/design data from computer to instrument for validation/setting out"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Electronic processing of coordinate geometry data including geometric networks"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Data processing of captured information and production of deliverables. Eg drafting plans, producing reports"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Use and manipulation of digital ground models (DEM/DTM)"
+      },
+      {
+        "ref": "F",
+        "std": "B",
+        "desc": "Point cloud registration and principles of data extraction"
+      },
+      {
+        "ref": "G",
+        "std": "B",
+        "desc": "Data validation and quality control procedures"
+      },
+      {
+        "ref": "H",
+        "std": "B",
+        "desc": "Data management, archiving, versioning, backup and security"
+      },
+      {
+        "ref": "I",
+        "std": "E",
+        "desc": "Data security and legal considerations"
+      }
+    ]
+  }
+] },
+      GEHS: { label: "Specialist Hydrospatial (Marine) Surveying", comps: [
+  {
+    "id": "GEHS01",
+    "name": "Hydrospatial Science",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Oceanography including tidal theory, currents, water column parameters (temperature, salinity and density), weather factors"
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Electromagnetic waves for: Navigation e.g. GNSS Radio waves; Bathymetry / Inspection e.g. Light Detection and Ranging (LiDAR)"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Surface Positioning methods (e.g. GNSS modes, Traverse, Radiation) for structure, vessel/USV positioning and integrated, multi-sensor position solutions"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Subsurface Positioning: SONAR systems (e.g. USBL, LBL) and integrated, multi-sensor position solutions; Bathymetry (e.g. Echosounders); Acoustic theory, Speed of Sound"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Coordinate Reference Systems: horizontal and vertical datums, transformations, projections. Spatial Reference Identifiers (SRID) e.g. EPSG. Geoid models, VORF"
+      }
+    ]
+  },
+  {
+    "id": "GEHS02",
+    "name": "Surveying Operations",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Planning: specification, acoustics, hazard identification and risk assessment, environmental concerns, vessel capability, weather and tide planning, logistics"
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Installation of Survey positioning systems (surface and subsurface) and interfacing with external systems (e.g. Vessel Dynamic Positioning) as appropriate"
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "Use of different survey platforms, vehicles e.g. ROVs AUVs, USVs"
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Acoustic scanning systems e.g. Profilers, Single or Multibeam Echosounders"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Calibration and verification of sensors, both surface and subsurface e.g. GNSS, Gyros, Motion Sensors / INS, USBL, Echosounders, LBL"
+      },
+      {
+        "ref": "F",
+        "std": "B",
+        "desc": "Establishment of vessel CRS, installation of sensors and offset measurement relative to CRP"
+      }
+    ]
+  },
+  {
+    "id": "GEHS03",
+    "name": "Charts, Models & Data Integration",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Preparation and production of hydrographic charts and/or engineering drawings to appropriate standards e.g. IHO or Company"
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Vessel Navigation Systems e.g. ECDIS, AIS"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Preparation and production of other output types e.g. point clouds, DTMs, photo mosaics, photogrammetric products"
+      },
+      {
+        "ref": "D",
+        "std": "K",
+        "desc": "Other Engineering Survey task specific outputs e.g. Cross Sections, DEMs of Difference"
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Integration of multiple data sources, use of GIS"
+      }
+    ]
+  }
+] },
+      GEGIS: { label: "Specialist GIS", comps: [
+  {
+    "id": "GEGIS01",
+    "name": "Data management",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Metadata 1. Producing, enriching and managing metadata"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Standards 1. Information Management Standards applied to GIS Data Management eg Gemini, ISO19115, INSPIRE"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Data types Assessing the suitability and quality of vector and raster data models and their applications"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Data Interoperability Interoperability best practices during systems or data integration eg data formats exchange formats with particular attention to BIM, IOT, etc"
+      },
+      {
+        "ref": "F",
+        "std": "K",
+        "desc": "Data Ethics Policy and best practices eg Locus charter"
+      },
+      {
+        "ref": "G",
+        "std": "K",
+        "desc": "Data Security Policy and best practices eg ISO 27001 and GDPR"
+      }
+    ]
+  },
+  {
+    "id": "GEGIS02",
+    "name": "GIS Analysis of Data",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Basic vector analysis 1. Buffering, overlay etc"
+      },
+      {
+        "ref": "B",
+        "std": "K",
+        "desc": "Advanced vector analysis 1. Network analysis, spatial statistics, temporal analysis, cluster analysis, multi-variate analysis"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Basic raster analysis 1. Reclassification, terrain modelling, map algebra, filtering, flow, aspect, slope, basic interpolation (inverse distance weighted etc)"
+      },
+      {
+        "ref": "D",
+        "std": "K",
+        "desc": "Advanced raster analysis 1. Geostatistics eg kriging, spline; advanced image processing eg NDVI"
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Scripted analysis and modelling 1. Scripted analysis and model building eg Esri model-builder, SQL, FME, Python, R"
+      },
+      {
+        "ref": "F",
+        "std": "K",
+        "desc": "Data Science, Machine learning and artificial intelligence 1. Understanding of basic terminology eg labelled/training data, Artificial Intelligence, Machine Learning, neural networks, heuristics, errors, supervised/unsupervised learning"
+      }
+    ]
+  },
+  {
+    "id": "GEGIS03",
+    "name": "Reporting/Visualisation",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "2D Map creation 1. Designing and creating maps following the principles of cartographic design eg generalisation, labelling, symbology, projections, map layout (map face / map surround information - Scale, Orientation, Grid / Graticule, Legend)"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "3D Map creation 1. Designing and creating 3D maps with 3D authoring tools, processes and standards eg BIM (textures, materials), 3D CAD in GIS, vertical datums"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Dashboards – Data Visualisation 1. Designing and creating spatially enabled reporting tools eg visualise statistics & quantification, report on spatial relationships between multiple features"
+      }
+    ]
+  },
+  {
+    "id": "GEGIS04",
+    "name": "Consultancy and Advocacy",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "User requirements Collecting and understanding requirements for GIS data collection, analysis, visualisation, and development eg understanding map requirements, field software requirements, web app requirements"
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Advocacy Knowledge sharing, mentoring, and coaching in GIS best practice"
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Sustainability Principles of sustainable GIS practices in civil engineering eg socially, economically, and environmentally sustainable"
+      }
+    ]
+  }
+] },
+      GES3: { label: "Specialist Photogrammetry & Remote Sensing", standalone: true, comps: [
+  {
+    "id": "GES301",
+    "name": "Competencies and Range of Elements",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Principles of photogrammetry, remote sensing and photographic interpretation"
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "The work of analytical and digital photogrammetric instrumentation"
+      },
+      {
+        "ref": "C",
+        "std": "K",
+        "desc": "The work of remote sensing systems"
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Commissioning of photography and other remotely sensed imagery (terrestrial, aerial and space)"
+      },
+      {
+        "ref": "F",
+        "std": "E",
+        "desc": "Types of control requirements, methods of acquisition and triangulation"
+      },
+      {
+        "ref": "G",
+        "std": "E",
+        "desc": "Topographic mapping"
+      },
+      {
+        "ref": "H",
+        "std": "E",
+        "desc": "Close range applications"
+      },
+      {
+        "ref": "I",
+        "std": "E",
+        "desc": "Methods of digital surface model generation"
+      },
+      {
+        "ref": "J",
+        "std": "E",
+        "desc": "Production of large-scale engineering plans"
+      }
+    ]
+  }
+] },
+      GEUS: { label: "Specialist Utilities & Subsurface Mapping", comps: [
+  {
+    "id": "GEUS01",
+    "name": "Ability to carry out utility/subsurface mapping surveys",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Understand relevant specifications and standards relating to utility surveys and mapping e.g. PAS 128:2022 and PAS 256:2017."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Obtain (either directly or from 3rd party), interpret and understand limitations of Statutory Undertakers records (e.g. PAS 128:2022 Survey Type D), service records and other available historical data and assessment of formal and other informal sources of information."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Site reconnaissance (e.g. PAS 128:2022 Survey Type C) & methods of identifying services prior to use of geophysical detection methods. Presenting site reconnaissance data clearly and accurately."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Understand applicable licensing requirements, legislations and how it applies including CDM considerations; HSG47, NRSWA, Traffic Management Act and any other."
+      }
+    ]
+  },
+  {
+    "id": "GEUS02",
+    "name": "Ability to carry out utility/subsurface mapping surveys",
+    "activities": [
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Effective use of the electromagnetic methods of locating services. Direct connection Induction clamp Sonde Induction Correct use of frequencies and their purposes Passive modes Power Radio"
+      },
+      {
+        "ref": "F",
+        "std": "B",
+        "desc": "Effective use of ground penetrating radar (GPR) including post-processing of data. Licensing requirements Different GPR technologies and frequencies Methods of GPR Survey Data collection Data interpretation Data processing Use of GPR in PAS 128:2022"
+      }
+    ]
+  },
+  {
+    "id": "GEUS03",
+    "name": "Ability to carry out utility/subsurface mapping surveys",
+    "activities": [
+      {
+        "ref": "G",
+        "std": "B",
+        "desc": "Drainage surveys. Understanding of drainage networks and operations Drainage recording e.g. STC 25 Line & level surveys Methods of mapping drainage e.g. sonde, gyroscopic mapping, laser scanning. Presenting drainage on drawings Health &Safety when working with drainage assets, including confined spaces"
+      },
+      {
+        "ref": "H",
+        "std": "B",
+        "desc": "Methods of permanent recording of utility locations according to requirements of relevant specifications e.g. PAS 256:2017."
+      }
+    ]
+  },
+  {
+    "id": "GEUS04",
+    "name": "Ability to carry out utility/subsurface mapping surveys",
+    "activities": [
+      {
+        "ref": "I",
+        "std": "K",
+        "desc": "Identify where use of alternative detection methods may be suitable or required, and how these techniques are applied. Other methodologies might include: Geophysical methods: -Electromagnetic conductivity, -Seismic, -Electrical resistivity, -Microgravity, etc. Acoustic pipe detection methods Gyroscopic techniques Drainage CCTV surveys See PAS128:2022 / TSA’s The Essential Guide to Utility Surveys for additional techniques"
+      },
+      {
+        "ref": "J",
+        "std": "K",
+        "desc": "Geotechnical investigations, including borehole, trial pit and window sampling operations. Appreciation of relationship of geotechnical investigations to PAS 128:2022 & PAS 256:2017."
+      }
+    ]
+  },
+  {
+    "id": "GEUS05",
+    "name": "Use and understanding of surveying instruments",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Total Stations."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "GNSS - Static – Kinematic."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Levels: Optical, Electronic, Digital."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Instrument checking."
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Instrument adjustment within the boundaries and limitations of the equipment in use along with associated checking and procedures."
+      },
+      {
+        "ref": "F",
+        "std": "E",
+        "desc": "Accessories; checking and adjustment."
+      },
+      {
+        "ref": "G",
+        "std": "E",
+        "desc": "Other methods of measuring distance e.g. use of tape, Disto, measuring wheel."
+      }
+    ]
+  },
+  {
+    "id": "GEUS06",
+    "name": "Application of geometric principles",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Calculating 3-dimensional co-ordinate geometry using manual or computerised methods."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "2D and 3D survey control. Intersections, resections, free station, traverse, network and geometric configurations."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Adjustment of survey measurements. Redundant observations. Principles of least squares, residuals, standard errors, error ellipses."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Measurement of heights, use of height datum, datum transformations, geoid / spheroid separations."
+      },
+      {
+        "ref": "E",
+        "std": "K",
+        "desc": "Error propagation."
+      }
+    ]
+  },
+  {
+    "id": "GEUS07",
+    "name": "Ability to use information and communication technologies (ICT) in surveying",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "E",
+        "desc": "Transfer of utility survey and/or subsurface mapping data between instrument and computer."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Electronic processing of utility survey data and/or subsurface mapping data including but not limited to geometric networks, GPR data, GNSS data."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Use and manipulation of 3D utility data with digital ground models."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "CAD & GIS - general principles, structure, layering, UCS."
+      }
+    ]
+  },
+  {
+    "id": "GEUS08",
+    "name": "Ability to use information and communication technologies (ICT) in surveying",
+    "activities": [
+      {
+        "ref": "F",
+        "std": "E",
+        "desc": "Understand relevant guidances and standards relating to data security e.g. The CICES’ Secure Data Management for Utility Surveys, Cyber Essentials, ISO 27001"
+      },
+      {
+        "ref": "G",
+        "std": "A",
+        "desc": "Appreciation of how digitalisation and modern techniques such as automation and artificial intelligence (AI) can benefit the surveyor."
+      }
+    ]
+  }
+] },
+      GEIM: { label: "Specialist Geospatial Information Management", comps: [
+  {
+    "id": "GEIM01",
+    "name": "Source Data Validation When considering where data has come from (the source) take the following into consideration:",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Recognise and respect existing standards/specifications that are appropriate to the data set being validated and would support the delivery of the task reporting errors or improvements to the standards/specifications e.g. PAS, ISO, client guides, client specific specifications."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Understanding of techniques and technologies used to capture source data e.g. scanner type, camera, total station, GNSS, mobile mapping, GPR, pipe lasers, interferometry, InSAR, single/multi beam echo sounding etc."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Ability to evaluate the quality of source data (Variance, Standard Deviation, accuracy statements, statistical reports)."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Understand the limitations of use."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Analyse and assess external (3rd party) validation."
+      },
+      {
+        "ref": "F",
+        "std": "B",
+        "desc": "Interrogate and evaluate metadata."
+      }
+    ]
+  },
+  {
+    "id": "GEIM02",
+    "name": "Source Data preparation Prepare the source data using the activities below in readiness for manipulation.",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "The ability to spot erroneous data for example poor residuals and how to resolve the error."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Undertake complex data fusion e.g. combining datasets of differing types, whilst respecting data standards where appropriate."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Techniques and limitations of point cloud registration (Cloud to Cloud, Spheres, Targets, SLAM)."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Transformation of data to a common or user defined coordinate system."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Application and understanding of scale factor."
+      }
+    ]
+  },
+  {
+    "id": "GEIM03",
+    "name": "Data Manipulation",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Conversion of data from 2D to a 3D model and visa- versa."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Ability to choose an appropriate method of data abstraction/manipulation and understand the impact this has on the deliverables e.g. re-sampling of geospatial data."
+      },
+      {
+        "ref": "C",
+        "std": "B",
+        "desc": "Interoperability of data sets and implications of converting between formats (Revit, TIN, Mesh, Grid, LAS, LAZ ASCII, 3Ds max, etc)."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Ability to extract features from manipulated data."
+      },
+      {
+        "ref": "E",
+        "std": "B",
+        "desc": "Understanding of data cleaning methodologies e.g. use of filters."
+      },
+      {
+        "ref": "F",
+        "std": "E",
+        "desc": "Understanding of data compression technologies e.g. Octree, Pyramid etc."
+      }
+    ]
+  },
+  {
+    "id": "GEIM04",
+    "name": "Quality reporting",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Understand the difference between accuracy and precision. Relative or absolute. This must be cross referenced in the experience report."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Generation of metadata as per recognised national standards and rulesets that support the origin, output and transmission of compliant spatial data (geospatial data standards) pertinent at the time of application."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Creation of metadata in relation to BIM."
+      },
+      {
+        "ref": "D",
+        "std": "B",
+        "desc": "Apply correct version control and ensure a robust and systematic approach."
+      }
+    ]
+  },
+  {
+    "id": "GEIM05",
+    "name": "Use of ICT",
+    "activities": [
+      {
+        "ref": "A",
+        "std": "B",
+        "desc": "Sharing and storing of geospatial data. for example, SFTP, Dropbox, cloud hosted web service."
+      },
+      {
+        "ref": "B",
+        "std": "E",
+        "desc": "Understand the importance of data security and sharing, including adherence to GDPR."
+      },
+      {
+        "ref": "C",
+        "std": "E",
+        "desc": "Data exchange technologies and standards e.g. IDE, IFC."
+      },
+      {
+        "ref": "D",
+        "std": "E",
+        "desc": "Understanding the use of Database Management Systems (DBMS), e.g. relational, object orientated, spatial."
+      }
+    ]
+  }
+] },
+      GEIM: { label: "Specialist Geospatial Information Management", comps: [{"id":"GEIM01","name":"Source Data Validation When considering where data has come from (the source) take the following into consideration:","activities":[{"ref":"A","std":"B","desc":"Recognise and respect existing standards/specifications that are appropriate to the data set being validated and would support the delivery of the task reporting errors or improvements to the standards/specifications e.g. PAS, ISO, client guides, client specific specifications."},{"ref":"B","std":"E","desc":"Understanding of techniques and technologies used to capture source data e.g. scanner type, camera, total station, GNSS, mobile mapping, GPR, pipe lasers, interferometry, InSAR, single/multi beam echo sounding etc."},{"ref":"C","std":"B","desc":"Ability to evaluate the quality of source data (Variance, Standard Deviation, accuracy statements, statistical reports)."},{"ref":"D","std":"B","desc":"Understand the limitations of use."},{"ref":"E","std":"B","desc":"Analyse and assess external (3rd party) validation."},{"ref":"F","std":"B","desc":"Interrogate and evaluate metadata."}]},{"id":"GEIM02","name":"Source Data preparation Prepare the source data using the activities below in readiness for manipulation.","activities":[{"ref":"A","std":"B","desc":"The ability to spot erroneous data for example poor residuals and how to resolve the error."},{"ref":"B","std":"E","desc":"Undertake complex data fusion e.g. combining datasets of differing types, whilst respecting data standards where appropriate."},{"ref":"C","std":"E","desc":"Techniques and limitations of point cloud registration (Cloud to Cloud, Spheres, Targets, SLAM)."},{"ref":"D","std":"B","desc":"Transformation of data to a common or user defined coordinate system."},{"ref":"E","std":"B","desc":"Application and understanding of scale factor."}]},{"id":"GEIM03","name":"Data Manipulation","activities":[{"ref":"A","std":"B","desc":"Conversion of data from 2D to a 3D model and visa- versa."},{"ref":"B","std":"E","desc":"Ability to choose an appropriate method of data abstraction/manipulation and understand the impact this has on the deliverables e.g. re-sampling of geospatial data."},{"ref":"C","std":"B","desc":"Interoperability of data sets and implications of converting between formats (Revit, TIN, Mesh, Grid, LAS, LAZ ASCII, 3Ds max, etc)."},{"ref":"D","std":"B","desc":"Ability to extract features from manipulated data."},{"ref":"E","std":"B","desc":"Understanding of data cleaning methodologies e.g. use of filters."},{"ref":"F","std":"E","desc":"Understanding of data compression technologies e.g. Octree, Pyramid etc."}]},{"id":"GEIM04","name":"Quality reporting","activities":[{"ref":"A","std":"B","desc":"Understand the difference between accuracy and precision. Relative or absolute. This must be cross referenced in the experience report."},{"ref":"B","std":"E","desc":"Generation of metadata as per recognised national standards and rulesets that support the origin, output and transmission of compliant spatial data (geospatial data standards) pertinent at the time of application."},{"ref":"C","std":"E","desc":"Creation of metadata in relation to BIM."},{"ref":"D","std":"B","desc":"Apply correct version control and ensure a robust and systematic approach."}]},{"id":"GEIM05","name":"Use of ICT","activities":[{"ref":"A","std":"B","desc":"Sharing and storing of geospatial data. for example, SFTP, Dropbox, cloud hosted web service."},{"ref":"B","std":"E","desc":"Understand the importance of data security and sharing, including adherence to GDPR."},{"ref":"C","std":"E","desc":"Data exchange technologies and standards e.g. IDE, IFC."},{"ref":"D","std":"E","desc":"Understanding the use of Database Management Systems (DBMS), e.g. relational, object orientated, spatial."}]}] }
+    }
   },
   commercial: {
     label: "Commercial Management",
@@ -8117,13 +8777,13 @@ const CICES_SECTORS = {
     ]
   }
 ] },
-      project_controls: { label: "Project Controls", comps: [] },
-      project_management: { label: "Project Management", comps: [] },
-      construction_law: { label: "Construction Law", comps: [] }
+      project_controls: { label: "Project Controls", comps: [{"id":"CMPC_C01","name":"Financial and Commercial processes in Civil Engineering","activities":[{"ref":"A","std":"E","desc":"Management of budgets for civil engineering works. Cost forecasting, management and control processes including the use of contract programmes, change and risk registers."},{"ref":"B","std":"E","desc":"Profitability forecasts, cost/budget/value comparisons and cash flow."},{"ref":"C","std":"K","desc":"Value engineering techniques and their importance in achieving cost effective and safe design, construction and maintenance solutions, including transfer or acceptance of risk, design and performance obligations as a result."},{"ref":"D","std":"E","desc":"Design, adaption and continual improvement of processes, procedures, and tools to enable the monitoring and management of key commercial drivers e.g., change, cost, risk, certification etc. including a facility to check and audit."}]},{"id":"CMPC_C02","name":"Commercial management and contract administration on civil engineering projects","activities":[{"ref":"A","std":"K","desc":"Supply chain procurement including selection of appropriate forms of contract and management."},{"ref":"B","std":"K","desc":"Administration of contracts and / or subcontracts including payment mechanisms and resolution of contentious issues, final accounts agreement and management."},{"ref":"C","std":"E","desc":"The principles of insurance and liability. The common types of insurance available for usage on civil engineering projects, including professional indemnity insurance and warranties."},{"ref":"D","std":"E","desc":"Identification, recording, notification and negotiation of change in accordance with the contract. Evaluation of change through analysis of rates or compensation methods, and agreement of the effects of change."},{"ref":"E","std":"K","desc":"Employment legislation and its applicability to civil engineering works (e.g., Working Rule Agreement)."}]},{"id":"CMPC_C03","name":"Contract structure, documentation and the bid process in civil engineering","activities":[{"ref":"A","std":"E","desc":"Standard forms of contract, contract selection, how they deal with key provisions including the rights and obligations of the Parties."},{"ref":"B","std":"E","desc":"Determination of the scope of work through interpretation of the contract documents – contract provisions, specifications, drawing, schedules, technical etc."},{"ref":"C","std":"E","desc":"The purposes of and differences between Preambles, Pricing Schedules, Bills of Quantities, Activity Schedules and Schedules of Rates."},{"ref":"D","std":"E","desc":"Risk and opportunities identification, analysis and management."},{"ref":"E","std":"K","desc":"The preparation and interpretation of estimates and tender submissions."}]},{"id":"CMPC_C04","name":"The principles of contract law and their application within the context of civil engineering","activities":[{"ref":"A","std":"K","desc":"Contract and other civil law principles applicable to the jurisdiction."},{"ref":"B","std":"K","desc":"Statute law relevant to civil engineering works."},{"ref":"C","std":"E","desc":"Advice on contractual matters and formulating contractual correspondence."},{"ref":"D","std":"K","desc":"Dispute avoidance and resolution – processes available and procedures that apply."}]},{"id":"CMPC_C05","name":"Planning and programme in the management of civil engineering works","activities":[{"ref":"A","std":"E","desc":"Various types of programmes used in civil engineering."},{"ref":"B","std":"E","desc":"Use of the programmes for planning and monitoring the works."},{"ref":"C","std":"E","desc":"Use of programmes for analysis and demonstration of delay and disruption and entitlement to extensions of time."},{"ref":"D","std":"E","desc":"Use of programmes to support budget and risk management on a project."}]},{"id":"CMPC_C06","name":"Techniques and technologies employed in civil engineering works","activities":[{"ref":"A","std":"K","desc":"Techniques and technologies, their impact on sustainable, security minded and safe working practices with particular emphasis on stakeholder involvement in projects with which personally involved."},{"ref":"B","std":"K","desc":"The utilisation of labour, plant, equipment, materials and sub-contractors."},{"ref":"C","std":"K","desc":"Building Information Modelling (BIM) including the security implication of this and similar management tools."},{"ref":"D","std":"B","desc":"Apply structured information management practices to organise and maintain project performance and cost data"},{"ref":"E","std":"K","desc":"Implement data architecture principles to support the integration and secure handling of project control systems and tools"}]}] },
+      project_management: { label: "Project Management", comps: [{"id":"CMPM_C01","name":"CM Core 1 PM","activities":[{"ref":"A","std":"E","desc":"Management of budgets for civil engineering works. Cost forecasting, management and control processes including the use of contract programmes, change and risk registers"},{"ref":"B","std":"E","desc":"Profitability forecasts, cost/budget/value comparisons and cash flow"},{"ref":"C","std":"B","desc":"Value engineering techniques and their importance in achieving cost effective and safe design, construction and maintenance solutions"},{"ref":"D","std":"E","desc":"Design, adaption and continual improvement of processes, procedures, and tools to enable the monitoring and management of key commercial drivers e.g. change, cost, risk, certification etc. including a facility to check and audit"}]},{"id":"CMPM_C02","name":"CM Core 2 PM","activities":[{"ref":"A","std":"E","desc":"Supply chain procurement and management"},{"ref":"B","std":"K","desc":"Administration of contracts and / or subcontracts including payment mechanisms, change procedures, and resolution of contentious issues, final accounts agreement and management"},{"ref":"C","std":"K","desc":"The principles of insurance and the common types of insurance available for usage on civil engineering projects, including professional indemnity insurance and warranties"},{"ref":"D","std":"E","desc":"Identification, recording, notification and negotiation of change in accordance with the contract. Evaluation of change through analysis of rates or compensation methods, and agreement of the effects of change"},{"ref":"E","std":"K","desc":"Employment legislation and its applicability to civil engineering works (e.g. Working Rule Agreement)"}]},{"id":"CMPM_C03","name":"CM Core 3 PM","activities":[{"ref":"A","std":"B","desc":"Standard forms of contract, how they deal with key provisions including the rights and obligations of the Parties"},{"ref":"B","std":"K","desc":"Determination of the scope of work through interpretation of the contract documents – contract provisions, specifications, drawing, schedules, technical etc."},{"ref":"C","std":"E","desc":"The purposes of and differences between Preambles, Bills of Quantities, Activity Schedules and Schedules of Rates"},{"ref":"D","std":"B","desc":"Risk identification, analysis and management"},{"ref":"E","std":"K","desc":"The preparation and interpretation of estimates and tender submissions"}]},{"id":"CMPM_C04","name":"CM Core 4 PM","activities":[{"ref":"A","std":"K","desc":"Contract and other civil law principles applicable to the jurisdiction"},{"ref":"B","std":"K","desc":"Statute law relevant to civil engineering works"},{"ref":"C","std":"E","desc":"Advice on contractual matters and formulating contractual / legal correspondence"},{"ref":"D","std":"K","desc":"Dispute avoidance and resolution – processes available and procedures that apply"}]},{"id":"CMPM_C05","name":"CM Core 5 PM","activities":[{"ref":"A","std":"E","desc":"Various types of programmes used in civil engineering"},{"ref":"B","std":"E","desc":"Use of the programmes for planning and monitoring the works"},{"ref":"C","std":"K","desc":"Use of programmes for analysis and demonstration and delay and disruption and entitlement to extensions of time"},{"ref":"D","std":"E","desc":"Use of programmes to support budget and risk management on a project"}]},{"id":"CMPM_C06","name":"CM Core 6 PM","activities":[{"ref":"A","std":"E","desc":"Techniques and technologies, their impact on sustainable, security minded and safe working practices with particular emphasis on stakeholder involvement in projects with which personally involved"},{"ref":"B","std":"K","desc":"The utilisation of labour, plant, equipment, materials and sub- contractors"},{"ref":"C","std":"E","desc":"Building Information Modelling (BIM) including the security implication of this and similar management tools"}]}] },
+      construction_law: { label: "Construction Law", comps: [{"id":"CMCL_C01","name":"Law and Legal System for Construction Professionals","activities":[{"ref":"A","std":"K","desc":"Legal systems and sources of law such as common law and civil law"},{"ref":"B","std":"E","desc":"Statute, Common Law, Custom, Conventions, Rules, Standards, Ethical Code of Conduct"},{"ref":"C","std":"K","desc":"General application of various branches of law and legal rules in construction - Contract/Tort/Crime/Planning/Procurement"},{"ref":"D","std":"E","desc":"Financial and Insurance Law for Construction Professionals"},{"ref":"E","std":"A","desc":"Processes followed in avoidance mitigation or resolution in case there is any dispute - Litigation/ADR"}]},{"id":"CMCL_C02","name":"Commercial management and contract administration on civil engineering projects","activities":[{"ref":"A","std":"E","desc":"General Elements of the Law of Contract - formation, performance, breach, remedies"},{"ref":"B","std":"E","desc":"Construction Contract Law for the Surveyors - Nature and use of Contract and its content"},{"ref":"C","std":"E","desc":"Express/Implied Terms at common law and by Statutes"},{"ref":"D","std":"E","desc":"Conditions/Warranties/In-nominate Terms and different consequences of their breach"},{"ref":"E","std":"K","desc":"Employment legislation and its applicability to civil engineering works (e.g., Working Rule Agreement)."}]},{"id":"CMCL_C03","name":"Contract structure, documentation and the bid process in civil engineering","activities":[{"ref":"A","std":"E","desc":"Standard forms of contract, contract selection, how they deal with key provisions including the rights and obligations of the Parties, and the role of various personnel such as Client/Designer/Project Manager/Supervisor/Engineer etc."},{"ref":"B","std":"E","desc":"Determination of the scope of work through interpretation of the contract documents – contract provisions, specifications, drawing, schedules, technical data etc."},{"ref":"C","std":"E","desc":"The purposes of and differences between Preambles, Conditions, Pricing Schedules, Bills of Quantities, Activity Schedules and Schedules of Rates."},{"ref":"D","std":"E","desc":"Risk and opportunities identification, analysis and management."},{"ref":"E","std":"K","desc":"The preparation and interpretation of estimates and tender submissions."}]},{"id":"CMCL_C04","name":"The principles of law and their application within the context of civil engineering","activities":[{"ref":"A","std":"E","desc":"Laws of Health and Safety/Sustainability/ and Laws regarding Digital Delivery"},{"ref":"B","std":"E","desc":"Statute law relevant to civil engineering works including consumer legislation and exclusion and limiting the liability."},{"ref":"C","std":"E","desc":"Advice on contractual matters at formation, drafting, at performance stage and contractual correspondence, including post completion."},{"ref":"D","std":"K","desc":"Dispute avoidance, mitigation and resolution – processes available and procedures that apply."},{"ref":"E","std":"K","desc":"Payment Laws/Terms, Insurance/Guarantee/Bonds/Liability to third Parties including clients and users"}]},{"id":"CMCL_C05","name":"Planning and programme in the management of civil engineering works","activities":[{"ref":"A","std":"K","desc":"Various types of programmes used in civil engineering."},{"ref":"B","std":"K","desc":"Use of the programmes for planning and monitoring the works."},{"ref":"C","std":"E","desc":"Use of programmes for analysis and demonstration of delay and disruption and entitlement to extensions of time."},{"ref":"D","std":"E","desc":"Use of Programme to make claims and its relationship with records."},{"ref":"E","std":"K","desc":"Delay analysis methods, making delay claims – Extension of Time (EoT), Loss and Expenses, Damages"}]},{"id":"CMCL_C06","name":"Techniques and technologies employed in civil engineering works","activities":[{"ref":"A","std":"E","desc":"Breach at various stages of performance including before commencement at site, completion of works, commissioning and taking over, defects and rectification/correction, final payment and discharge."},{"ref":"B","std":"E","desc":"Establishing liability or entitlement under contract or tort for the parties and the professionals"},{"ref":"C","std":"E","desc":"Analysing contract documents and prepare structured schedules for claims"},{"ref":"D","std":"K","desc":"Use of information using verified technology is structured and derived form validated data"},{"ref":"C","std":"K","desc":"Opinion evidence and Expert Reports the nature and obligation of the Expert."}]}] }
     },
     specialisms: {
-      qs: { label: "Quantity Surveying", comps: [] },
-      cost_eng: { label: "Cost Engineering", comps: [] },
+      qs: { label: "Quantity Surveying", comps: [{"id":"CMQS_S01","name":"Cost planning and pre-contract cost control","activities":[{"ref":"A","std":"K","desc":"Possess a knowledge of the elements present in a project budget at pre-contract phase."},{"ref":"B","std":"E","desc":"Have knowledge of the development of a cost plan or spread of a tender budget along with identification of cost drivers for civil engineering works."},{"ref":"C","std":"K","desc":"Understand various civil engineering design options covering Employer/Consultant design, innovation and Contractor design and construct."},{"ref":"D","std":"E","desc":"Analyse and compare contract and subcontract tenders and tender budget information."},{"ref":"E","std":"K","desc":"Knowledge of various scheme funding options and corporate governance applied by stakeholders."}]},{"id":"CMQS_S02","name":"Project/commercial management reporting, internal accounts and company accounts","activities":[{"ref":"A","std":"B","desc":"Assessment of financial performance through applying the quantity and cost/value of work completed to arrive at cost and value reconciliation reporting. Demonstrating ability in cost capture, codes of accounts and work breakdown structures."},{"ref":"B","std":"E","desc":"Involvement in and understanding of the production of project trading accounts/reports illustrating profit/loss, overhead cost recovery and financial outturn forecasts for management purposes and their impact on company objectives."},{"ref":"C","std":"E","desc":"Understand the basics of company accounts, including turnover, profit/loss, work in hand and cash-flow."},{"ref":"D","std":"E","desc":"Identify and interpret Key Performance and Result Measures, for example Earned Value Management/Analysis."}]},{"id":"CMQS_S03","name":"Recording works progress and determining/evaluating the effects of delay, prolongation and disruption","activities":[{"ref":"A","std":"B","desc":"Ability to devise, maintain and audit suitable contemporary records of work progress."},{"ref":"B","std":"E","desc":"Evaluation of recorded work through applying relevant financial assessment methods."},{"ref":"C","std":"K","desc":"Understand the causes of delay, means of delay analysis and their critical and non-critical effects on project completion and entitlement to extensions of time."},{"ref":"D","std":"K","desc":"Understand the effects of disruption on resources and progress, and methods of demonstrating disruption effects."},{"ref":"E","std":"K","desc":"Apply a range of valuation techniques to items of change and understand the relative strengths and weaknesses of those techniques."}]},{"id":"CMQS_S04","name":"Bills of Quantities, Schedules of Rates and Activity Schedules","activities":[{"ref":"A","std":"E","desc":"Understand the various uses of Bills of Quantities, Schedules of Rates, and Activity Schedules and their preparation in accordance with standard methods of measurement."},{"ref":"B","std":"E","desc":"Understand the different risks associated with measurement and pricing carried out under remeasurement contracts, lump sum contracts and target cost/cost reimbursable contracts and design and construct contracts."},{"ref":"C","std":"E","desc":"Experience of the structure of a Bill of Quantities and the varying approach to pricing with particular reference to quantity related and time related items and method related charges."},{"ref":"D","std":"K","desc":"Understand the principles of pricing using Activity Schedules (including scope coverage) and how to deal with the evaluation of change where Activity Schedules are used."}]},{"id":"CMQS_S05","name":"Management of interim and final accounts","activities":[{"ref":"A","std":"B","desc":"Apply the contractual and statutory provisions relating to applications for payment including Contractor and Employer/Project Manager assessments, certificates and payment for both interim and final accounts."},{"ref":"B","std":"E","desc":"Preparation, presentation, negotiation and agreement of interim and final accounts, including re-measurement in accordance with a standard method of measurement."},{"ref":"C","std":"K","desc":"Understanding of what constitutes Settlement Agreements and auditing of final accounts."},{"ref":"D","std":"E","desc":"Preparation and evaluation of compensation event claims, and/or other claims based upon contractual entitlement, and/or insurance claims."}]}] },
+      cost_eng: { label: "Cost Engineering", comps: [{"id":"CMCE_S01","name":"Cost Engineering Specialist Competencies","activities":[{"ref":"A","std":"B","desc":"Identify the key elements of a project and prepare an initial project budget at high level"}]},{"id":"CMCE_S02","name":"Cost Engineering Specialist Competencies","activities":[{"ref":"A","std":"E","desc":"Assessment of financial performance through the use of cost loaded programmes or assessment of quantity of work completed to arrive at cost and value reconciliation reporting."},{"ref":"B","std":"K","desc":"The production of project trading accounts/reports illustrating profit/loss, overhead cost recovery, and financial outturn forecasts for management purposes and their impact on company objectives."},{"ref":"C","std":"K","desc":"Understand the basics of company accounts, including turnover, profit/loss, work in hand and cashflow"},{"ref":"D","std":"E","desc":"Identify and interpret Key Performance and Result Measures"}]},{"id":"CMCE_S03","name":"Cost Engineering Specialist Competencies","activities":[{"ref":"A","std":"K","desc":"Preparation and maintenance of suitable contemporary records of work progress"},{"ref":"B","std":"E","desc":"Evaluation of recorded work through applying relevant financial assessment methods"},{"ref":"C","std":"K","desc":"The causes of delay and their critical and non-critical effects on project completion and entitlement to extensions of time"},{"ref":"D","std":"K","desc":"The effects of disruption on resources and progress, and methods of demonstrating disruption effects"}]},{"id":"CMCE_S04","name":"Cost Engineering Specialist Competencies","activities":[{"ref":"A","std":"E","desc":"The various uses of Bills of Quantities, Schedules of Rates, and Activity Schedules and their preparation in accordance with standard methods of measurement."},{"ref":"B","std":"E","desc":"The different risks associated with measurement and pricing carried out under re-measurement contracts, lump sum contracts and target cost/cost reimbursable contracts and design and construct contracts."},{"ref":"C","std":"E","desc":"The structure of a Bill of Quantities and the varying approach to pricing with particular reference to quantity related and time related items and method related charges"},{"ref":"D","std":"E","desc":"The principles of pricing using Activity Schedules (including scope coverage) and how to deal with the evaluation of change under this type of contract."}]},{"id":"CMCE_S05","name":"Cost Engineering Specialist Competencies","activities":[{"ref":"A","std":"E","desc":"Apply the contractual and statutory provisions relating to applications for payment including Contractor and Employer/Project Manager assessments, certificates and payment for both interim and final accounts"},{"ref":"D","std":"K","desc":"Preparation and evaluation of compensation event claims, and/or other claims based upon contractual entitlement, and/or insurance claims"}]}] },
       estimating: { label: "Estimating", comps: [] },
       planning: { label: "Planning", comps: [
   {
@@ -8256,9 +8916,9 @@ const CICES_SECTORS = {
     ]
   }
 ] },
-      project_controls: { label: "Project Controls", comps: [] },
-      project_management: { label: "Project Management", comps: [] },
-      construction_law: { label: "Construction Law", comps: [] },
+      project_controls: { label: "Project Controls", comps: [{"id":"CMPC_S01","name":"Project planning and pre-contract cost control","activities":[{"ref":"A","std":"K","desc":"Describe the elements present in a project budget at pre-contract phase."},{"ref":"B","std":"E","desc":"Development of cost plans or spread of a tender budget along with identification of cost drivers for civil engineering works."},{"ref":"C","std":"E","desc":"Management of the project control measures and communicate the project strategy and baseline for post contract award monitoring"},{"ref":"D","std":"K","desc":"Various engineering design delivery options covering Employer/Consultant design, innovation and Contractor design and construct."}]},{"id":"CMPC_S02","name":"Bills of Quantities, Schedules of Rates and Activity Schedules","activities":[{"ref":"A","std":"E","desc":"Various uses of Bills of Quantities, Schedules of Rates and Activity Schedules and their preparation in accordance with standard methods of measurement."},{"ref":"B","std":"K","desc":"Describe the different risks associated with measurement and pricing carried out under remeasurement contracts, lump sum contracts and target cost/cost reimbursable contracts and design and construct contracts."},{"ref":"C","std":"E","desc":"Support structured information management through common code sets such as WBS/CBS"},{"ref":"D","std":"E","desc":"Evaluation of the impact of change on the risk, programme or cost profile and the demonstration of this by quantitative means."}]},{"id":"CMPC_S03","name":"Project Management Reporting","activities":[{"ref":"A","std":"E","desc":"Assessment of financial performance through analysis of the quantity of work completed to arrive at cost/value and budget reconciliation reporting"},{"ref":"B","std":"E","desc":"Analyse progress against the programme and highlight any areas of concern. Communicate reasons for failures to meet progress expectations and propose mitigation action were appropriate."},{"ref":"C","std":"E","desc":"Communicating the performance of project trading accounts and the financial outturn forecasts against budget for management purposes and their impact on project objectives."},{"ref":"D","std":"B","desc":"Prepare regular progress updates and reports to meet the project management requirements."},{"ref":"E","std":"B","desc":"Identify and report Key Performance and Result Measures, for example Earned Value Management/Analysis."},{"ref":"F","std":"E","desc":"Establish internal and external monitoring and reporting for non-financial performance"},{"ref":"G","std":"E","desc":"Describe the effects of disruption on resources and progress, and methods of demonstrating disruption effects"},{"ref":"E","std":"K","desc":"Communicate the effects of the projects threats and opportunities in relation to Risk Management"}]},{"id":"CMPC_S04","name":"Information Management","activities":[{"ref":"A","std":"E","desc":"Establishment of appropriate measures to monitor progress during the course of the project and to communicate corrective action and/or mitigation measures where required."},{"ref":"B","std":"K","desc":"Establish and maintain appropriate audit and testing process and procedures to ensure compliance with the business processes and project objectives, instigating corrective action and/or mitigation measures where necessary."},{"ref":"C","std":"E","desc":"Advise on and support appropriate processes and procedures for the management of performance information flows across project interfaces."},{"ref":"D","std":"B","desc":"Collation of reporting calendar for project delivery, business reporting and contractual requirements."},{"ref":"E","std":"K","desc":"Manage reporting and data collation responsibilities to meet business and project performance information requirements"}]},{"id":"CMPC_S05","name":"Leadership and Communication","activities":[{"ref":"A","std":"B","desc":"Demonstrate clear and concise communication skills to convey project controls information, targets, and updates."},{"ref":"B","std":"K","desc":"Empower team members to make decisions within their areas of responsibility, fostering a sense of ownership and accountability."},{"ref":"C","std":"E","desc":"Encourage a proactive approach to risk identification and fosters a risk-aware culture within the project team."},{"ref":"D","std":"E","desc":"Effectively manages conflicts within the project controls team and collaboratively resolves issues to maintain a positive work environment."},{"ref":"E","std":"B","desc":"Builds and maintains strong relationships with clients, stakeholders, and project partners, ensuring their needs are understood and addressed through project controls processes."}]}] },
+      project_management: { label: "Project Management", comps: [{"id":"CMPM_S01","name":"Project Management Specialist Competency","activities":[{"ref":"A","std":"K","desc":"Possesses the knowledge of the elements that are required in a project business case"},{"ref":"B","std":"K","desc":"Have the knowledge of the constraints that may affect a project such as environmental, quality, value for money and / or sustainability"},{"ref":"C","std":"K","desc":"Understand the need for the consideration of project optioneering in terms of cost, environmental impacts and benefits"},{"ref":"D","std":"E","desc":"Have the ability to produce a project cost plan, including risk"}]},{"id":"CMPM_S02","name":"Project Management Specialist Competency","activities":[{"ref":"A","std":"K","desc":"Possesses the knowledge of the elements that are required in the production of project governance and management structure"},{"ref":"B","std":"K","desc":"Understand the various strategies for packaging the delivery of a project including design allocation and responsibility"},{"ref":"C","std":"B","desc":"Be able to produce a project engagement model for the selection of contract delivery"},{"ref":"D","std":"B","desc":"Be able to produce a project commercial model including risk allocation"}]},{"id":"CMPM_S03","name":"Project Management Specialist Competency","activities":[{"ref":"A","std":"E","desc":"To be able to co-ordinate and oversee the selection of the preferred project from the optioneering stage"},{"ref":"B","std":"E","desc":"Understand the requirements required to progress the preliminary design, including the cost / benefits, to a point that allows for client approval"},{"ref":"C","std":"K","desc":"Understand the regulatory requirements for the delivery of the project e.g. Planning approval or Statutory approval including the need for environmental assessment and potential local public inquiry"},{"ref":"D","std":"E","desc":"Development of the detailed project cost plan and delivery schedule"}]},{"id":"CMPM_S04","name":"Project Management Specialist Competency","activities":[{"ref":"A","std":"K","desc":"Understand the requirements for BIM as part of the tender and mobilisation process"},{"ref":"B","std":"E","desc":"Understand the risk management in relation to the tender and mobilisation process"},{"ref":"C","std":"E","desc":"Be able to co-ordinate and oversee the Tender and mobilisation process"},{"ref":"D","std":"E","desc":"Contract Award"}]},{"id":"CMPM_S05","name":"Project Management Specialist Competency","activities":[{"ref":"A","std":"E","desc":"Ability to develop and implement a project delivery strategy"},{"ref":"B","std":"E","desc":"Understand the importance of programme management including the delivery of it, management of change in a programme and basic risk analysis methods that come from it"},{"ref":"C","std":"K","desc":"Understand the importance of managing wider project stakeholders"},{"ref":"D","std":"E","desc":"Ability to review, challenge, understand and improve project outputs and productivity"},{"ref":"E","std":"K","desc":"Understand the importance of project milestones along with documentation and wider requirements associated with milestones"}]},{"id":"CMPM_S06","name":"Project Management Specialist Competency","activities":[{"ref":"A","std":"B","desc":"Possesses the knowledge of the elements that are required in the production and agreement of the final account"},{"ref":"B","std":"K","desc":"Understand the statutory obligations of the client in the production of the Health and Safety File"},{"ref":"C","std":"E","desc":"Preparation of a project evaluation report"},{"ref":"D","std":"E","desc":"Understand the need to undertake a benefits realisation plan to demonstrate whether the objectives in the business case have been achieved"}]}] },
+      construction_law: { label: "Construction Law", comps: [{"id":"CMCL_S01","name":"Legal Rules and their Application at the formation Stage","activities":[{"ref":"A","std":"K","desc":"Role and obligation of various parties such as clients, professionals, managers etc."},{"ref":"B","std":"E","desc":"Advice on consequences of failure to value and certify works"},{"ref":"C","std":"K","desc":"Various civil engineering design options and relevant risk and consequences of them from legal perspective."},{"ref":"D","std":"E","desc":"Advice on analysis and comparisons of contract and subcontract tenders and tender budget information."},{"ref":"E","std":"K","desc":"Various scheme funding options and corporate governance and corporate responsibility"}]},{"id":"CMCL_S02","name":"Project / commercial management and law","activities":[{"ref":"A","std":"E","desc":"Assessment of performance of agreed works in the light of express and implied contract terms and tortious liability and advise the project management on those aspect."},{"ref":"B","std":"K","desc":"The production of change/additions to the existing work and ensure compliance with contractual and legal procedure both under the contract or amending it."},{"ref":"C","std":"K","desc":"The basics of corporate liability and responsibility"},{"ref":"D","std":"E","desc":"Identify and interpret Key stages of performance and Result Measures, from a legal perspective."}]},{"id":"CMCL_S03","name":"Recording works progress and determining/evaluating the effects of delay, prolongation and disruption from a legal perspective","activities":[{"ref":"A","std":"E","desc":"Audit and compare suitable contemporary records of work progress and their evidential value."},{"ref":"B","std":"E","desc":"Evaluation of recorded work through applying relevant financial assessment methods."},{"ref":"C","std":"E","desc":"The causes of delay, means of delay analysis and their critical and non-critical effects on project completion and entitlement to extensions of time."},{"ref":"D","std":"B","desc":"The effects of disruption on resources and progress, and methods of demonstrating disruption effects."},{"ref":"E","std":"B","desc":"Apply a range of valuation techniques to items of change and understand the relative strengths and weaknesses of those techniques."}]},{"id":"CMCL_S04","name":"Pricing and its consequences including payment of damages.","activities":[{"ref":"A","std":"E","desc":"The legal effect of the various types of price, including the consequence of using Bills of Quantities, Schedules of Rates, and Activity Schedules and their preparation in accordance with standard methods of measurement."},{"ref":"B","std":"E","desc":"Legal implication of the different risks associated with measurement and pricing carried out under remeasurement contracts, lump sum contracts and target cost/cost reimbursable contracts and design and construct contracts."},{"ref":"C","std":"E","desc":"Pricing document and its effects on claims, mis-performance / non-performance, force majeure and frustration."},{"ref":"D","std":"E","desc":"Liquidated damages and unliquidated damages and their applications"}]},{"id":"CMCL_S05","name":"Management of interim and final payments and legal consequences","activities":[{"ref":"A","std":"E","desc":"Apply the contractual and statutory provisions relating to applications for payment including Contractor and Employer/Project Manager assessments, certificates and payment for both interim and final payments and release of retention."},{"ref":"B","std":"E","desc":"Preparation, presentation, negotiation and agreement of interim and final payments, including re-measurement in accordance with a standard method of measurement."},{"ref":"C","std":"E","desc":"Understanding of what constitutes Settlement Agreements and auditing of project final payment and certificate"},{"ref":"D","std":"E","desc":"Advice on reparation and evaluation of compensation event claims, and/or other claims based upon contractual entitlement, and/or insurance claims."},{"ref":"E","std":"K","desc":"Closing the project contract, final certificate, termination and post termination obligation including defects of all types."}]}] },
       procurement_engineering: { label: "Procurement Engineering", standalone: true, comps: [] }
     }
   },
@@ -9092,315 +9752,11 @@ function r2Cices(C) {
 
 // ──────────────────────────────────────────────── STEP 1 — Pathway ──────────
 
-function r1(C) {
-  if (S.body === "CICES") { r1Cices(C); return; }
-  C.innerHTML=`<div class="page-centre"><div class="panel">
-    <h1 class="page-title">Select Pathway &amp; Designation</h1>
-    <p class="sub">Your designation determines the required specialism, which will be automatically pre-selected and locked in the Competencies step.</p>
-    <div class="choice-grid">
-      <div class="choice-card ${S.desig==='eng'?'selected':''}" onclick="selDesig('eng')">
-        <div class="choice-label" style="font-size:16px;color:var(--accent)">Chartered Engineering Surveyor</div>
-        <div class="choice-desc">Engineering Surveying (ENG) will be automatically set as your specialism and removed from Core options.</div>
-        <span class="badge badge-acc">ENG Auto-Selected</span>
-      </div>
-      <div class="choice-card ${S.desig==='land'?'selected':''}" onclick="selDesig('land')">
-        <div class="choice-label" style="font-size:16px;color:var(--accent)">Chartered Land Surveyor</div>
-        <div class="choice-desc">Surveying &amp; Mapping (SMP) will be automatically set as your specialism and removed from Core options.</div>
-        <span class="badge badge-acc">SMP Auto-Selected</span>
-      </div>
-    </div>
-    ${S.desig?`<div class="panel-acc" style="padding:12px 16px;border-radius:8px;font-size:12px;color:var(--accent);margin-bottom:20px">
-      ✓ Specialism pre-set: <strong>${DESIG_SPEC_LABEL[S.desig]}</strong> — locked in Specialism section; removed from Core list.
-    </div>`:''}
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goStep(0)">← Back</button>
-      <button class="btn btn-primary" ${!S.desig?'disabled':''} onclick="goStep(2)">Continue →</button>
-    </div>
-  </div></div>`;
-}
-function selDesig(d) {
-  S.desig=d;
-  S.sel.spec = DESIG_SPEC[d]||null;
-  if (S.sel.spec) {
-    const sb = boOf(S.sel.spec, CORE_LIST);
-    S.sel.core = S.sel.core.filter(id => boOf(id,CORE_LIST)!==sb);
-  }
-  saveState();
-  render();
-}
+
 
 // ──────────────────────────────────────────────── STEP 2 — Competencies ─────
 
-function setR2Group(g) {
-  // null means "All Groups" — always clear; otherwise toggle
-  S.r2ActiveGroup = (g === null || S.r2ActiveGroup === g) ? null : g;
-  saveState();
-  render();
-}
 
-function r2(C) {
-  if (S.body === "CICES") { r2Cices(C); return; }
-  if (S.valErrs.length) {
-    const eb=document.createElement("div");
-    eb.className="error-box";
-    eb.innerHTML=S.valErrs.map(e=>`<div class="error-item">${e}</div>`).join("");
-    C.appendChild(eb);
-  }
-
-  // 3-column layout: [empty left col] | centre panels | right glossary
-  const outer = document.createElement("div");
-  outer.className = "r2-layout";
-
-  // ── Left sidebar — clickable group navigator ──────────────────────────────
-  const leftPlaceholder = document.createElement("div");
-  leftPlaceholder.className = "sidebar";
-  leftPlaceholder.style.cssText = "border-right:1px solid var(--border);border-left:none;padding:16px 12px;";
-
-  const ag = S.r2ActiveGroup; // current active group filter
-  const navGroups = [
-    { key: "mandatory", label: "Mandatory",  count: MANDATORY.length + " comps", sub: "Auto-included", done: true },
-    { key: "core",      label: "Core",        count: coreCount() + "/3",           sub: "Choose 3 to L3", done: coreCount()>=3 },
-    { key: "specialism",label: "Specialism",  count: "1/1",                        sub: "Auto-set",      done: true },
-    { key: "optional",  label: "Optional",    count: S.sel.opt.length + "/2",      sub: "Choose 2 to L2",done: S.sel.opt.length>=2 },
-    { key: "technical", label: "Technical",   count: (S.sel.tech?1:0) + "/1",      sub: "Choose 1 to L2",done: !!S.sel.tech },
-  ];
-
-  const navHTML = navGroups.map(g => {
-    const isActive = ag === g.key;
-    return `<div class="r2-nav-item${isActive?' r2-nav-active':''}" onclick="setR2Group('${g.key}')"
-      style="border-radius:8px;padding:9px 11px;margin-bottom:5px;cursor:pointer;transition:all .13s;
-             background:${isActive?'var(--acc-bg)':'transparent'};
-             border:1px solid ${isActive?'var(--acc-border)':'var(--border)'};
-             user-select:none;">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-        <span style="font-size:12px;font-weight:600;color:${isActive?'var(--accent)':'var(--text)'}">${g.label}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:${g.done?'var(--accent)':'var(--muted)'};white-space:nowrap">${g.done?'✓ ':''} ${g.count}</span>
-      </div>
-      <div style="font-size:10px;color:var(--faint);margin-top:1px">${g.sub}</div>
-    </div>`;
-  }).join('');
-
-  leftPlaceholder.innerHTML = `
-    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;padding-left:2px">Groups</div>
-    <div style="margin-bottom:4px">
-      <div class="r2-nav-item${!ag?' r2-nav-active':''}" onclick="setR2Group(null)"
-        style="border-radius:8px;padding:8px 11px;margin-bottom:5px;cursor:pointer;transition:all .13s;
-               background:${!ag?'var(--surface)':'transparent'};
-               border:1px solid ${!ag?'var(--border)':'transparent'};user-select:none;">
-        <span style="font-size:11px;font-weight:600;color:${!ag?'var(--text)':'var(--muted)'}">All Groups</span>
-      </div>
-      ${navHTML}
-    </div>
-    <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px">
-      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px">Competency CSV</div>
-      <button onclick="downloadCompCSV()" class="btn-outline" style="width:100%;margin-bottom:6px;font-size:11px;padding:7px 10px">⬇ Download CSV</button>
-      <button onclick="document.getElementById('comp-csv-upload').click()" class="btn-outline" style="width:100%;font-size:11px;padding:7px 10px">⬆ Upload CSV</button>
-      <input type="file" id="comp-csv-upload" accept=".csv" style="display:none" onchange="uploadCompCSV(this)">
-      <div style="font-size:10px;color:var(--faint);margin-top:6px;line-height:1.4">Click a group to focus. CSV exports all competencies.</div>
-    </div>
-  `;
-
-  // Centre column
-  const compCol = document.createElement("div");
-  compCol.className = "r2-centre";
-
-  // Right glossary
-  const gSidebarWrap = document.createElement("div");
-  gSidebarWrap.className = "r3-glossary";
-  gSidebarWrap.innerHTML = buildGlossarySidebar();
-
-  outer.appendChild(leftPlaceholder);
-  outer.appendChild(compCol);
-  outer.appendChild(gSidebarWrap.firstElementChild || gSidebarWrap);
-  C.appendChild(outer);
-
-  // Helper: should this group panel be shown?
-  const showGroup = (key) => !ag || ag === key;
-
-  // Mandatory info
-  if (showGroup("mandatory")) addPanel(compCol,`
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-      <span class="badge badge-sky">📋 AUTO-INCLUDED</span>
-      <span style="font-size:13px;font-weight:600">Mandatory Competencies</span>
-    </div>
-    <p class="hint" style="margin:0">All 11 mandatory professional standards are automatically included. You will write statements for these in the next step.</p>
-  `,"panel-info");
-
-  // Core
-  const ct=coreCount(), coreDone=ct>=3;
-  if (showGroup("core")) addPanel(compCol,`
-    <div class="section-header">
-      <h2 class="section-title">Core Competencies</h2>
-      <span class="badge ${coreDone?'badge-green':'badge-muted'}">${ct}/3${coreDone?' ✓':''}</span>
-    </div>
-    <p class="sub">Choose THREE competencies to Level 3. Measurement (MSR) is always included — click <em>L3</em> to upgrade it and use it as one of your three slots. The specialism competency is excluded from this list.</p>
-    <div>${buildCoreRows()}</div>
-  `, "", true);
-
-  // Specialism — auto-locked
-  const sc = S.sel.spec ? CORE_LIST.find(c=>c.id===S.sel.spec) : null;
-  if (showGroup("specialism")) addPanel(compCol,`
-    <div class="section-header">
-      <h2 class="section-title">Specialism</h2>
-      <span class="badge badge-green">1/1 ✓ Auto-set</span>
-    </div>
-    <p class="sub">Pre-selected based on your chosen designation. To change, go back to the Pathway step.</p>
-    <div class="comp-row auto-locked">
-      <div class="chk-lock-r">${svgCk('#fff')}</div>
-      <span class="comp-id" style="color:var(--rics-bright)">${sc?sc.id:'—'}</span>
-      <span class="comp-name" style="color:var(--rics-bright)">${sc?sc.name:'—'}</span>
-      <span class="comp-auto">Auto-selected · Level 3</span>
-    </div>
-  `, "", true);
-
-  // Optional
-  const od=S.sel.opt.length===2;
-  if (showGroup("optional")) addPanel(compCol,`
-    <div class="section-header">
-      <h2 class="section-title">Optional Competencies</h2>
-      <span class="badge ${od?'badge-green':'badge-muted'}">${S.sel.opt.length}/2${od?' ✓':''}</span>
-    </div>
-    <p class="sub">Choose TWO to Level 2. Cannot duplicate Core, Specialism, or Technical selections.</p>
-    <div>${buildOptRows()}</div>
-  `, "", true);
-
-  // Technical
-  const td=!!S.sel.tech;
-  if (showGroup("technical")) addPanel(compCol,`
-    <div class="section-header">
-      <h2 class="section-title">Technical Competency</h2>
-      <span class="badge ${td?'badge-green':'badge-muted'}">${td?'1/1 ✓':'0/1'}</span>
-    </div>
-    <p class="sub">Choose ONE from the full list to Level 2. Cannot duplicate other selections.</p>
-    <div>${buildTechRows()}</div>
-  `, "", true);
-
-  addPanel(compCol,`
-    <div class="btn-row">
-      <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
-      <button class="btn btn-primary" onclick="tryAdvance()">Continue to Submission Documents →</button>
-    </div>
-  `);
-}
-
-function addPanel(C,html,cls="",collapsible=false) {
-  const d=document.createElement("div");
-  d.className="panel "+cls;
-  if (collapsible) {
-    d.className += " panel-collapsible";
-    const tmp = document.createElement("div");
-    tmp.innerHTML = html;
-    const hdr = tmp.querySelector(".section-header");
-    if (hdr) {
-      // SVG chevron button
-      const btn = document.createElement("button");
-      btn.className = "panel-collapse-btn";
-      btn.title = "Collapse / expand";
-      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>`;
-      // Toggle on button click
-      btn.addEventListener("click", function(e) {
-        e.stopPropagation();
-        d.classList.toggle("collapsed");
-      });
-      hdr.appendChild(btn);
-      // Make entire header row toggle too
-      hdr.addEventListener("click", function() {
-        d.classList.toggle("collapsed");
-      });
-      d.appendChild(hdr);
-      // Wrap remaining nodes in panel-body
-      const body = document.createElement("div");
-      body.className = "panel-body";
-      body.style.maxHeight = "2000px";
-      body.style.opacity = "1";
-      while (tmp.firstChild) {
-        body.appendChild(tmp.firstChild);
-      }
-      d.appendChild(body);
-    } else {
-      d.innerHTML = html;
-    }
-  } else {
-    d.innerHTML = html;
-  }
-  C.appendChild(d);
-}
-
-function buildCoreRows() {
-  const otherB = usedBases("core");
-  const sf3On  = S.sel.sf3Level===3;
-
-  // MSR row — always present, toggleable level
-  let h=`<div class="comp-row ${sf3On?'selected':'locked'}" onclick="toggleSF3()" style="cursor:pointer">
-    <div class="chk-lock-g">${svgCk('#fff')}</div>
-    <span class="comp-id" style="color:${sf3On?'var(--accent)':'#4caf7d'}">MSR</span>
-    <span class="comp-name" style="color:${sf3On?'var(--text)':'#4caf7d'}">Measurement</span>
-    <div class="sf3-toggle" onclick="event.stopPropagation()">
-      <span class="sf3-lbl">Level:</span>
-      <button class="sf3-btn ${!sf3On?'on':'off'}" onclick="setSF3(1)">L1</button>
-      <button class="sf3-btn ${sf3On?'on':'off'}"  onclick="setSF3(3)">L3 (counts as core)</button>
-    </div>
-  </div>`;
-
-  // Remaining — exclude MSR and the specialism comp
-  CORE_LIST.filter(c=>c.id!=="MSR" && c.id!==S.sel.spec).forEach(comp=>{
-    const on=S.sel.core.includes(comp.id);
-    const b=gb(comp);
-    const ue=!on && otherB.has(b);
-    const al=!on && (3-coreCount())<=0;
-    const dis=ue||al;
-    h+=`<div class="comp-row${on?' selected':''}${dis?' disabled':''}" onclick="togCore('${comp.id}')" onmouseenter="setGlossaryComp('${comp.id}')">
-      <div class="chk${on?' on':''}">${on?svgCk('var(--bg)'):''}</div>
-      <span class="comp-id">${(S.compAliases&&S.compAliases[comp.id])||comp.id}</span>
-      <span class="comp-name">${comp.name}</span>
-      ${ue&&!on?'<span class="comp-conflict">used elsewhere</span>':""}
-      ${al&&!on?'<span class="comp-limit">limit reached</span>':""}
-    </div>`;
-  });
-  return h;
-}
-
-function buildOptRows() {
-  const cB = new Set([...S.sel.core.map(id=>boOf(id,CORE_LIST)), "MSR"]);
-  const sB = S.sel.spec ? boOf(S.sel.spec,CORE_LIST) : null;
-  const tB = S.sel.tech ? boOf(S.sel.tech,TECH_LIST) : null;
-  let h="";
-  OPTIONAL_LIST.forEach(comp=>{
-    const on=S.sel.opt.includes(comp.id), b=gb(comp);
-    const ue=!on&&(cB.has(b)||sB===b||tB===b);
-    const al=!on&&S.sel.opt.length>=2;
-    const dis=(ue||al)&&!on;
-    h+=`<div class="comp-row${on?' selected':''}${dis?' disabled':''}" onclick="togOpt('${comp.id}')" onmouseenter="setGlossaryComp('${comp.id}')">
-      <div class="chk${on?' on':''}">${on?svgCk('var(--bg)'):''}</div>
-      <span class="comp-id">${(S.compAliases&&S.compAliases[comp.id])||comp.id}</span>
-      <span class="comp-name">${comp.name}</span>
-      ${ue&&!on?'<span class="comp-conflict">used elsewhere</span>':""}
-    </div>`;
-  });
-  return h;
-}
-
-function buildTechRows() {
-  const cB = new Set([...S.sel.core.map(id=>boOf(id,CORE_LIST)), "MSR"]);
-  const oB = new Set(S.sel.opt.map(id=>boOf(id,OPTIONAL_LIST)));
-  const sB = S.sel.spec ? boOf(S.sel.spec,CORE_LIST) : null;
-  let h="";
-  TECH_LIST.forEach(comp=>{
-    const on=S.sel.tech===comp.id, b=gb(comp);
-    const ue=!on&&(cB.has(b)||oB.has(b)||sB===b);
-    const al=!on&&S.sel.tech!==null;
-    const dis=(ue||al)&&!on;
-    h+=`<div class="comp-row${on?' selected':''}${dis?' disabled':''}" onclick="togTech('${comp.id}')" onmouseenter="setGlossaryComp('${comp.id}')">
-      <div class="chk radio${on?' on':''}">${on?svgRad():''}</div>
-      <span class="comp-id">${(S.compAliases&&S.compAliases[comp.id])||comp.id.replace(/t$/,'')}</span>
-      <span class="comp-name">${comp.name}</span>
-      ${ue&&!on?'<span class="comp-conflict">used elsewhere</span>':""}
-    </div>`;
-  });
-  return h;
-}
 
 function svgCk(fill) { return `<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1,5 4,8 9,2" stroke="${fill}" stroke-width="1.8" fill="none"/></svg>`; }
 function svgRad()    { return `<svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="2.5" fill="var(--bg)"/></svg>`; }
@@ -9447,36 +9803,7 @@ function tryAdvance() { if (validate()) { S.activeComp=null; goStep(3); } else r
 // ──────────────────────────────────────────────── STEP 3 — Statements ────────
 
 // Categorise comps into two sections
-function mandatoryComps() { return buildAllComps().filter(c=>c.cat==="Mandatory"); }
-function technicalComps()  { return buildAllComps().filter(c=>c.cat!=="Mandatory"); }
 
-// Word count totals for a group
-function sectionWordCount(comps) {
-  let total=0, words=0;
-  comps.forEach(comp=>{
-    for(let l=1;l<=comp.req;l++){
-      total += getWordTarget(comp,l);
-      words += cw(S.statements[`${comp.id}_L${l}`]);
-    }
-  });
-  return {words, total};
-}
-
-// Completion % for a single comp (word-based)
-function compWordPct(comp) {
-  let w=0,t=0;
-  for(let l=1;l<=comp.req;l++){
-    t+=getWordTarget(comp,l);
-    w+=cw(S.statements[`${comp.id}_L${l}`]);
-  }
-  return t ? Math.min(Math.round((w/t)*100),100) : 0;
-}
-
-// Is comp manually marked complete?
-function isCompleted(id) { return !!S.completed[id]; }
-
-// Max word caps per section
-const SECTION_MAX = { mand: 1500, tech: 4000 };
 
 function sectionBar(comps, idPrefix) {
   const {words} = sectionWordCount(comps);
@@ -10436,510 +10763,7 @@ function csMoveChapter(id, dir) {
 
 // ──────────────────────────────────────────────── STEP 4 — Case Study ────────
 
-function r4(C) {
-  if (S.body === "CICES") { r4Cices(C); return; }
-  // ── Tabs bar (so user can navigate to CPD or Statements from Case Study) ───
-  const _allC  = buildAllComps();
-  const _mC    = _allC.filter(c=>c.cat==="Mandatory");
-  const _tC    = _allC.filter(c=>c.cat!=="Mandatory");
-  const _mDone = _mC.filter(c=>isCompleted(c.id)).length;
-  const _tDone = _tC.filter(c=>isCompleted(c.id)).length;
-  const _cpdN  = (S.cpd||[]).length;
-  const _isCICES_r4 = S.body === "CICES";
-  let tabsWrap;
-  if (_isCICES_r4) {
-    const _cicesP4 = cicesCompProgress(cicesGetAllComps());
-    tabsWrap = document.createElement("div");
-    tabsWrap.className = "section-tabs-bar";
-    tabsWrap.id = "section-tabs-bar";
-    tabsWrap.innerHTML = `
-      <div class="stab${S.activeSection==='competencies'?' active':''}" onclick="switchSection('competencies')">Competencies<span class="stab-count">${_cicesP4.met}/${_cicesP4.total} at opt.</span></div>
-      <div class="stab stab-cpd${S.activeSection==='cpd'?' active':''}" onclick="switchSection('cpd')">CPD Logbook<span class="stab-count">${_cpdN} entr${_cpdN===1?'y':'ies'}</span></div>
-      <div class="stab stab-cs active" onclick="switchSection('experiencereport')">Experience Report<span class="stab-count">${cw(S.experienceReport||'')} words</span></div>
-      <div class="stab stab-cv${S.activeSection==='cv'?' active':''}" onclick="switchSection('cv')">Detailed CV<span class="stab-count">${(S.cv||[]).length} entr${(S.cv||[]).length===1?'y':'ies'}</span></div>`;
-  } else {
-    tabsWrap = buildRicsStabBar('casestudy', {
-      mDone: _mDone, mTotal: _mC.length,
-      tDone: _tDone, tTotal: _tC.length,
-      cpd: _cpdN, csWords: cw(S.caseStudy), cv: (S.cv||[]).length
-    });
-  }
-  C.appendChild(tabsWrap);  // will be moved into main below
 
-  const csn   = cw(S.caseStudy);
-  const cspct = Math.min((csn / 3000) * 100, 100);
-  const cscol = csn > 3000 ? "#c0392b" : csn >= 1500 ? "#2e7d52" : "#b5651d";
-  const dl    = S.desig === "ENG" ? "Chartered Engineering Surveyor" : "Chartered Land Surveyor";
-
-  // ── Outer 2-col layout ──────────────────────────────────────────────────────
-  const layout = document.createElement("div");
-  layout.className = "cs-layout";
-
-  // ── LEFT: main editor column ────────────────────────────────────────────────
-  const main = document.createElement("div");
-  main.className = "cs-main";
-
-  // Tabs go inside main column (same position as all other sections)
-  C.removeChild(tabsWrap);
-  main.appendChild(tabsWrap);
-
-  const csContent = document.createElement("div");
-
-  // Chapters HTML
-  const chapters = S.caseStudyChapters || [];
-  const chaptersHtml = chapters.length === 0 ? '' : chapters.map((ch, idx) => `
-    <div class="cs-chapter" id="cs-ch-${ch.id}" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--faint);min-width:24px">§${idx+1}</span>
-        <input id="cs-ch-title-${ch.id}" type="text" value="${esc(ch.title)}"
-          placeholder="Chapter title (e.g. Introduction, My Approach…)"
-          oninput="csUpdateChapterTitle('${ch.id}',this.value)"
-          style="flex:1;font-size:13px;font-weight:600;padding:6px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif">
-        <div style="display:flex;gap:3px;flex-shrink:0">
-          ${idx>0?`<button onclick="csMoveChapter('${ch.id}',-1)" title="Move up" style="padding:4px 7px;border:1px solid var(--border);border-radius:5px;background:var(--surface);cursor:pointer;color:var(--muted);font-size:11px">↑</button>`:''}
-          ${idx<chapters.length-1?`<button onclick="csMoveChapter('${ch.id}',1)" title="Move down" style="padding:4px 7px;border:1px solid var(--border);border-radius:5px;background:var(--surface);cursor:pointer;color:var(--muted);font-size:11px">↓</button>`:''}
-          <button onclick="csDeleteChapter('${ch.id}')" title="Delete chapter" style="padding:4px 8px;border:1px solid #e88;border-radius:5px;background:#fff5f5;cursor:pointer;color:#c0392b;font-size:11px">✕</button>
-        </div>
-      </div>
-      <textarea id="cs-ch-text-${ch.id}"
-        placeholder="Write this chapter here… Reference competencies inline e.g. (ETH, HSE). Use [Fig. 1] to reference appendix images."
-        oninput="csUpdateChapterText('${ch.id}',this.value)"
-        style="width:100%;min-height:140px;resize:vertical;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.65;box-sizing:border-box"
-      >${esc(ch.text)}</textarea>
-      <div style="text-align:right;font-family:'DM Mono',monospace;font-size:10px;color:var(--faint);margin-top:4px">${cw(ch.text)} words</div>
-    </div>
-  `).join('');
-
-  csContent.innerHTML = `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px">
-      <h1 class="page-title" style="margin-bottom:0">Case Study</h1>
-      <a href="https://apcstudyhub.com/case-study-rics-apc/" target="_blank" rel="noopener"
-         style="font-size:11.5px;color:var(--rics);text-decoration:none;display:flex;align-items:center;gap:4px;padding:5px 10px;border:1px solid var(--rics-border);border-radius:7px;background:var(--rics-bg);white-space:nowrap;flex-shrink:0;margin-top:4px">
-        💡 Writing Tips
-      </a>
-    </div>
-    <p class="sub" style="margin-bottom:14px">Maximum 3,000 words. Describe a real project from the two years prior to your submission date.</p>
-
-    <div class="cs-tip-box">
-      <strong>Your case study should:</strong>
-      (1) Describe a real project you managed or contributed to &nbsp;·&nbsp;
-      (2) Demonstrate how you applied multiple competencies &nbsp;·&nbsp;
-      (3) Show professional judgement and problem-solving &nbsp;·&nbsp;
-      (4) Reflect critically on outcomes and lessons learned
-    </div>
-
-    <div class="cs-warn-box">
-      ⏱ <strong>24-month validity window:</strong> Your case study must cover a project within the 24 months prior to your submission date. <strong>You must clearly state the start and end date of the project</strong> — RICS will not accept case studies where this is absent.
-    </div>
-
-    <!-- Project metadata fields -->
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:16px">
-      <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:12px;letter-spacing:.02em">📋 Project Details</div>
-      <div style="margin-bottom:12px">
-        <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Name of Case Study</label>
-        <input type="text" value="${esc(S.caseStudyTitle||'')}"
-          placeholder="e.g. Topographic Survey for Highway Realignment — A45 Northampton"
-          oninput="S.caseStudyTitle=this.value;S.caseStudy=csAssembleText();saveState()"
-          style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;box-sizing:border-box">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div>
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Project Start Date</label>
-          <input type="date" value="${esc(S.caseStudyStart||'')}"
-            oninput="S.caseStudyStart=this.value;S.caseStudy=csAssembleText();saveState()"
-            style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:'DM Mono',sans-serif;font-size:12px;box-sizing:border-box">
-        </div>
-        <div>
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em">Project End Date</label>
-          <input type="date" value="${esc(S.caseStudyEnd||'')}"
-            oninput="S.caseStudyEnd=this.value;S.caseStudy=csAssembleText();saveState()"
-            style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text);font-family:'DM Mono',sans-serif;font-size:12px;box-sizing:border-box">
-        </div>
-      </div>
-    </div>
-
-    <!-- Chapters -->
-    <div id="cs-chapters-container">${chaptersHtml}</div>
-
-    <button onclick="csAddChapter()"
-      style="width:100%;padding:11px;border:2px dashed var(--border);border-radius:10px;background:transparent;cursor:pointer;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;transition:all .15s;margin-bottom:16px"
-      onmouseenter="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
-      onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
-      + Add Chapter
-    </button>
-
-    <!-- Word count bar -->
-    <div class="wc-row" style="margin-top:4px">
-      <span>Total word count</span>
-      <span class="wc-val" id="cs-wc" style="color:${cscol}">${csn} / 3,000 words</span>
-    </div>
-    <div class="wc-bar-track" style="height:6px;margin-bottom:4px">
-      <div class="wc-bar-fill" id="cs-wbf" style="width:${cspct}%;background:${cscol}"></div>
-    </div>
-    <div class="cs-bar-labels"><span>0</span><span>1,500 recommended min</span><span>3,000 max</span></div>
-
-    <!-- Appendix images -->
-    <div class="cs-appendix-section">
-      <div class="cs-appendix-title">📎 Appendix Images</div>
-      <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5">
-        Upload supporting images. Each is assigned a figure label (Fig. 1, Fig. 2…).
-        Type <code style="font-size:11px;background:var(--rics-bg);padding:1px 5px;border-radius:3px;color:var(--rics)">[Fig. 1]</code> in your chapter text to reference it.
-      </p>
-      <div class="cs-appendix-grid" id="cs-appendix-grid">${renderAppendixGrid()}</div>
-      <label class="cs-upload-btn" for="cs-file-input">
-        <span style="font-size:16px">＋</span> Add image
-      </label>
-      <input type="file" id="cs-file-input" accept="image/*" multiple style="display:none" onchange="handleAppendixUpload(this)">
-    </div>
-  `;
-  main.appendChild(csContent);
-
-  // Sync word count using full structured count
-  const _csWcFull = csFullWordCount();
-  const _cscol2 = _csWcFull > 3000 ? '#c0392b' : _csWcFull >= 1500 ? '#2e7d52' : '#b5651d';
-  const _wcEl = csContent.querySelector('#cs-wc');
-  const _wbEl = csContent.querySelector('#cs-wbf');
-  if (_wcEl) { _wcEl.textContent = _csWcFull.toLocaleString() + ' / 3,000 words'; _wcEl.style.color = _cscol2; }
-  if (_wbEl) { _wbEl.style.width = Math.min((_csWcFull/3000)*100,100)+'%'; _wbEl.style.background = _cscol2; }
-
-  // ── RIGHT: guidance panel ───────────────────────────────────────────────────
-  const guide = document.createElement("div");
-  guide.className = "cs-guidance";
-  guide.innerHTML = buildCsGuidance();
-
-  layout.appendChild(main);
-  layout.appendChild(guide);
-  C.appendChild(layout);
-
-  // Initialise figure reference hovers after DOM is ready
-  setTimeout(initFigHovers, 0);
-}
-
-function buildSummaryGrid(csn) {
-  const dl = S.desig === "ENG" ? "Chartered Engineering Surveyor" : "Chartered Land Surveyor";
-  const si = [
-    {l:"Body",           v: S.body || "—"},
-    {l:"Designation",    v: dl},
-    {l:"Mandatory",      v: `${MANDATORY.length} competencies (auto)`},
-    {l:"Core (Level 3)", v: `${S.sel.core.length} selected + Measurement (L${S.sel.sf3Level})`},
-    {l:"Specialism",     v: S.sel.spec ? `${S.sel.spec} (auto)` : "—"},
-    {l:"Optional (L2)",  v: `${S.sel.opt.length}/2`},
-    {l:"Technical (L2)", v: S.sel.tech || "—"},
-    {l:"Case Study",     v: `${csn} words`},
-    {l:"Appendix images",v: `${S.appendices.length} image(s)`},
-    {l:"Overall Progress",v: calcProgress() + "%"},
-  ];
-  return si.map(i=>`<div class="summary-cell"><div class="summary-cell-label">${i.l}</div><div class="summary-cell-val">${i.v}</div></div>`).join("");
-}
-
-function renderAppendixGrid() {
-  if (!S.appendices || !S.appendices.length) return "";
-  return S.appendices.map((img, i) => `
-    <div class="cs-appendix-item" id="appx-${img.id}">
-      <img class="cs-appendix-thumb" src="${img.dataUrl}" alt="${img.label}"
-           onclick="openLightbox('${img.id}')" title="Click to view full size">
-      <div class="cs-appendix-label">${img.label}</div>
-      <div class="cs-appendix-name">${img.name}</div>
-      <div class="cs-appendix-actions">
-        <button class="cs-appx-btn cs-appx-open"   onclick="openLightbox('${img.id}')"  title="View full size">⛶</button>
-        <button class="cs-appx-btn cs-appx-replace" onclick="replaceAppendix('${img.id}')" title="Replace image">↺</button>
-        <button class="cs-appx-btn cs-appx-del"     onclick="removeAppendix('${img.id}')"  title="Remove">✕</button>
-      </div>
-    </div>
-  `).join("");
-}
-
-function handleAppendixUpload(input) {
-  const files = Array.from(input.files);
-  let loaded = 0;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const idx  = S.appendices.length + 1;
-      const id   = "fig_" + Date.now() + "_" + Math.random().toString(36).slice(2,6);
-      const label = "Fig. " + idx;
-      S.appendices.push({ id, name: file.name, dataUrl: e.target.result, label });
-      loaded++;
-      if (loaded === files.length) {
-        saveState();
-        // Re-render grid and re-init hovers
-        const grid = document.getElementById("cs-appendix-grid");
-        if (grid) grid.innerHTML = renderAppendixGrid();
-        const sumGrid = document.getElementById("cs-summary-grid");
-        if (sumGrid) sumGrid.innerHTML = buildSummaryGrid(cw(S.caseStudy));
-        setTimeout(initFigHovers, 0);
-      }
-    };
-    reader.readAsDataURL(file);
-  });
-  input.value = ""; // reset so same file can be re-added
-}
-
-function openLightbox(id) {
-  const img = S.appendices.find(a => a.id === id);
-  if (!img) return;
-
-  // Build lightbox overlay
-  const lb = document.createElement("div");
-  lb.id = "cs-lightbox";
-  lb.style.cssText = `
-    position:fixed;inset:0;z-index:10000;
-    background:rgba(0,0,0,.88);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    animation:fadeIn .18s ease;cursor:zoom-out;
-  `;
-
-  lb.innerHTML = `
-    <div style="position:relative;max-width:92vw;max-height:88vh;display:flex;flex-direction:column;align-items:center;gap:12px" onclick="event.stopPropagation()">
-      <img src="${img.dataUrl}" alt="${img.label}"
-           style="max-width:90vw;max-height:80vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 48px rgba(0,0,0,.6);cursor:default">
-      <div style="display:flex;align-items:center;gap:16px">
-        <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:rgba(255,255,255,.9)">${img.label}</span>
-        <span style="font-size:12px;color:rgba(255,255,255,.55)">${img.name}</span>
-      </div>
-      <button onclick="document.getElementById('cs-lightbox').remove()"
-        style="position:absolute;top:-14px;right:-14px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)">✕</button>
-    </div>
-  `;
-
-  lb.onclick = () => lb.remove();
-
-  // Close on Escape
-  const onKey = (e) => { if (e.key === "Escape") { lb.remove(); document.removeEventListener("keydown", onKey); } };
-  document.addEventListener("keydown", onKey);
-
-  document.body.appendChild(lb);
-}
-
-function replaceAppendix(id) {
-  // Create a hidden file input, trigger it, then swap the image data
-  const input = document.createElement("input");
-  input.type  = "file";
-  input.accept = "image/*";
-  input.style.display = "none";
-  input.onchange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const appx = S.appendices.find(a => a.id === id);
-      if (!appx) return;
-      appx.dataUrl = ev.target.result;
-      appx.name    = file.name;
-      saveState();
-      // Refresh grid and overlay
-      const grid = document.getElementById("cs-appendix-grid");
-      if (grid) grid.innerHTML = renderAppendixGrid();
-      setTimeout(initFigHovers, 0);
-    };
-    reader.readAsDataURL(file);
-    input.remove();
-  };
-  document.body.appendChild(input);
-  input.click();
-}
-
-
-function removeAppendix(id) {
-  S.appendices = S.appendices.filter(a => a.id !== id);
-  // Re-number labels
-  S.appendices.forEach((a, i) => { a.label = "Fig. " + (i + 1); });
-  saveState();
-  const grid = document.getElementById("cs-appendix-grid");
-  if (grid) grid.innerHTML = renderAppendixGrid();
-  const sumGrid = document.getElementById("cs-summary-grid");
-  if (sumGrid) sumGrid.innerHTML = buildSummaryGrid(cw(S.caseStudy));
-  initFigHovers();
-}
-
-// ── Figure hover preview ──────────────────────────────────────────────────────
-function initFigHovers() {
-  const ta = document.getElementById("casestudy-ta");
-  if (!ta) return;
-
-  // Create shared tooltip element if not exists
-  let tooltip = document.getElementById("fig-preview-tooltip");
-  if (!tooltip) {
-    tooltip = document.createElement("div");
-    tooltip.id = "fig-preview-tooltip";
-    tooltip.className = "fig-preview-tooltip";
-    tooltip.innerHTML = '<img id="fig-preview-img" src="" alt=""><div class="fig-preview-label" id="fig-preview-lbl"></div>';
-    document.body.appendChild(tooltip);
-  }
-
-  // We can't hover within a <textarea> — so render a rich overlay div
-  // that mirrors the textarea content with clickable/hoverable [Fig. N] spans
-  buildFigOverlay();
-}
-
-function buildFigOverlay() {
-  // Remove existing overlay
-  const old = document.getElementById("cs-fig-overlay-wrap");
-  if (old) old.remove();
-
-  if (!S.appendices.length) return;
-
-  const ta = document.getElementById("casestudy-ta");
-  if (!ta) return;
-
-  // Create a read-only rich-text overlay that shows [Fig. N] as hoverable tags
-  // We position it over the textarea and hide the textarea text (make it transparent)
-  // Actually: use a simpler approach — render a preview div BELOW the textarea
-  // that shows the text with highlighted fig references and hover previews
-
-  const wrap = document.createElement("div");
-  wrap.id = "cs-fig-overlay-wrap";
-  wrap.style.cssText = "margin-top:12px;";
-
-  const lbl = document.createElement("div");
-  lbl.style.cssText = "font-family:'DM Mono',monospace;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:6px";
-  lbl.textContent = "Figure references in your text";
-
-  const preview = document.createElement("div");
-  preview.id = "cs-fig-preview-text";
-  preview.style.cssText = "font-size:13px;line-height:1.8;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow-y:auto";
-
-  // Build HTML with [Fig. N] → hoverable spans
-  const text = S.caseStudy || "";
-  const figRefs = S.appendices.map(a => a.label); // ["Fig. 1", "Fig. 2", ...]
-
-  if (figRefs.length === 0 || !text) {
-    wrap.remove();
-    return;
-  }
-
-  // Check if any fig refs appear in text
-  const hasFigRef = figRefs.some(f => text.includes("[" + f + "]"));
-  if (!hasFigRef) {
-    wrap.remove();
-    return;
-  }
-
-  // Build regex to match [Fig. N]
-  const escaped = figRefs.map(f => f.replace(".", "\.")).join("|");
-  const regex = new RegExp("\[(" + escaped + ")\]", "g");
-  const htmlContent = escHtml(text).replace(
-    new RegExp("\[(" + figRefs.map(f => escHtml(f).replace(".", "\.")).join("|") + ")\]", "g"),
-    (match, label) => {
-      const img = S.appendices.find(a => a.label === label);
-      if (!img) return match;
-      return `<span class="fig-ref-tag" data-fig-id="${img.id}" data-fig-label="${label}">${match}</span>`;
-    }
-  );
-
-  preview.innerHTML = htmlContent;
-  wrap.appendChild(lbl);
-  wrap.appendChild(preview);
-
-  // Insert after textarea
-  ta.insertAdjacentElement("afterend", wrap);
-
-  // Attach hover events to spans
-  preview.querySelectorAll(".fig-ref-tag").forEach(span => {
-    span.addEventListener("mouseenter", (e) => {
-      const figId  = span.dataset.figId;
-      const figLbl = span.dataset.figLabel;
-      const img    = S.appendices.find(a => a.id === figId);
-      if (!img) return;
-      const tooltip = document.getElementById("fig-preview-tooltip");
-      document.getElementById("fig-preview-img").src = img.dataUrl;
-      document.getElementById("fig-preview-lbl").textContent = figLbl + " — " + img.name;
-      tooltip.style.display = "block";
-      positionTooltip(e, tooltip);
-    });
-    span.addEventListener("mousemove", (e) => {
-      const tooltip = document.getElementById("fig-preview-tooltip");
-      positionTooltip(e, tooltip);
-    });
-    span.addEventListener("mouseleave", () => {
-      document.getElementById("fig-preview-tooltip").style.display = "none";
-    });
-  });
-}
-
-function escHtml(s) {
-  return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-
-function positionTooltip(e, tooltip) {
-  const margin = 14;
-  let x = e.clientX + margin;
-  let y = e.clientY + margin;
-  const tw = tooltip.offsetWidth  || 280;
-  const th = tooltip.offsetHeight || 220;
-  if (x + tw > window.innerWidth  - 10) x = e.clientX - tw - margin;
-  if (y + th > window.innerHeight - 10) y = e.clientY - th - margin;
-  tooltip.style.left = x + "px";
-  tooltip.style.top  = y + "px";
-}
-
-function buildCsGuidance() {
-  return `
-    <div class="cs-guide-title">📋 Case Study Guidance</div>
-
-    <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Overview</div>
-      <div class="cs-guide-text">
-        The case study is a <strong>maximum of 3,000 words</strong> and must be on a project or projects you have been personally involved in the <strong>two years prior to your assessment submission date</strong>.
-        <br><br>
-        A project may have started over two years ago, but your case study must focus on your involvement in the two years prior to submission. It must provide a <strong>critical appraisal</strong> of the project together with an outline of your <strong>learning outcomes</strong>.
-      </div>
-    </div>
-
-    <hr class="cs-guide-divider">
-
-    <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Choosing your project</div>
-      <div class="cs-guide-text">
-        Your choice of project is very important and must reflect your specific APC pathway. It may be a complex or large project, or something more straightforward and typical of your work. The project may include work undertaken outside your country of assessment.
-        <br><br>
-        Assessors will be looking for a real-life project where you dealt with a <strong>key issue, anomaly or challenge</strong>. You are not necessarily expected to have led the project — it is your <strong>involvement or role in the team</strong> that matters.
-      </div>
-    </div>
-
-    <hr class="cs-guide-divider">
-
-    <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Required structure</div>
-      ${[
-        ["1","Introduction (~500 words)","Summarise the project and your role. Cover: What did you do? Level of responsibility? Stakeholders? Timeline?"],
-        ["2","My Approach","Describe the key issues or challenges. Explain why they became a challenge for you, options considered, and solutions identified."],
-        ["3","My Achievements","Describe what you achieved and how. Demonstrate logical, lateral and professional thinking. Give examples of reasoned advice for your Level 3 competencies."],
-        ["4","Conclusion","Reflect on and analyse your performance. Reference lessons learned and what you would do differently. This shows your analytical thinking and professional development."],
-      ].map(([n,t,d])=>`
-        <div class="cs-structure-item">
-          <div class="cs-structure-num">${n}</div>
-          <div class="cs-structure-body">
-            <div class="cs-structure-label">${t}</div>
-            <div class="cs-structure-desc">${d}</div>
-          </div>
-        </div>
-      `).join("")}
-    </div>
-
-    <hr class="cs-guide-divider">
-
-    <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Appendices</div>
-      <div class="cs-guide-text">
-        <strong>Appendix A</strong> — List the mandatory and technical competencies demonstrated in your case study.<br><br>
-        <strong>Appendix B, C…</strong> — You may insert illustrations, photographs or plans. Keep attachments to a minimum and ensure they are relevant. Appendices should <em>support</em> your report, not add to or expand on it.
-      </div>
-    </div>
-
-    <hr class="cs-guide-divider">
-
-    <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Important reminders</div>
-      <div class="cs-guide-text">
-        ⏱ Your case study <strong>validity is calculated on a rolling 24-month period</strong> from your submission date. You must reference the start date and end date of the project clearly — RICS will not accept case studies where this is absent.<br><br>
-        🎙 You will use your case study to make a <strong>10-minute presentation</strong> to the final assessment panel.<br><br>
-        ✂️ If RICS staff discover your case study exceeds the word count, <strong>they reserve the right to cancel your interview</strong>.<br><br>
-        🔍 It is <strong>quality not quantity</strong> that counts. Focus on analysing the project — do not simply summarise what it involved.
-      </div>
-    </div>
-  `;
-}
 
 function updCS(val) {
   S.caseStudy = val;
