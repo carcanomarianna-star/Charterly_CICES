@@ -5969,7 +5969,7 @@ function render() {
     } else if (S.step === 3) {
       r3(mainEl);
     } else {
-      [r0,r1,r2,r3][S.step](mainEl);
+      [r0,r1Cices,r2Cices,r3][S.step](mainEl);
     }
   } catch(err) {
     console.error("render() error:", err);
@@ -9890,8 +9890,8 @@ function r3(C) {
   if (S.body === "CICES" && S.activeSection === "experiencereport") { r4Cices(C); return; }
   // Route non-statement sections
   if (S.activeSection === "cpd")        { rCPD(C); return; }
-  if (S.activeSection === "casestudy")  { r4(C);   return; }
-  if (S.activeSection === "cv")         { rCV(C);  return; }
+  if (S.activeSection === "casestudy")  { r4Cices(C);   return; }
+  if (S.activeSection === "cv")         { rCVCices(C);  return; }
 
   const allComps = buildAllComps();
   const mComps   = allComps.filter(c=>c.cat==="Mandatory");
