@@ -2869,8 +2869,12 @@ function rCPD(C) {
   const allC   = buildAllComps();
   const mComps = allC.filter(c => c.cat === "Mandatory");
   const tComps = allC.filter(c => c.cat !== "Mandatory");
-  const mDoneC = mComps.filter(c => isCompleted(c.id)).length;
-  const tDoneC = tComps.filter(c => isCompleted(c.id)).length;
+
+  // Provide a safe fallback if isCompleted is undefined (legacy RICS ref)
+  const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const mDoneC = mComps.filter(c => isCmp(c.id)).length;
+  const tDoneC = tComps.filter(c => isCmp(c.id)).length;
+
   const csWords = cw(S.caseStudy);
   const cvCount = (S.cv||[]).length;
 
@@ -3362,8 +3366,11 @@ function rCPD_CICES(C) {
   const allC   = buildAllComps();
   const mComps = allC.filter(c => c.cat === "Mandatory");
   const tComps = allC.filter(c => c.cat !== "Mandatory");
-  const mDoneC = mComps.filter(c => isCompleted(c.id)).length;
-  const tDoneC = tComps.filter(c => isCompleted(c.id)).length;
+
+  const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const mDoneC = mComps.filter(c => isCmp(c.id)).length;
+  const tDoneC = tComps.filter(c => isCmp(c.id)).length;
+
   const csWords = cw(S.caseStudy);
   const cvCount = (S.cv||[]).length;
 
@@ -3928,8 +3935,9 @@ function rCV(C) {
   const allC   = buildAllComps();
   const mComps = allC.filter(c => c.cat === "Mandatory");
   const tComps = allC.filter(c => c.cat !== "Mandatory");
-  const mDoneC = mComps.filter(c => isCompleted(c.id)).length;
-  const tDoneC = tComps.filter(c => isCompleted(c.id)).length;
+  const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const mDoneC = mComps.filter(c => isCmp(c.id)).length;
+  const tDoneC = tComps.filter(c => isCmp(c.id)).length;
 
   // ── 2-column layout ───────────────────────────────────────────────────────
   const cvWrap = document.createElement("div");
@@ -3945,9 +3953,10 @@ function rCV(C) {
   const allCv2 = buildAllComps();
   const _mCv = allCv2.filter(c=>c.cat==="Mandatory");
   const _tCv = allCv2.filter(c=>c.cat!=="Mandatory");
+  const _isCmp2 = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
   const tabsDiv = buildRicsStabBar(S.activeSection, {
-    mDone: _mCv.filter(c=>isCompleted(c.id)).length, mTotal: _mCv.length,
-    tDone: _tCv.filter(c=>isCompleted(c.id)).length, tTotal: _tCv.length,
+    mDone: _mCv.filter(c=>_isCmp2(c.id)).length, mTotal: _mCv.length,
+    tDone: _tCv.filter(c=>_isCmp2(c.id)).length, tTotal: _tCv.length,
     cpd: (S.cpd||[]).length, csWords: cw(S.caseStudy), cv: entries.length
   });
   main.appendChild(tabsDiv);
@@ -4115,7 +4124,11 @@ function updDCV(val) {
 }
 
 function insertCompRefDCV(compId) {
-  const ta = document.getElementById("detailedcv-ta");
+  let ta = document.getElementById("detailedcv-ta");
+  // If the detailed CV text area isn't found, check if the overview text area is active
+  if (!ta) {
+    ta = document.getElementById("cv_overview");
+  }
   if (!ta) return;
   const ref = "(" + compId + ")";
   const start = ta.selectionStart;
@@ -4127,7 +4140,12 @@ function insertCompRefDCV(compId) {
   const newPos = start + spaceBefore.length + ref.length;
   ta.selectionStart = ta.selectionEnd = newPos;
   ta.focus();
-  updDCV(ta.value);
+  if (ta.id === "detailedcv-ta") {
+    updDCV(ta.value);
+  } else {
+    // Manually trigger an input event for "cv_overview" or handle syncing here
+    syncRefButtons("dcvref-btn-", ta.value);
+  }
 }
 
 function rCVCices(C) {
@@ -4271,6 +4289,7 @@ function rCVCices(C) {
         <div class="field-group">
           <label class="field-label">Scope and Responsibilities <span style="color:var(--muted);font-weight:400">(include competency refs e.g. GEN05, GECORE01)</span></label>
           <textarea id="cv_overview" class="field-textarea" style="min-height:110px"
+            oninput="syncRefButtons('dcvref-btn-', this.value)"
             placeholder="Describe your main duties, scope of work and key achievements. Reference CICES competencies where applicable (GEN05, GECORE01 etc.)…">${v('overview')}</textarea>
         </div>
       </div>
@@ -4693,7 +4712,9 @@ function rSubmission(C) {
   const fPct  = total>0?(fHrs/total)*100:0;
   const iPct  = total>0?(iHrs/total)*100:0;
   const cpdOk = cpdEntries.length>=2 && fPct>=50 && iPct>=50;
-  const stmtsOk = comps.filter(c=>isCompleted(c.id)).length === comps.length;
+
+  const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const stmtsOk = comps.filter(c=>isCmp(c.id)).length === comps.length;
 
   const rpqMode = isRPQRoute();
   const checkItems = rpqMode ? [
@@ -6647,8 +6668,6 @@ function rCicesElig(C) {
       "<div class=\"elig-hero-inner\">" +
         "<div class=\"elig-logo-row\">" +
           "<span class=\"elig-badge-rics\" style=\"background:var(--cices);color:#fff;border-color:var(--cices)\">CICES</span>" +
-          "<span class=\"elig-badge-sep\">\u00b7</span>" +
-          "<span class=\"elig-badge-path\" style=\"color:#ffffff;font-weight:600\">Geospatial Pathway</span>" +
         "</div>" +
         "<h1 class=\"elig-title\">Eligibility Criteria Assessment</h1>" +
         "<p class=\"elig-subtitle\">Answer the questions below to find out whether you are eligible to apply for <strong>MCInstCES (Chartered)</strong> membership and when to submit your portfolio.</p>" +
@@ -6951,8 +6970,6 @@ function rCicesElig(C) {
       <div class="elig-hero-inner">
         <div class="elig-logo-row">
           <span class="elig-badge-rics" style="background:var(--cices);color:#fff;border-color:var(--cices)">CICES</span>
-          <span class="elig-badge-sep">·</span>
-          <span class="elig-badge-path" style="color:#ffffff;font-weight:600">Geospatial Pathway</span>
         </div>
         <h1 class="elig-title">Eligibility Criteria Assessment</h1>
         <p class="elig-subtitle">Answer the questions below to find out whether you are eligible to apply for <strong>MCInstCES (Chartered)</strong> membership and when to submit your portfolio.</p>
@@ -7314,7 +7331,6 @@ function r0(C) {
       <div class="choice-card cices-card ${S.body==='CICES'?'selected':''}" onclick="selBody('CICES')">
         <div class="choice-label" style="color:var(--cices-bright)">CICES</div>
         <div class="choice-desc">Chartered Institution of Civil Engineering Surveyors</div>
-        <span class="badge badge-cices">Geospatial Pathway</span>
       </div>
     </div>
 
@@ -9811,7 +9827,8 @@ function sectionBar(comps, idPrefix) {
   const pct = Math.min(Math.round((words/max)*100),100);
   const over = words > max;
   const hexCol = over?"#c0392b":pct>=85?"#2e7d52":pct>=50?"#6F597A":"#5a8aa4";
-  const numCompleted = comps.filter(c=>isCompleted(c.id)).length;
+  const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const numCompleted = comps.filter(c=>isCmp(c.id)).length;
   const label = idPrefix==="mand"
     ? "Total word count — Mandatory (max 1,500)"
     : "Total word count — Technical (max 4,000)";
@@ -9834,8 +9851,9 @@ function buildSidebar(allComps) {
   // Mandatory section tab
   const mComps = allComps.filter(c=>c.cat==="Mandatory");
   const tComps = allComps.filter(c=>c.cat!=="Mandatory");
-  const mDone  = mComps.filter(c=>isCompleted(c.id)).length;
-  const tDone  = tComps.filter(c=>isCompleted(c.id)).length;
+  const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const mDone  = mComps.filter(c=>isCmp(c.id)).length;
+  const tDone  = tComps.filter(c=>isCmp(c.id)).length;
 
   sb+=`<div style="display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:14px">
     <div class="section-tab ${S.activeSection==='mandatory'?'active':''}" onclick="switchSection('mandatory')" style="flex:1;text-align:center;padding:8px 4px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;background:${S.activeSection==='mandatory'?'var(--acc-bg)':'var(--surface)'};color:${S.activeSection==='mandatory'?'var(--accent)':'var(--muted)'};border-right:1px solid var(--border)">
@@ -9854,8 +9872,9 @@ function buildSidebar(allComps) {
       if(S.activeSection==="technical") sb+=`<div class="sidebar-cat">${comp.cat}</div>`;
       lastCat=comp.cat;
     }
-    const pct = compWordPct(comp);
-    const done = isCompleted(comp.id);
+    const pct = typeof compWordPct !== 'undefined' ? compWordPct(comp) : 100;
+    const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+    const done = isCmp(comp.id);
     const pctCol = done?"#6F597A":pct>=85?"#2e7d52":pct>=50?"#b5651d":"#96aab8";
     const nameCol = done?"var(--rics-bright)":"inherit";
     sb+=`<div class="sidebar-item${S.activeComp===comp.id?' active':''}" onclick="setActive('${comp.id}')">
@@ -9925,7 +9944,8 @@ function r3(C) {
     if(!comp){ ed=""; }
     else {
       const mand=MANDATORY.find(m=>m.id===comp.id);
-      const done=isCompleted(comp.id);
+      const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+      const done=isCmp(comp.id);
       let lh="";
       for(let l=1;l<=comp.req;l++){
         const key=`${comp.id}_L${l}`, txt=S.statements[key]||"";
@@ -9980,8 +10000,9 @@ function r3(C) {
   }
 
   // Assemble section wrapper with word bar
-  const mDoneC = mComps.filter(c=>isCompleted(c.id)).length;
-  const tDoneC = tComps.filter(c=>isCompleted(c.id)).length;
+  const isCmpTop = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+  const mDoneC = mComps.filter(c=>isCmpTop(c.id)).length;
+  const tDoneC = tComps.filter(c=>isCmpTop(c.id)).length;
   const cpdCount = (S.cpd||[]).length;
   const cvCount  = (S.cv||[]).length;
   const csWords  = cw(S.caseStudy);
@@ -10120,8 +10141,9 @@ function updStmt(key, val) {
   const allC=buildAllComps();
   const comp=allC.find(c=>key.startsWith(c.id+"_"));
   if(comp){
-    const cpct=compWordPct(comp);
-    const cpctCol=isCompleted(comp.id)?"#6F597A":cpct>=85?"#2e7d52":cpct>=50?"#b5651d":"#96aab8";
+    const cpct = typeof compWordPct !== 'undefined' ? compWordPct(comp) : 100;
+    const isCmp = typeof isCompleted !== 'undefined' ? isCompleted : () => true;
+    const cpctCol=isCmp(comp.id)?"#6F597A":cpct>=85?"#2e7d52":cpct>=50?"#b5651d":"#96aab8";
     document.querySelectorAll(".sidebar-item").forEach(el=>{
       const nameEl=el.querySelector("div > div:first-child");
       if(nameEl && nameEl.textContent.trim()===comp.name){
