@@ -266,21 +266,24 @@ app.get('/', (req, res) => {
   if (!sess || !sess.userId || !store.isEmailAllowed(sess.email)) {
     return res.redirect('/login');
   }
-  res.sendFile(path.join(__dirname, 'public', 'app.html'));
+  const appPath = path.resolve(__dirname, 'public', 'index.html');
+  res.sendFile(appPath);
 });
 
 // Login & Registration Page
 app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+  const loginPath = path.resolve(__dirname, 'public', 'login.html');
+  res.sendFile(loginPath);
 });
 
 // Admin Manager Page
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+  const adminPath = path.resolve(__dirname, 'public', 'admin.html');
+  res.sendFile(adminPath);
 });
 
-// Static assets (if any)
-app.use(express.static(path.join(__dirname, 'public')));
+// Static assets
+app.use(express.static(path.resolve(__dirname, 'public')));
 
 if (require.main === module) {
   app.listen(PORT, () => {
