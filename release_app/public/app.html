@@ -1862,6 +1862,42 @@
   <div class="autosave-dot"></div> Saved
 </div>
 
+<!-- Logout Warning Modal -->
+<div id="logout-warning-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(13,19,26,0.75);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#ffffff;color:#1e2530;border-radius:16px;max-width:520px;width:100%;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,0.3);border:1px solid #cdd8e0;animation:fadeUp .2s ease both;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <span style="font-size:28px;line-height:1;">⚠️</span>
+      <div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#c0392b;margin:0;">Warning: Save Your Data Before Logging Out</h3>
+        <p style="font-size:12px;color:#5a6a7a;margin:2px 0 0 0;">Charterly session security notice</p>
+      </div>
+    </div>
+    
+    <div style="background:#fdf0f0;border-left:4px solid #c0392b;padding:12px 16px;border-radius:6px;font-size:13px;line-height:1.55;color:#4a1e1e;margin-bottom:20px;">
+      <strong>You must download your .json file to save your data.</strong><br>
+      If you log out without downloading your <strong>.json session file</strong>, all session progress will be lost and cannot be recovered.
+    </div>
+
+    <p style="font-size:13px;color:#5a6a7a;line-height:1.5;margin-bottom:24px;">
+      Click <strong>"Download .JSON &amp; Log Out"</strong> to safely save your answers, competency logs, and case study to your device before ending your session.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn btn-primary" onclick="logoutWithDownload()" style="background:#2e7d52;font-size:14px;padding:12px 18px;justify-content:center;font-weight:600;">
+        ⬇ Download .JSON &amp; Log Out (Safe)
+      </button>
+      <div style="display:flex;gap:10px;margin-top:4px;">
+        <button class="btn btn-ghost" onclick="closeLogoutModal()" style="flex:1;justify-content:center;font-size:13px;color:#5a6a7a;">
+          Cancel, Keep Working
+        </button>
+        <button class="btn btn-ghost" onclick="proceedLogoutWithoutSaving()" style="flex:1;justify-content:center;font-size:12px;color:#c0392b;border-color:#e8b4b8;">
+          Discard &amp; Log Out Anyway
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ═══════════════════════════════════════════════════════════════ DATA ═══════
 
@@ -4720,13 +4756,49 @@ async function initUserSession() {
   }
 }
 
-async function handleUserLogout() {
-  if (confirm("Log out of your Charterly session? Your progress has been saved.")) {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch(e) {}
-    window.location.href = '/login';
+function handleUserLogout() {
+  const modal = document.getElementById("logout-warning-modal");
+  if (modal) {
+    modal.style.display = "flex";
+  } else {
+    // Fallback confirmation dialog if modal element is not present
+    const proceed = confirm(
+      "⚠️ WARNING: SAVE YOUR DATA BEFORE LOGGING OUT\n\n" +
+      "You must download your .json session file to save your data, or all session progress will be permanently lost.\n\n" +
+      "• Click OK to download your .json file and log out safely.\n" +
+      "• Click Cancel to return and keep working."
+    );
+    if (proceed) {
+      exportJSON();
+      setTimeout(async () => {
+        try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(e) {}
+        window.location.href = '/login';
+      }, 500);
+    }
   }
+}
+
+function closeLogoutModal() {
+  const modal = document.getElementById("logout-warning-modal");
+  if (modal) modal.style.display = "none";
+}
+
+function logoutWithDownload() {
+  exportJSON();
+  setTimeout(async () => {
+    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(e) {}
+    window.location.href = '/login';
+  }, 400);
+}
+
+async function proceedLogoutWithoutSaving() {
+  const secondConfirm = confirm(
+    "🛑 FINAL WARNING: Are you sure you want to log out WITHOUT downloading your .json file?\n\n" +
+    "All progress in this session will be permanently lost."
+  );
+  if (!secondConfirm) return;
+  try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(e) {}
+  window.location.href = '/login';
 }
 
 function confirmReset() {
