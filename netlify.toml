@@ -1,33 +1,20 @@
 [build]
-  base = "release_app"
   publish = "public"
-  functions = "netlify/functions"
 
-[functions]
-  node_bundler = "esbuild"
-  included_files = ["public/**"]
-
-# API routes go to the serverless function
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/api/:splat"
-  status = 200
-  force = true
-
-# Direct access to portal entry
 [[redirects]]
   from = "/login"
   to = "/login.html"
   status = 200
 
-# Direct access to admin manager
 [[redirects]]
-  from = "/admin"
-  to = "/admin.html"
-  status = 200
-
-# Root serves index.html (client-side initUserSession validates auth & redirects to /login if not authenticated)
-[[redirects]]
-  from = "/"
+  from = "/*"
   to = "/index.html"
   status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
