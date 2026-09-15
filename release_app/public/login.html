@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+  <!-- Netlify Identity Widget -->
+  <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <style>
     :root {
       --bg: #eef2f5;
@@ -318,10 +320,10 @@
     <!-- Card: Sign In / Create Password -->
     <div class="card">
       
-      <!-- STEP 1: Email Verification Form -->
+      <!-- STEP 1: Email Verification & Netlify Identity Login Form -->
       <div id="viewCheckEmail">
         <h2 class="card-title">Welcome to Charterly</h2>
-        <p class="card-desc">Enter your email address to access your candidacy portal or activate your account.</p>
+        <p class="card-desc">Enter your email address to access your candidacy portal or activate your invited account.</p>
 
         <form id="formCheckEmail" onsubmit="handleCheckEmail(event)">
           <div class="form-group">
@@ -333,55 +335,18 @@
             <span>→</span>
           </button>
         </form>
-      </div>
 
-      <!-- STEP 2A: Login Form (For already registered users) -->
-      <div id="viewLogin" style="display: none;">
-        <h2 class="card-title">Welcome Back</h2>
-        <p class="card-desc" id="loginEmailDesc">Enter your password to unlock your portal session.</p>
-
-        <form id="formLogin" onsubmit="handleLogin(event)">
-          <div class="form-group">
-            <label for="loginPassword">Password</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
-          </div>
-          <button type="submit" id="btnLogin" class="btn">
-            <span>Sign In to Charterly</span>
+        <div style="margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0;text-align:center;">
+          <button type="button" class="btn btn-secondary" onclick="openNetlifyIdentity()" style="font-size:13px;padding:10px 16px;">
+            🔑 Sign In with Netlify Identity
           </button>
-          <button type="button" class="btn btn-secondary" onclick="resetToEmailCheck()">
-            ← Use a different email
-          </button>
-        </form>
-      </div>
-
-      <!-- STEP 2B: Register / Set Password Form (For newly invited candidates) -->
-      <div id="viewRegister" style="display: none;">
-        <h2 class="card-title">Activate Your Account</h2>
-        <p class="card-desc" id="registerEmailDesc">Your email has been authorized. Please create a password to secure your workspace.</p>
-
-        <form id="formRegister" onsubmit="handleRegister(event)">
-          <div class="form-group">
-            <label for="regPassword">Create Password</label>
-            <input type="password" id="regPassword" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password">
-            <div class="pw-hint">Must be at least 6 characters.</div>
-          </div>
-          <div class="form-group">
-            <label for="regPasswordConfirm">Confirm Password</label>
-            <input type="password" id="regPasswordConfirm" placeholder="Repeat your password" minlength="6" required autocomplete="new-password">
-          </div>
-          <button type="submit" id="btnRegister" class="btn">
-            <span>Activate & Launch Portal</span>
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="resetToEmailCheck()">
-            ← Use a different email
-          </button>
-        </form>
+        </div>
       </div>
 
     </div>
 
     <div class="footer-note">
-      Restricted access edition &bull; <a href="/admin">Administrator Login</a>
+      Restricted candidate release &bull; Netlify Identity Authentication
     </div>
   </div>
 
@@ -401,151 +366,66 @@
       el.innerHTML = '';
     }
 
-    function resetToEmailCheck() {
-      hideAlert();
-      document.getElementById('viewCheckEmail').style.display = 'block';
-      document.getElementById('viewLogin').style.display = 'none';
-      document.getElementById('viewRegister').style.display = 'none';
-      document.getElementById('inputEmail').focus();
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    async function handleCheckEmail(e) {
+    function openNetlifyIdentity(action = 'login') {
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.open(action);
+      } else {
+        showAlert('Netlify Identity widget is loading. Please try again in a few seconds.', 'info');
+      }
+    }
+
+    function handleCheckEmail(e) {
       e.preventDefault();
       hideAlert();
       const email = document.getElementById('inputEmail').value.trim();
       if (!email) return;
 
-      const btn = document.getElementById('btnContinue');
-      btn.disabled = true;
-      btn.innerHTML = 'Checking authorization...';
-
-      try {
-        const res = await fetch('/api/auth/check-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          showAlert(data.error || 'Access denied for this email address.');
-          btn.disabled = false;
-          btn.innerHTML = '<span>Continue</span> <span>→</span>';
-          return;
-        }
-
-        currentEmail = email;
-        document.getElementById('viewCheckEmail').style.display = 'none';
-
-        if (data.isRegistered) {
-          // Returning user -> show Login
-          document.getElementById('loginEmailDesc').innerHTML = `Signing in as <strong>${escapeHtml(email)}</strong>`;
-          document.getElementById('viewLogin').style.display = 'block';
-          setTimeout(() => document.getElementById('loginPassword').focus(), 50);
-        } else {
-          // New allowed candidate -> show account password creation
-          showAlert(`✨ Welcome! Your email (<strong>${escapeHtml(email)}</strong>) is invited. Create a password below to activate your account.`, 'success');
-          document.getElementById('registerEmailDesc').innerHTML = `Creating account for <strong>${escapeHtml(email)}</strong>`;
-          document.getElementById('viewRegister').style.display = 'block';
-          setTimeout(() => document.getElementById('regPassword').focus(), 50);
-        }
-      } catch (err) {
-        showAlert('Unable to connect to authentication server. Please check connection.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span>Continue</span> <span>→</span>';
-      }
+      currentEmail = email;
+      openNetlifyIdentity('login');
     }
 
-    async function handleLogin(e) {
-      e.preventDefault();
-      hideAlert();
-      const password = document.getElementById('loginPassword').value;
-      const btn = document.getElementById('btnLogin');
-      btn.disabled = true;
-      btn.innerHTML = 'Signing in...';
+    // Initialize Netlify Identity lifecycle listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!window.netlifyIdentity) return;
 
-      try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: currentEmail, password })
-        });
-        const data = await res.json();
+      // Ensure widget points directly to charterly-cices.netlify.app if running on localhost
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        window.netlifyIdentity.setAPIUrl('https://charterly-cices.netlify.app/.netlify/identity');
+      }
 
-        if (!res.ok) {
-          showAlert(data.error || 'Invalid password.');
-          btn.disabled = false;
-          btn.innerHTML = 'Sign In to Charterly';
-          return;
+      // Handle direct invite / recovery token in URL hash (#invite_token=... / #recovery_token=...)
+      if (window.location.hash && (
+        window.location.hash.includes('_token=') || 
+        window.location.hash.includes('invite_token=') || 
+        window.location.hash.includes('recovery_token=')
+      )) {
+        showAlert('🔑 Authentication token detected! Opening account setup...', 'info');
+        window.netlifyIdentity.open();
+      }
+
+      window.netlifyIdentity.on('init', (user) => {
+        if (user && user.email) {
+          showAlert(`Welcome back, ${escapeHtml(user.email)}! Redirecting to your workspace...`, 'success');
+          setTimeout(() => { window.location.href = '/'; }, 300);
         }
+      });
 
-        showAlert('Access granted! Loading your workspace...', 'success');
+      window.netlifyIdentity.on('login', (user) => {
+        showAlert(`Access granted! Welcome, ${escapeHtml(user.email)}. Opening portal...`, 'success');
         setTimeout(() => {
+          window.netlifyIdentity.close();
           window.location.href = '/';
-        }, 400);
-      } catch (err) {
-        showAlert('Network error during login.');
-        btn.disabled = false;
-        btn.innerHTML = 'Sign In to Charterly';
-      }
-    }
+        }, 300);
+      });
 
-    async function handleRegister(e) {
-      e.preventDefault();
-      hideAlert();
-      const p1 = document.getElementById('regPassword').value;
-      const p2 = document.getElementById('regPasswordConfirm').value;
-
-      if (p1 !== p2) {
-        showAlert('Passwords do not match. Please re-enter.');
-        return;
-      }
-
-      const btn = document.getElementById('btnRegister');
-      btn.disabled = true;
-      btn.innerHTML = 'Activating account...';
-
-      try {
-        const res = await fetch('/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: currentEmail, password: p1 })
-        });
-        const data = await res.json();
-
-        if (!res.ok) {
-          showAlert(data.error || 'Registration failed.');
-          btn.disabled = false;
-          btn.innerHTML = 'Activate & Launch Portal';
-          return;
-        }
-
-        showAlert('Account created successfully! Launching your portal...', 'success');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 500);
-      } catch (err) {
-        showAlert('Network error during account registration.');
-        btn.disabled = false;
-        btn.innerHTML = 'Activate & Launch Portal';
-      }
-    }
-
-    function escapeHtml(str) {
-      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    // Auto-check if already authenticated
-    (async function checkExisting() {
-      try {
-        const res = await fetch('/api/auth/me');
-        const data = await res.json();
-        if (data.authenticated) {
-          window.location.href = '/';
-        }
-      } catch (e) {}
-    })();
+      window.netlifyIdentity.on('error', (err) => {
+        showAlert(err?.message || 'Authentication error. Please check your credentials or invite status.');
+      });
+    });
   </script>
 </body>
 </html>

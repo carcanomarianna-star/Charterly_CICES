@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GeoCharteRly</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Netlify Identity Widget -->
+<script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <style>
   /* ── PALETTE
      #9FBBCF  sky blue   → neutral / landing
@@ -4533,7 +4535,7 @@ function exportData() {
 }
 
 
-// ════════════════════════════════════════════════════════ GLOSSARY PANEL ══════
+// ═════════════════════════════════════════════ GLOSSARY PANEL ══════
 
 // G state: what the sidebar is currently showing
 let G = { compId: null, level: null };
@@ -4724,81 +4726,91 @@ function loadState() {
 
 async function initUserSession() {
   try {
-    const res = await fetch('/api/auth/me');
-    const data = await res.json();
-    if (!data.authenticated) {
-      window.location.href = '/login';
+    if (!window.netlifyIdentity) {
+      console.warn('Netlify Identity widget not loaded.');
       return;
     }
-    CURRENT_USER = data.user;
+
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      window.netlifyIdentity.setAPIUrl('https://charterly-cices.netlify.app/.netlify/identity');
+    }
+
+    if (window.location.hash && (
+      window.location.hash.includes('_token=') || 
+      window.location.hash.includes('invite_token=') || 
+      window.location.hash.includes('recovery_token=')
+    )) {
+      window.netlifyIdentity.open();
+    }
+
+    const user = window.netlifyIdentity.currentUser();
+    if (!user || !user.email) {
+      window.location.href = '/login.html';
+      return;
+    }
+
+    CURRENT_USER = {
+      email: user.email,
+      name: user.user_metadata?.full_name || user.email.split('@')[0]
+    };
     SAVE_KEY = 'rics_portal_' + (CURRENT_USER.email || 'user').replace(/[^a-zA-Z0-9_]/g, '_');
     
     // Update header display pill
     const userText = document.getElementById('user-email-text');
     if (userText) userText.textContent = CURRENT_USER.email;
 
-    // Fetch cloud state from server to restore if local is empty or server is newer
-    try {
-      const stateRes = await fetch('/api/user/state');
-      if (stateRes.ok) {
-        const stateData = await stateRes.json();
-        if (stateData.state && typeof stateData.state === 'object') {
-          const hasLocal = localStorage.getItem(SAVE_KEY);
-          if (!hasLocal) {
-            Object.assign(S, stateData.state);
-            saveState();
-          }
-        }
-      }
-    } catch(e) {}
+    window.netlifyIdentity.on('logout', () => {
+      window.location.href = '/login.html';
+    });
   } catch(err) {
-    console.warn('Could not verify server session', err);
+    console.warn('Could not verify Netlify Identity session', err);
   }
 }
 
 function handleUserLogout() {
-  const modal = document.getElementById("logout-warning-modal");
+  const modal = document.getElementById('logout-warning-modal');
   if (modal) {
-    modal.style.display = "flex";
+    modal.style.display = 'flex';
   } else {
-    // Fallback confirmation dialog if modal element is not present
     const proceed = confirm(
-      "⚠️ WARNING: SAVE YOUR DATA BEFORE LOGGING OUT\n\n" +
-      "You must download your .json session file to save your data, or all session progress will be permanently lost.\n\n" +
-      "• Click OK to download your .json file and log out safely.\n" +
-      "• Click Cancel to return and keep working."
+      '⚠️ WARNING: SAVE YOUR DATA BEFORE LOGGING OUT\n\n' +
+      'You must download your .json session file to save your data, or all session progress will be permanently lost.\n\n' +
+      '• Click OK to download your .json file and log out safely.\n' +
+      '• Click Cancel to return and keep working.'
     );
     if (proceed) {
-      exportJSON();
-      setTimeout(async () => {
-        try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(e) {}
-        window.location.href = '/login';
-      }, 500);
+      logoutWithDownload();
     }
   }
 }
 
 function closeLogoutModal() {
-  const modal = document.getElementById("logout-warning-modal");
-  if (modal) modal.style.display = "none";
+  const modal = document.getElementById('logout-warning-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 function logoutWithDownload() {
   exportJSON();
-  setTimeout(async () => {
-    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(e) {}
-    window.location.href = '/login';
+  setTimeout(() => {
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.logout();
+    } else {
+      window.location.href = '/login.html';
+    }
   }, 400);
 }
 
-async function proceedLogoutWithoutSaving() {
+function proceedLogoutWithoutSaving() {
   const secondConfirm = confirm(
-    "🛑 FINAL WARNING: Are you sure you want to log out WITHOUT downloading your .json file?\n\n" +
-    "All progress in this session will be permanently lost."
+    '🛑 FINAL WARNING: Are you sure you want to log out WITHOUT downloading your .json file?\n\n' +
+    'All progress in this session will be permanently lost.'
   );
   if (!secondConfirm) return;
-  try { await fetch('/api/auth/logout', { method: 'POST' }); } catch(e) {}
-  window.location.href = '/login';
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.logout();
+  } else {
+    window.location.href = '/login.html';
+  }
 }
 
 function confirmReset() {
