@@ -4731,16 +4731,16 @@ async function initUserSession() {
       return;
     }
 
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-      window.netlifyIdentity.setAPIUrl('https://charterly-cices.netlify.app/.netlify/identity');
-    }
-
+    // If there is an authentication token in hash (invite, recovery, confirmation, email change)
     if (window.location.hash && (
       window.location.hash.includes('_token=') || 
       window.location.hash.includes('invite_token=') || 
+      window.location.hash.includes('confirmation_token=') || 
       window.location.hash.includes('recovery_token=')
     )) {
-      window.netlifyIdentity.open();
+      // Pass token hash over to login.html so user sets password or confirms email
+      window.location.href = '/login.html' + window.location.hash;
+      return;
     }
 
     const user = window.netlifyIdentity.currentUser();

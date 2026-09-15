@@ -397,13 +397,14 @@
         window.netlifyIdentity.setAPIUrl('https://charterly-cices.netlify.app/.netlify/identity');
       }
 
-      // Handle direct invite / recovery token in URL hash (#invite_token=... / #recovery_token=...)
+      // Handle direct tokens in URL hash: invite, confirmation, recovery, email_change
       if (window.location.hash && (
         window.location.hash.includes('_token=') || 
         window.location.hash.includes('invite_token=') || 
+        window.location.hash.includes('confirmation_token=') || 
         window.location.hash.includes('recovery_token=')
       )) {
-        showAlert('🔑 Authentication token detected! Opening account setup...', 'info');
+        showAlert('🔑 Verification token received! Confirming your account...', 'info');
         window.netlifyIdentity.open();
       }
 
@@ -423,7 +424,17 @@
       });
 
       window.netlifyIdentity.on('error', (err) => {
-        showAlert(err?.message || 'Authentication error. Please check your credentials or invite status.');
+        const msg = err?.message || 'Authentication error.';
+        if (msg.toLowerCase().includes('email not confirmed')) {
+          showAlert(
+            '<strong>Email Not Confirmed Yet</strong><br>' +
+            'Please check your inbox for the Netlify confirmation/invite email and click the confirmation link to activate your account. ' +
+            'If you already clicked it, click "Sign In with Netlify Identity" below.',
+            'danger'
+          );
+        } else {
+          showAlert(msg);
+        }
       });
     });
   </script>
