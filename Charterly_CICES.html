@@ -7325,16 +7325,30 @@ function renderEligResult(nodeId, wrap) {
 
 function r0(C) {
   C.innerHTML=`<div class="page-centre"><div class="panel">
-    <h1 class="page-title">Select Professional Body</h1>
-    <p class="sub">Choose the institution you are seeking chartered membership with.</p>
+    <h1 class="page-title">Select Pathway or Direct Portal Access</h1>
+    <p class="sub">Choose the institution route you are seeking chartered membership with, or proceed directly to your submission workspace.</p>
     <div class="choice-grid">
       <div class="choice-card cices-card ${S.body==='CICES'?'selected':''}" onclick="selBody('CICES')">
         <div class="choice-label" style="color:var(--cices-bright)">CICES</div>
         <div class="choice-desc">Chartered Institution of Civil Engineering Surveyors</div>
+        <div style="margin-top:10px"><span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border)">Standard / Direct Route</span></div>
+      </div>
+      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface);" onclick="goDirectSubmission()">
+        <div class="choice-label" style="color:var(--cices)">Direct to Portal</div>
+        <div class="choice-desc">Jump straight to your Submission Documents workspace, Competency Logs, and Report Editor.</div>
+        <div style="margin-top:10px"><span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border)">⚡ Workspace Quick Launch</span></div>
       </div>
     </div>
 
   </div></div>`;
+}
+function goDirectSubmission() {
+  if (!S.body) S.body = "CICES";
+  document.body.className = "cices-mode" + (isRPQRoute() ? " rpq-mode" : "");
+  S.step = 3;
+  if (!S.activeSection) S.activeSection = "competencies";
+  saveState();
+  render();
 }
 function selBody(b) {
   S.body=b;
