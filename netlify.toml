@@ -1,0 +1,28 @@
+[build]
+  base = "release_app"
+  publish = "public"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Route API and dynamic pages to serverless Express function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/.netlify/functions/api/login"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/.netlify/functions/api/admin"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/.netlify/functions/api/"
+  status = 200

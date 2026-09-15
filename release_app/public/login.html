@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charterly — Sign In & Account Activation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d131a;
+      --card-bg: rgba(22, 30, 41, 0.78);
+      --card-border: rgba(159, 187, 207, 0.18);
+      --card-glow: rgba(90, 138, 164, 0.14);
+      --accent: #5a8aa4;
+      --accent-bright: #7bb3d4;
+      --cices-green: #4a7a61;
+      --rics-purple: #826691;
+      --text: #f0f4f8;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --input-bg: rgba(13, 19, 26, 0.85);
+      --input-border: #2d3748;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Subtle background ambient mesh */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(90, 138, 164, 0.15) 0%, rgba(46, 77, 59, 0.12) 50%, transparent 70%);
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 40%, #9FBBCF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    .brand-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .badge-cices {
+      background: rgba(74, 122, 97, 0.2);
+      border: 1px solid rgba(74, 122, 97, 0.5);
+      color: #9fe2bf;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4), 0 0 40px var(--card-glow);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      font-size: 14px;
+      color: #ffffff;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: var(--accent-bright);
+      box-shadow: 0 0 0 3px rgba(90, 138, 164, 0.25);
+      background: rgba(18, 26, 36, 0.95);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, #4a7a61, #2e4d3b);
+      border: 1px solid rgba(132, 179, 153, 0.4);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #5b9476, #365a45);
+      box-shadow: 0 6px 20px rgba(46, 77, 59, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      margin-top: 12px;
+      padding: 10px;
+      font-size: 13px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .alert {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.5;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: #86efac;
+    }
+
+    .alert-info {
+      background: rgba(90, 138, 164, 0.14);
+      border: 1px solid rgba(159, 187, 207, 0.3);
+      color: #bae6fd;
+    }
+
+    .toggle-view {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .toggle-view a {
+      color: var(--accent-bright);
+      text-decoration: none;
+      font-weight: 600;
+      margin-left: 4px;
+      cursor: pointer;
+    }
+
+    .toggle-view a:hover {
+      text-decoration: underline;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 12px;
+      color: var(--text-faint);
+    }
+
+    .footer-note a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .footer-note a:hover {
+      color: #ffffff;
+    }
+
+    /* Password meter / hints */
+    .pw-hint {
+      font-size: 11.5px;
+      color: var(--text-faint);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="brand-header">
+      <h1 class="brand-title">GeoCharteRly</h1>
+      <div class="brand-sub">
+        <span>Professional Portal</span>
+        <span class="badge-cices">Private Preview</span>
+      </div>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alertBox" class="alert"></div>
+
+    <!-- Card: Sign In / Create Password -->
+    <div class="card">
+      
+      <!-- STEP 1: Email Verification Form -->
+      <div id="viewCheckEmail">
+        <h2 class="card-title">Welcome to Charterly</h2>
+        <p class="card-desc">Enter your email address to access your candidacy portal or activate your account.</p>
+
+        <form id="formCheckEmail" onsubmit="handleCheckEmail(event)">
+          <div class="form-group">
+            <label for="inputEmail">Work or Candidate Email</label>
+            <input type="email" id="inputEmail" placeholder="name@company.com" required autofocus autocomplete="email">
+          </div>
+          <button type="submit" id="btnContinue" class="btn">
+            <span>Continue</span>
+            <span>→</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2A: Login Form (For already registered users) -->
+      <div id="viewLogin" style="display: none;">
+        <h2 class="card-title">Welcome Back</h2>
+        <p class="card-desc" id="loginEmailDesc">Enter your password to unlock your portal session.</p>
+
+        <form id="formLogin" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+          <button type="submit" id="btnLogin" class="btn">
+            <span>Sign In to Charterly</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetToEmailCheck()">
+            ← Use a different email
+          </button>
+        </form>
+      </div>
+
+      <!-- STEP 2B: Register / Set Password Form (For newly invited candidates) -->
+      <div id="viewRegister" style="display: none;">
+        <h2 class="card-title">Activate Your Account</h2>
+        <p class="card-desc" id="registerEmailDesc">Your email has been authorized. Please create a password to secure your workspace.</p>
+
+        <form id="formRegister" onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label for="regPassword">Create Password</label>
+            <input type="password" id="regPassword" placeholder="At least 6 characters" minlength="6" required autocomplete="new-password">
+            <div class="pw-hint">Must be at least 6 characters.</div>
+          </div>
+          <div class="form-group">
+            <label for="regPasswordConfirm">Confirm Password</label>
+            <input type="password" id="regPasswordConfirm" placeholder="Repeat your password" minlength="6" required autocomplete="new-password">
+          </div>
+          <button type="submit" id="btnRegister" class="btn">
+            <span>Activate & Launch Portal</span>
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="resetToEmailCheck()">
+            ← Use a different email
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      Restricted access edition &bull; <a href="/admin">Administrator Login</a>
+    </div>
+  </div>
+
+  <script>
+    let currentEmail = '';
+
+    function showAlert(msg, type = 'danger') {
+      const el = document.getElementById('alertBox');
+      el.className = 'alert alert-' + type;
+      el.innerHTML = msg;
+      el.style.display = 'block';
+    }
+
+    function hideAlert() {
+      const el = document.getElementById('alertBox');
+      el.style.display = 'none';
+      el.innerHTML = '';
+    }
+
+    function resetToEmailCheck() {
+      hideAlert();
+      document.getElementById('viewCheckEmail').style.display = 'block';
+      document.getElementById('viewLogin').style.display = 'none';
+      document.getElementById('viewRegister').style.display = 'none';
+      document.getElementById('inputEmail').focus();
+    }
+
+    async function handleCheckEmail(e) {
+      e.preventDefault();
+      hideAlert();
+      const email = document.getElementById('inputEmail').value.trim();
+      if (!email) return;
+
+      const btn = document.getElementById('btnContinue');
+      btn.disabled = true;
+      btn.innerHTML = 'Checking authorization...';
+
+      try {
+        const res = await fetch('/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showAlert(data.error || 'Access denied for this email address.');
+          btn.disabled = false;
+          btn.innerHTML = '<span>Continue</span> <span>→</span>';
+          return;
+        }
+
+        currentEmail = email;
+        document.getElementById('viewCheckEmail').style.display = 'none';
+
+        if (data.isRegistered) {
+          // Returning user -> show Login
+          document.getElementById('loginEmailDesc').innerHTML = `Signing in as <strong>${escapeHtml(email)}</strong>`;
+          document.getElementById('viewLogin').style.display = 'block';
+          setTimeout(() => document.getElementById('loginPassword').focus(), 50);
+        } else {
+          // New allowed candidate -> show account password creation
+          showAlert(`✨ Welcome! Your email (<strong>${escapeHtml(email)}</strong>) is invited. Create a password below to activate your account.`, 'success');
+          document.getElementById('registerEmailDesc').innerHTML = `Creating account for <strong>${escapeHtml(email)}</strong>`;
+          document.getElementById('viewRegister').style.display = 'block';
+          setTimeout(() => document.getElementById('regPassword').focus(), 50);
+        }
+      } catch (err) {
+        showAlert('Unable to connect to authentication server. Please check connection.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>Continue</span> <span>→</span>';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      hideAlert();
+      const password = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('btnLogin');
+      btn.disabled = true;
+      btn.innerHTML = 'Signing in...';
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, password })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showAlert(data.error || 'Invalid password.');
+          btn.disabled = false;
+          btn.innerHTML = 'Sign In to Charterly';
+          return;
+        }
+
+        showAlert('Access granted! Loading your workspace...', 'success');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 400);
+      } catch (err) {
+        showAlert('Network error during login.');
+        btn.disabled = false;
+        btn.innerHTML = 'Sign In to Charterly';
+      }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      hideAlert();
+      const p1 = document.getElementById('regPassword').value;
+      const p2 = document.getElementById('regPasswordConfirm').value;
+
+      if (p1 !== p2) {
+        showAlert('Passwords do not match. Please re-enter.');
+        return;
+      }
+
+      const btn = document.getElementById('btnRegister');
+      btn.disabled = true;
+      btn.innerHTML = 'Activating account...';
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: currentEmail, password: p1 })
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          showAlert(data.error || 'Registration failed.');
+          btn.disabled = false;
+          btn.innerHTML = 'Activate & Launch Portal';
+          return;
+        }
+
+        showAlert('Account created successfully! Launching your portal...', 'success');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 500);
+      } catch (err) {
+        showAlert('Network error during account registration.');
+        btn.disabled = false;
+        btn.innerHTML = 'Activate & Launch Portal';
+      }
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Auto-check if already authenticated
+    (async function checkExisting() {
+      try {
+        const res = await fetch('/api/auth/me');
+        const data = await res.json();
+        if (data.authenticated) {
+          window.location.href = '/';
+        }
+      } catch (e) {}
+    })();
+  </script>
+</body>
+</html>

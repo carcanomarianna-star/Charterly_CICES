@@ -1,0 +1,14 @@
+{
+  "name": "charterly-release-server",
+  "version": "1.0.0",
+  "description": "Charterly CICES with User Authentication & Admin Allowlist Manager",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.19.2",
+    "serverless-http": "^4.0.0"
+  }
+}

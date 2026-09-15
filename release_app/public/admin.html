@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charterly — Back-End Access Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f15;
+      --surface: #141b24;
+      --card: #1a2330;
+      --border: #283547;
+      --accent: #5a8aa4;
+      --accent-bright: #7ab2d3;
+      --text: #f0f4f8;
+      --text-muted: #94a3b8;
+      --text-faint: #64748b;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --cices-green: #4a7a61;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    header {
+      background: rgba(20, 27, 36, 0.95);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .badge-admin {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+    }
+    .btn-primary:hover { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
+
+    .btn-green {
+      background: linear-gradient(135deg, #4a7a61, #2e4d3b);
+      color: #fff;
+      border-color: rgba(132, 179, 153, 0.3);
+    }
+    .btn-green:hover { background: linear-gradient(135deg, #5c9677, #365b45); }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-muted);
+    }
+    .btn-ghost:hover { background: rgba(255, 255, 255, 0.05); color: #fff; }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.25); color: #fff; }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    /* Main layout */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 80px;
+    }
+
+    /* Auth modal for admin login */
+    .admin-login-wrap {
+      max-width: 400px;
+      margin: 80px auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+    }
+
+    .stat-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-family: 'DM Mono', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    @media (max-width: 850px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      background: #0e141c;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--accent-bright);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 85px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12.5px;
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #0e141c;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      color: #cbd5e1;
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .badge-active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .badge-revoked {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .badge-registered {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-unregistered {
+      background: rgba(148, 163, 184, 0.12);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #86efac;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Login Guard Screen -->
+  <div id="adminLoginScreen" style="display: none;">
+    <div class="admin-login-wrap">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <span class="badge-admin">Access Control</span>
+        <h2 style="font-family: 'Playfair Display', serif; margin-top: 10px; font-size: 22px;">Administrator Portal</h2>
+        <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Sign in with master password to manage allowlist.</p>
+      </div>
+
+      <div id="loginAlert" class="alert alert-danger"></div>
+
+      <form onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label for="adminPw">Master Password</label>
+          <input type="password" id="adminPw" placeholder="Enter password (default: admin123)" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-green" style="width: 100%; justify-content: center; padding: 12px;">
+          Unlock Manager
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard Screen -->
+  <div id="adminDashboard" style="display: none;">
+    <header>
+      <div class="brand">
+        <span class="brand-title">GeoCharteRly</span>
+        <span class="badge-admin">Manager</span>
+      </div>
+      <div class="header-actions">
+        <a href="/" target="_blank" class="btn btn-ghost">↗ Open App</a>
+        <button onclick="handleAdminLogout()" class="btn btn-danger btn-sm">Sign Out</button>
+      </div>
+    </header>
+
+    <div class="container">
+      <div id="dashAlert" class="alert"></div>
+
+      <!-- Stats Summary -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-title">Allowed Candidates</div>
+          <div class="stat-value" id="statTotalAllowed">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Registered Accounts</div>
+          <div class="stat-value" id="statRegistered">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Pending Activation</div>
+          <div class="stat-value" id="statPending">0</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Add Single Email -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">➕ Authorize Single Candidate</h3>
+          </div>
+          <form onsubmit="handleAddSingle(event)">
+            <div class="form-group">
+              <label for="newEmail">Email Address</label>
+              <input type="email" id="newEmail" placeholder="candidate@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="newNotes">Candidate Notes (Optional)</label>
+              <input type="text" id="newNotes" placeholder="e.g. John Doe - Senior Surveyor">
+            </div>
+            <button type="submit" class="btn btn-green">Authorize Email</button>
+          </form>
+        </div>
+
+        <!-- Bulk Add Emails -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">📋 Bulk Import Candidates</h3>
+          </div>
+          <form onsubmit="handleBulkAdd(event)">
+            <div class="form-group">
+              <label for="bulkEmails">Paste Emails (Newline, comma, or space separated)</label>
+              <textarea id="bulkEmails" placeholder="user1@company.com&#10;user2@company.com&#10;user3@company.com" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Multiple Candidates</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Allowed Emails Table -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title">👥 Authorized Candidate Directory</h3>
+          <div style="display: flex; gap: 8px;">
+            <button onclick="exportAllowlistCSV()" class="btn btn-ghost btn-sm">⬇ Export CSV</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Email Address</th>
+                <th>Access Status</th>
+                <th>Registration</th>
+                <th>Last Login</th>
+                <th>Notes</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="emailTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--text-muted);">Loading allowlist...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Security Settings -->
+      <div class="panel" style="margin-top: 28px; max-width: 500px;">
+        <div class="panel-header">
+          <h3 class="panel-title">🛡️ Change Administrator Password</h3>
+        </div>
+        <form onsubmit="handleChangeAdminPw(event)">
+          <div class="form-group">
+            <label for="currPw">Current Master Password</label>
+            <input type="password" id="currPw" required>
+          </div>
+          <div class="form-group">
+            <label for="newPw">New Master Password</label>
+            <input type="password" id="newPw" minlength="6" required>
+          </div>
+          <button type="submit" class="btn btn-ghost">Update Admin Password</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let emailsData = [];
+
+    function showDashAlert(msg, type = 'success') {
+      const el = document.getElementById('dashAlert');
+      el.className = 'alert alert-' + type;
+      el.innerHTML = msg;
+      el.style.display = 'block';
+      setTimeout(() => { el.style.display = 'none'; }, 4000);
+    }
+
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/admin/me');
+        const data = await res.json();
+        if (data.authenticated) {
+          document.getElementById('adminLoginScreen').style.display = 'none';
+          document.getElementById('adminDashboard').style.display = 'block';
+          loadEmails();
+        } else {
+          document.getElementById('adminLoginScreen').style.display = 'block';
+          document.getElementById('adminDashboard').style.display = 'none';
+        }
+      } catch (err) {
+        document.getElementById('adminLoginScreen').style.display = 'block';
+      }
+    }
+
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const password = document.getElementById('adminPw').value;
+      const alertEl = document.getElementById('loginAlert');
+      alertEl.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          alertEl.textContent = data.error || 'Incorrect password';
+          alertEl.style.display = 'block';
+          return;
+        }
+        checkAuth();
+      } catch (err) {
+        alertEl.textContent = 'Server connection error';
+        alertEl.style.display = 'block';
+      }
+    }
+
+    async function handleAdminLogout() {
+      await fetch('/api/admin/logout', { method: 'POST' });
+      checkAuth();
+    }
+
+    async function loadEmails() {
+      try {
+        const res = await fetch('/api/admin/emails');
+        const data = await res.json();
+        emailsData = data.emails || [];
+        renderEmails();
+      } catch (err) {
+        console.error('Failed to load emails:', err);
+      }
+    }
+
+    function renderEmails() {
+      const tbody = document.getElementById('emailTableBody');
+      const totalAllowed = emailsData.filter(e => e.active).length;
+      const registered = emailsData.filter(e => e.isRegistered).length;
+      const pending = totalAllowed - registered;
+
+      document.getElementById('statTotalAllowed').textContent = totalAllowed;
+      document.getElementById('statRegistered').textContent = registered;
+      document.getElementById('statPending').textContent = Math.max(0, pending);
+
+      if (emailsData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 32px;">No email addresses authorized yet. Add your first candidate above!</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = emailsData.map(item => {
+        const statusBadge = item.active 
+          ? `<span class="badge-status badge-active">● Permitted</span>`
+          : `<span class="badge-status badge-revoked">✕ Revoked</span>`;
+
+        const regBadge = item.isRegistered
+          ? `<span class="badge-status badge-registered">✓ Registered</span>`
+          : `<span class="badge-status badge-unregistered">○ Pending Setup</span>`;
+
+        const lastLogin = item.lastLoginAt ? new Date(item.lastLoginAt).toLocaleString('en-GB') : '—';
+
+        return `
+          <tr>
+            <td><strong style="color: #fff;">${escapeHtml(item.email)}</strong></td>
+            <td>${statusBadge}</td>
+            <td>${regBadge}</td>
+            <td style="font-family: 'DM Mono', monospace; font-size: 12px;">${lastLogin}</td>
+            <td style="color: var(--text-muted); font-size: 12px;">${escapeHtml(item.notes || '—')}</td>
+            <td style="text-align: right;">
+              <button onclick="toggleEmail('${escapeHtml(item.email)}', ${!item.active})" class="btn btn-ghost btn-sm" title="${item.active ? 'Revoke login access' : 'Reactivate access'}">
+                ${item.active ? 'Suspend' : 'Activate'}
+              </button>
+              <button onclick="deleteEmail('${escapeHtml(item.email)}')" class="btn btn-danger btn-sm" title="Remove candidate completely">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function handleAddSingle(e) {
+      e.preventDefault();
+      const email = document.getElementById('newEmail').value.trim();
+      const notes = document.getElementById('newNotes').value.trim();
+      try {
+        const res = await fetch('/api/admin/emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, notes })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showDashAlert(data.error || 'Failed to authorize email', 'danger');
+          return;
+        }
+        document.getElementById('newEmail').value = '';
+        document.getElementById('newNotes').value = '';
+        showDashAlert(`Authorized <strong>${escapeHtml(email)}</strong> successfully.`);
+        emailsData = data.emails;
+        renderEmails();
+      } catch (err) {
+        showDashAlert('Failed to connect to server', 'danger');
+      }
+    }
+
+    async function handleBulkAdd(e) {
+      e.preventDefault();
+      const text = document.getElementById('bulkEmails').value.trim();
+      try {
+        const res = await fetch('/api/admin/emails/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showDashAlert(data.error || 'Bulk add failed', 'danger');
+          return;
+        }
+        document.getElementById('bulkEmails').value = '';
+        showDashAlert(`Added <strong>${data.count}</strong> email address(es) to allowlist.`);
+        emailsData = data.emails;
+        renderEmails();
+      } catch (err) {
+        showDashAlert('Failed to connect to server', 'danger');
+      }
+    }
+
+    async function toggleEmail(email, active) {
+      try {
+        const res = await fetch(`/api/admin/emails/${encodeURIComponent(email)}/toggle`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ active })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          emailsData = data.emails;
+          renderEmails();
+          showDashAlert(`Updated access status for ${email}`);
+        }
+      } catch (err) {
+        showDashAlert('Failed to update status', 'danger');
+      }
+    }
+
+    async function deleteEmail(email) {
+      if (!confirm(`Are you sure you want to remove ${email} from the allowlist? They will no longer be able to log in.`)) {
+        return;
+      }
+      try {
+        const res = await fetch(`/api/admin/emails/${encodeURIComponent(email)}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (res.ok) {
+          emailsData = data.emails;
+          renderEmails();
+          showDashAlert(`Removed ${email}`);
+        }
+      } catch (err) {
+        showDashAlert('Failed to delete email', 'danger');
+      }
+    }
+
+    async function handleChangeAdminPw(e) {
+      e.preventDefault();
+      const currentPassword = document.getElementById('currPw').value;
+      const newPassword = document.getElementById('newPw').value;
+      try {
+        const res = await fetch('/api/admin/change-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showDashAlert(data.error || 'Password update failed', 'danger');
+          return;
+        }
+        document.getElementById('currPw').value = '';
+        document.getElementById('newPw').value = '';
+        showDashAlert('Administrator master password updated successfully!');
+      } catch (err) {
+        showDashAlert('Server connection error', 'danger');
+      }
+    }
+
+    function exportAllowlistCSV() {
+      const rows = [["Email", "Status", "Registered", "LastLogin", "Notes"]];
+      emailsData.forEach(e => {
+        rows.push([
+          e.email,
+          e.active ? "Permitted" : "Revoked",
+          e.isRegistered ? "Yes" : "No",
+          e.lastLoginAt || "",
+          (e.notes || "").replace(/"/g, '""')
+        ]);
+      });
+      const csv = rows.map(r => r.map(c => `"${c}"`).join(",")).join("\r\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "Charterly_Allowlist_" + new Date().toISOString().slice(0,10) + ".csv";
+      a.click();
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    checkAuth();
+  </script>
+</body>
+</html>

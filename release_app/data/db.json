@@ -1,0 +1,48 @@
+{
+  "admin": {
+    "salt": "a90a3b0dc78871afe27a3decc595272d",
+    "hash": "03095a04bde581f23f428eb8667f31fb381d210af01f965533a1edaf16ec635fad06034cfa2cd48748013000bd805c05d16f1ffdeabce59ef534e9a75361fbe0",
+    "updatedAt": "2026-09-15T12:08:29.285Z"
+  },
+  "allowedEmails": [
+    {
+      "email": "demo@charterly.com",
+      "addedAt": "2026-09-15T12:08:29.286Z",
+      "notes": "Demo preview user",
+      "active": true
+    },
+    {
+      "email": "pilot.user@company.com",
+      "addedAt": "2026-09-15T12:10:17.149Z",
+      "notes": "VIP candidate",
+      "active": false
+    },
+    {
+      "email": "new.pilot@survey.org",
+      "addedAt": "2026-09-15T12:11:46.814Z",
+      "notes": "Selected Pilot Candidate",
+      "active": true
+    }
+  ],
+  "users": {
+    "usr_48a5bff8c7c7ee6f": {
+      "id": "usr_48a5bff8c7c7ee6f",
+      "email": "pilot.user@company.com",
+      "salt": "002f01f038c98711fc03e83c533005e3",
+      "hash": "7655b90f42de46248fc5c17051c1f9fc8e9c9079317653bd5cfc1725f5134304fa86a5f37c1fdda900890a199e469b19254c19dd929a3cb13d4d46172aa2d1ce",
+      "createdAt": "2026-09-15T12:10:17.310Z",
+      "lastLoginAt": "2026-09-15T12:10:17.310Z",
+      "active": true
+    }
+  },
+  "userData": {
+    "usr_48a5bff8c7c7ee6f": {
+      "state": {
+        "step": 3,
+        "body": "CICES",
+        "testSaved": true
+      },
+      "updatedAt": "2026-09-15T12:10:17.329Z"
+    }
+  }
+}
