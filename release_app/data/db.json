@@ -15,13 +15,19 @@
       "email": "pilot.user@company.com",
       "addedAt": "2026-09-15T12:10:17.149Z",
       "notes": "VIP candidate",
-      "active": false
+      "active": true
     },
     {
       "email": "new.pilot@survey.org",
       "addedAt": "2026-09-15T12:11:46.814Z",
       "notes": "Selected Pilot Candidate",
       "active": true
+    },
+    {
+      "email": "pilot_1789478570653@company.com",
+      "addedAt": "2026-09-15T13:22:50.657Z",
+      "notes": "VIP candidate",
+      "active": false
     }
   ],
   "users": {
@@ -33,6 +39,15 @@
       "createdAt": "2026-09-15T12:10:17.310Z",
       "lastLoginAt": "2026-09-15T12:10:17.310Z",
       "active": true
+    },
+    "usr_ff064cdea7e078b8": {
+      "id": "usr_ff064cdea7e078b8",
+      "email": "pilot_1789478570653@company.com",
+      "salt": "470d07967b8f47180dc1670de087d293",
+      "hash": "3889abf4604fa9c77d93a5adb8839ccde6ec976bfd59f4ee4cba2d25a1a4a831364d480b8d06bce8aa523537743501b20205ed3043050683e30559e6c241a63c",
+      "createdAt": "2026-09-15T13:22:50.876Z",
+      "lastLoginAt": "2026-09-15T13:22:50.876Z",
+      "active": true
     }
   },
   "userData": {
@@ -43,6 +58,14 @@
         "testSaved": true
       },
       "updatedAt": "2026-09-15T12:10:17.329Z"
+    },
+    "usr_ff064cdea7e078b8": {
+      "state": {
+        "step": 3,
+        "body": "CICES",
+        "testSaved": true
+      },
+      "updatedAt": "2026-09-15T13:22:50.902Z"
     }
   }
 }

@@ -45,6 +45,8 @@ async function runTests() {
   const adminCookie = t2.headers['set-cookie']?.[0]?.split(';')[0];
   console.log('2. Admin login successful:', t2.status === 200 && t2.data?.success === true);
 
+  const testEmail = 'pilot_' + Date.now() + '@company.com';
+
   // 3. Add allowed email as admin
   const t3 = await request({
     hostname: 'localhost',
@@ -52,7 +54,7 @@ async function runTests() {
     path: '/api/admin/emails',
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Cookie': adminCookie }
-  }, { email: 'pilot.user@company.com', notes: 'VIP candidate' });
+  }, { email: testEmail, notes: 'VIP candidate' });
   console.log('3. Candidate authorized by admin:', t3.status === 200, '| Total emails:', t3.data?.emails?.length);
 
   // 4. Check authorized email (should return allowed: true, isRegistered: false)
@@ -62,7 +64,7 @@ async function runTests() {
     path: '/api/auth/check-email',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
-  }, { email: 'pilot.user@company.com' });
+  }, { email: testEmail });
   console.log('4. Authorized email permitted:', t4.data?.allowed === true, '| Registered:', t4.data?.isRegistered);
 
   // 5. Register user with new password
@@ -72,7 +74,7 @@ async function runTests() {
     path: '/api/auth/register',
     method: 'POST',
     headers: { 'Content-Type': 'application/json' }
-  }, { email: 'pilot.user@company.com', password: 'mySecurePassword123' });
+  }, { email: testEmail, password: 'mySecurePassword123' });
   const userCookie = t5.headers['set-cookie']?.[0]?.split(';')[0];
   console.log('5. Account registered & session issued:', t5.status === 200, '| User:', t5.data?.user?.email);
 
@@ -110,7 +112,7 @@ async function runTests() {
   const t9 = await request({
     hostname: 'localhost',
     port: 3000,
-    path: `/api/admin/emails/${encodeURIComponent('pilot.user@company.com')}/toggle`,
+    path: `/api/admin/emails/${encodeURIComponent(testEmail)}/toggle`,
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', 'Cookie': adminCookie }
   }, { active: false });

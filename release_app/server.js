@@ -41,14 +41,15 @@ app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 app.use(cookieParser(SESSION_SECRET));
 
 // Auth middlewares
-function requireUser(req, res, next) {
+async function requireUser(req, res, next) {
   const token = req.signedCookies?.user_token || req.headers.authorization?.replace('Bearer ', '');
   const sess = getSession(token);
   if (!sess || !sess.userId) {
     return res.status(401).json({ error: 'Unauthorized. Please log in.' });
   }
   // Check if email still allowed
-  if (!store.isEmailAllowed(sess.email)) {
+  const allowed = await store.isEmailAllowed(sess.email);
+  if (!allowed) {
     sessions.delete(token);
     res.clearCookie('user_token');
     return res.status(403).json({ error: 'Access has been revoked by the administrator.' });
@@ -71,20 +72,20 @@ function requireAdmin(req, res, next) {
 // ─────────────────────────────────────────────
 
 // Check email eligibility before password input (helpful UX)
-app.post('/api/auth/check-email', (req, res) => {
+app.post('/api/auth/check-email', async (req, res) => {
   const { email } = req.body;
   const norm = store.normalizeEmail(email);
   if (!norm || !norm.includes('@')) {
     return res.status(400).json({ error: 'Please enter a valid email address.' });
   }
-  const isAllowed = store.isEmailAllowed(norm);
+  const isAllowed = await store.isEmailAllowed(norm);
   if (!isAllowed) {
     return res.status(403).json({
       allowed: false,
       error: 'This email is not on the private release list. Please request access from the administrator.'
     });
   }
-  const allAllowed = store.getAllowedEmails();
+  const allAllowed = await store.getAllowedEmails();
   const info = allAllowed.find(e => e.email === norm);
   res.json({
     allowed: true,
@@ -93,10 +94,10 @@ app.post('/api/auth/check-email', (req, res) => {
 });
 
 // Register account (first-time password creation)
-app.post('/api/auth/register', (req, res) => {
+app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = store.registerUser(email, password);
+    const user = await store.registerUser(email, password);
     const token = createSession({ userId: user.id, email: user.email });
     res.cookie('user_token', token, {
       httpOnly: true,
@@ -111,10 +112,10 @@ app.post('/api/auth/register', (req, res) => {
 });
 
 // Login
-app.post('/api/auth/login', (req, res) => {
+app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = store.authenticateUser(email, password);
+    const user = await store.authenticateUser(email, password);
     const token = createSession({ userId: user.id, email: user.email });
     res.cookie('user_token', token, {
       httpOnly: true,
@@ -129,10 +130,10 @@ app.post('/api/auth/login', (req, res) => {
 });
 
 // Current session
-app.get('/api/auth/me', (req, res) => {
+app.get('/api/auth/me', async (req, res) => {
   const token = req.signedCookies?.user_token || req.headers.authorization?.replace('Bearer ', '');
   const sess = getSession(token);
-  if (!sess || !sess.userId || !store.isEmailAllowed(sess.email)) {
+  if (!sess || !sess.userId || !(await store.isEmailAllowed(sess.email))) {
     return res.json({ authenticated: false });
   }
   res.json({ authenticated: true, user: { id: sess.userId, email: sess.email } });
@@ -150,15 +151,15 @@ app.post('/api/auth/logout', (req, res) => {
 // User State Sync Endpoints (Auto-save)
 // ─────────────────────────────────────────────
 
-app.get('/api/user/state', requireUser, (req, res) => {
-  const state = store.getUserState(req.user.userId);
+app.get('/api/user/state', requireUser, async (req, res) => {
+  const state = await store.getUserState(req.user.userId);
   res.json({ state });
 });
 
-app.post('/api/user/state', requireUser, (req, res) => {
+app.post('/api/user/state', requireUser, async (req, res) => {
   const { state } = req.body;
   if (state && typeof state === 'object') {
-    store.saveUserState(req.user.userId, state);
+    await store.saveUserState(req.user.userId, state);
   }
   res.json({ success: true });
 });
@@ -168,9 +169,10 @@ app.post('/api/user/state', requireUser, (req, res) => {
 // ─────────────────────────────────────────────
 
 // Admin login
-app.post('/api/admin/login', (req, res) => {
+app.post('/api/admin/login', async (req, res) => {
   const { password } = req.body;
-  if (!password || !store.verifyAdminPassword(password)) {
+  const verified = await store.verifyAdminPassword(password);
+  if (!password || !verified) {
     return res.status(401).json({ error: 'Invalid Administrator password.' });
   }
   const token = createSession({ isAdmin: true }, 24 * 60 * 60 * 1000);
@@ -199,28 +201,30 @@ app.get('/api/admin/me', (req, res) => {
 });
 
 // Change admin password
-app.post('/api/admin/change-password', requireAdmin, (req, res) => {
+app.post('/api/admin/change-password', requireAdmin, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  if (!store.verifyAdminPassword(currentPassword)) {
+  const verified = await store.verifyAdminPassword(currentPassword);
+  if (!verified) {
     return res.status(400).json({ error: 'Current password incorrect' });
   }
   if (!newPassword || newPassword.length < 6) {
     return res.status(400).json({ error: 'New password must be at least 6 characters' });
   }
-  store.setAdminPassword(newPassword);
+  await store.setAdminPassword(newPassword);
   res.json({ success: true, message: 'Password updated successfully' });
 });
 
 // Get all allowed emails & registered users
-app.get('/api/admin/emails', requireAdmin, (req, res) => {
-  res.json({ emails: store.getAllowedEmails() });
+app.get('/api/admin/emails', requireAdmin, async (req, res) => {
+  const emails = await store.getAllowedEmails();
+  res.json({ emails });
 });
 
 // Add single email
-app.post('/api/admin/emails', requireAdmin, (req, res) => {
+app.post('/api/admin/emails', requireAdmin, async (req, res) => {
   try {
     const { email, notes } = req.body;
-    const emails = store.addAllowedEmail(email, notes);
+    const emails = await store.addAllowedEmail(email, notes);
     res.json({ success: true, emails });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -228,30 +232,31 @@ app.post('/api/admin/emails', requireAdmin, (req, res) => {
 });
 
 // Bulk add emails
-app.post('/api/admin/emails/bulk', requireAdmin, (req, res) => {
+app.post('/api/admin/emails/bulk', requireAdmin, async (req, res) => {
   try {
     const { text, notes } = req.body;
     if (!text) return res.status(400).json({ error: 'No emails provided' });
     const rawList = text.split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean);
-    const added = store.addAllowedEmailsBulk(rawList, notes);
-    res.json({ success: true, count: added.length, emails: store.getAllowedEmails() });
+    const added = await store.addAllowedEmailsBulk(rawList, notes);
+    const emails = await store.getAllowedEmails();
+    res.json({ success: true, count: added.length, emails });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
 // Toggle email active status
-app.patch('/api/admin/emails/:email/toggle', requireAdmin, (req, res) => {
+app.patch('/api/admin/emails/:email/toggle', requireAdmin, async (req, res) => {
   const { email } = req.params;
   const { active } = req.body;
-  const emails = store.toggleAllowedEmail(email, active);
+  const emails = await store.toggleAllowedEmail(email, active);
   res.json({ success: true, emails });
 });
 
 // Delete email from allowlist
-app.delete('/api/admin/emails/:email', requireAdmin, (req, res) => {
+app.delete('/api/admin/emails/:email', requireAdmin, async (req, res) => {
   const { email } = req.params;
-  const emails = store.removeAllowedEmail(email);
+  const emails = await store.removeAllowedEmail(email);
   res.json({ success: true, emails });
 });
 
