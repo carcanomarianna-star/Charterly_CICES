@@ -1,7 +1,9 @@
 /**
  * Database layer for Charterly Release
- * - Uses Netlify Blobs for persistent cloud storage when hosted on Netlify
+ * - Supports Netlify Blobs for persistent cloud storage when hosted on Netlify
+ * - Supports ADMIN_PASSWORD and ALLOWED_EMAILS environment variables (never wiped on redeploy)
  * - Falls back to atomic local db.json when running on localhost
+ * - Supports full database backup export and restore via JSON
  */
 const fs = require('fs');
 const path = require('path');
@@ -15,23 +17,6 @@ try {
 const DB_FILE = path.join(__dirname, 'data', 'db.json');
 const BLOB_STORE_NAME = 'charterly_data';
 const BLOB_KEY = 'db_state';
-
-// Default admin credentials: Admin PIN / password is 'admin123' upon first boot
-const DEFAULT_SALT = crypto.randomBytes(16).toString('hex');
-const DEFAULT_HASH = hashPassword('admin123', DEFAULT_SALT);
-
-const initialData = {
-  admin: {
-    salt: DEFAULT_SALT,
-    hash: DEFAULT_HASH,
-    updatedAt: new Date().toISOString()
-  },
-  allowedEmails: [
-    { email: 'demo@charterly.com', addedAt: new Date().toISOString(), notes: 'Demo preview user', active: true }
-  ],
-  users: {},
-  userData: {}
-};
 
 function hashPassword(password, salt) {
   return crypto.scryptSync(password, salt, 64).toString('hex');
@@ -48,6 +33,41 @@ class Store {
     this.init();
   }
 
+  // Generate initial database structure
+  getInitialData() {
+    // Default admin password: check environment variable ADMIN_PASSWORD first, fallback to 'admin123'
+    const adminPw = process.env.ADMIN_PASSWORD || 'admin123';
+    const salt = crypto.randomBytes(16).toString('hex');
+    const hash = hashPassword(adminPw, salt);
+
+    // Initial allowed emails from env ALLOWED_EMAILS (comma or space separated)
+    const allowed = [];
+    if (process.env.ALLOWED_EMAILS) {
+      const list = process.env.ALLOWED_EMAILS.split(/[\r\n,;]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+      list.forEach(em => {
+        if (em.includes('@') && !allowed.find(a => a.email === em)) {
+          allowed.push({ email: em, addedAt: new Date().toISOString(), notes: 'Configured via Environment Variable', active: true });
+        }
+      });
+    }
+
+    // Default demo email if none provided
+    if (allowed.length === 0) {
+      allowed.push({ email: 'demo@charterly.com', addedAt: new Date().toISOString(), notes: 'Demo preview candidate', active: true });
+    }
+
+    return {
+      admin: {
+        salt,
+        hash,
+        updatedAt: new Date().toISOString()
+      },
+      allowedEmails: allowed,
+      users: {},
+      userData: {}
+    };
+  }
+
   init() {
     try {
       if (!fs.existsSync(path.dirname(DB_FILE))) {
@@ -56,24 +76,58 @@ class Store {
       if (fs.existsSync(DB_FILE)) {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         this._data = JSON.parse(raw);
-        if (!this._data.admin) this._data.admin = initialData.admin;
+        if (!this._data.admin) this._data.admin = this.getInitialData().admin;
         if (!this._data.allowedEmails) this._data.allowedEmails = [];
         if (!this._data.users) this._data.users = {};
         if (!this._data.userData) this._data.userData = {};
       } else {
-        this._data = JSON.parse(JSON.stringify(initialData));
+        this._data = this.getInitialData();
         this.save();
       }
+      this.ensureEnvVariablesMerged();
     } catch (err) {
-      console.error('Error initializing local db:', err);
-      this._data = JSON.parse(JSON.stringify(initialData));
+      console.error('Error initializing db:', err);
+      this._data = this.getInitialData();
     }
   }
 
-  // Netlify Blobs helper
+  // Ensure any emails specified in ALLOWED_EMAILS or ADMIN_PASSWORD env vars are always active
+  ensureEnvVariablesMerged() {
+    if (!this._data) return;
+
+    // Merge ALLOWED_EMAILS env if defined
+    if (process.env.ALLOWED_EMAILS) {
+      const list = process.env.ALLOWED_EMAILS.split(/[\r\n,;]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
+      list.forEach(em => {
+        if (em.includes('@')) {
+          let existing = this._data.allowedEmails.find(a => a.email === em);
+          if (existing) {
+            existing.active = true;
+          } else {
+            this._data.allowedEmails.push({
+              email: em,
+              addedAt: new Date().toISOString(),
+              notes: 'Configured via Environment Variable',
+              active: true
+            });
+          }
+        }
+      });
+    }
+  }
+
+  // Netlify Blobs helper with automatic context or manual credentials support
   getBlobStore() {
     if (!getStoreFn) return null;
     try {
+      // Support manual configuration via SITE_ID and NETLIFY_TOKEN if automatic context isn't set
+      if (process.env.SITE_ID && process.env.NETLIFY_TOKEN) {
+        return getStoreFn({
+          name: BLOB_STORE_NAME,
+          siteID: process.env.SITE_ID,
+          token: process.env.NETLIFY_TOKEN
+        });
+      }
       return getStoreFn(BLOB_STORE_NAME);
     } catch (e) {
       return null;
@@ -88,13 +142,13 @@ class Store {
       const cloudJson = await blobStore.get(BLOB_KEY, { type: 'json' });
       if (cloudJson && typeof cloudJson === 'object' && cloudJson.admin) {
         this._data = cloudJson;
-        // Also update local file cache
+        this.ensureEnvVariablesMerged();
         try {
           fs.writeFileSync(DB_FILE, JSON.stringify(this._data, null, 2), 'utf-8');
         } catch(e) {}
       }
     } catch (err) {
-      // Blobs not configured or running in non-Netlify environment
+      // Blobs not provisioned or running offline
     }
   }
 
@@ -114,9 +168,52 @@ class Store {
     }
   }
 
+  // Full backup export
+  async exportBackup() {
+    await this.syncFromCloud();
+    return {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      data: {
+        admin: this._data.admin,
+        allowedEmails: this._data.allowedEmails,
+        users: this._data.users,
+        userData: this._data.userData
+      }
+    };
+  }
+
+  // Full backup restore
+  async importBackup(backupJson) {
+    if (!backupJson || typeof backupJson !== 'object') {
+      throw new Error('Invalid backup file format.');
+    }
+    const incoming = backupJson.data || backupJson;
+    if (!incoming.admin || !Array.isArray(incoming.allowedEmails)) {
+      throw new Error('Backup file missing essential admin or allowlist data.');
+    }
+
+    this._data = {
+      admin: incoming.admin,
+      allowedEmails: incoming.allowedEmails,
+      users: incoming.users || {},
+      userData: incoming.userData || {}
+    };
+
+    this.ensureEnvVariablesMerged();
+    await this.save();
+    return true;
+  }
+
   // Admin methods
   async verifyAdminPassword(password) {
     await this.syncFromCloud();
+
+    // Check if ADMIN_PASSWORD environment variable overrides or matches directly
+    if (process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD) {
+      return true;
+    }
+
     return verifyPassword(password, this._data.admin.salt, this._data.admin.hash);
   }
 

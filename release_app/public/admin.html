@@ -468,22 +468,41 @@
         </div>
       </div>
 
-      <!-- Admin Security Settings -->
-      <div class="panel" style="margin-top: 28px; max-width: 500px;">
-        <div class="panel-header">
-          <h3 class="panel-title">🛡️ Change Administrator Password</h3>
+      <div class="grid-2" style="margin-top: 28px;">
+        <!-- Admin Security Settings -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">🛡️ Change Administrator Password</h3>
+          </div>
+          <form onsubmit="handleChangeAdminPw(event)">
+            <div class="form-group">
+              <label for="currPw">Current Master Password</label>
+              <input type="password" id="currPw" required>
+            </div>
+            <div class="form-group">
+              <label for="newPw">New Master Password</label>
+              <input type="password" id="newPw" minlength="6" required>
+            </div>
+            <button type="submit" class="btn btn-ghost">Update Admin Password</button>
+          </form>
         </div>
-        <form onsubmit="handleChangeAdminPw(event)">
-          <div class="form-group">
-            <label for="currPw">Current Master Password</label>
-            <input type="password" id="currPw" required>
+
+        <!-- Database Backup & Restore -->
+        <div class="panel">
+          <div class="panel-header">
+            <h3 class="panel-title">💾 Backup &amp; Disaster Recovery</h3>
           </div>
-          <div class="form-group">
-            <label for="newPw">New Master Password</label>
-            <input type="password" id="newPw" minlength="6" required>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5;">
+            Download a full snapshot of your allowed candidates, registered accounts, and master settings, or restore from a previously saved backup file.
+          </p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="downloadJsonBackup()" class="btn btn-primary btn-sm">⬇ Export Full Backup (.json)</button>
+            <label class="btn btn-ghost btn-sm" style="margin: 0; cursor: pointer;">
+              ⬆ Import Backup (.json)
+              <input type="file" id="backupFileInput" accept=".json" onchange="uploadJsonBackup(event)" style="display: none;">
+            </label>
           </div>
-          <button type="submit" class="btn btn-ghost">Update Admin Password</button>
-        </form>
+        </div>
       </div>
 
     </div>
@@ -729,6 +748,57 @@
       a.href = URL.createObjectURL(blob);
       a.download = "Charterly_Allowlist_" + new Date().toISOString().slice(0,10) + ".csv";
       a.click();
+    }
+
+    async function downloadJsonBackup() {
+      try {
+        const res = await fetch('/api/admin/backup/export');
+        if (!res.ok) {
+          showDashAlert('Failed to export backup', 'danger');
+          return;
+        }
+        const data = await res.json();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "Charterly_Master_Backup_" + new Date().toISOString().slice(0,10) + ".json";
+        a.click();
+        showDashAlert('Full database backup downloaded successfully!');
+      } catch (err) {
+        showDashAlert('Failed to download backup: ' + err.message, 'danger');
+      }
+    }
+
+    function uploadJsonBackup(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!confirm(`Import backup from ${file.name}? This will restore all candidates, permissions, and passwords from this backup.`)) {
+            event.target.value = '';
+            return;
+          }
+          const res = await fetch('/api/admin/backup/import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ backup: parsed })
+          });
+          const result = await res.json();
+          if (!res.ok) {
+            showDashAlert(result.error || 'Import failed', 'danger');
+          } else {
+            showDashAlert('Backup restored successfully!');
+            loadEmails();
+          }
+        } catch (err) {
+          showDashAlert('Invalid JSON backup file: ' + err.message, 'danger');
+        } finally {
+          event.target.value = '';
+        }
+      };
+      reader.readAsText(file);
     }
 
     function escapeHtml(str) {

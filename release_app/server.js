@@ -13,7 +13,7 @@ const store = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const SESSION_SECRET = process.env.SESSION_SECRET || 'charterly-sec-' + crypto.randomBytes(16).toString('hex');
+const SESSION_SECRET = process.env.SESSION_SECRET || 'charterly-production-session-secret-cices-2025';
 
 // In-memory token store: token -> { userId, email, isAdmin, expiresAt }
 const sessions = new Map();
@@ -258,6 +258,30 @@ app.delete('/api/admin/emails/:email', requireAdmin, async (req, res) => {
   const { email } = req.params;
   const emails = await store.removeAllowedEmail(email);
   res.json({ success: true, emails });
+});
+
+// Full database backup export
+app.get('/api/admin/backup/export', requireAdmin, async (req, res) => {
+  try {
+    const backup = await store.exportBackup();
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="charterly_backup_${new Date().toISOString().slice(0,10)}.json"`);
+    res.json(backup);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Full database backup restore / import
+app.post('/api/admin/backup/import', requireAdmin, async (req, res) => {
+  try {
+    const { backup } = req.body;
+    await store.importBackup(backup);
+    const emails = await store.getAllowedEmails();
+    res.json({ success: true, message: 'Database backup imported successfully', emails });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // ─────────────────────────────────────────────
