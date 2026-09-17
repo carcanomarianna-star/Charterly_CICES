@@ -288,21 +288,21 @@ app.post('/api/admin/backup/import', requireAdmin, async (req, res) => {
 // Page Routing
 // ─────────────────────────────────────────────
 
-// Main App (requires user authentication)
+// Main App
 app.get('/', (req, res) => {
-  const token = req.signedCookies?.user_token;
-  const sess = getSession(token);
-  if (!sess || !sess.userId || !store.isEmailAllowed(sess.email)) {
-    return res.redirect('/login');
-  }
   const appPath = path.resolve(__dirname, 'public', 'index.html');
   res.sendFile(appPath);
 });
 
-// Login & Registration Page
-app.get('/login', (req, res) => {
-  const loginPath = path.resolve(__dirname, 'public', 'login.html');
-  res.sendFile(loginPath);
+// Senior Applicant Portal
+app.get('/senior', (req, res) => {
+  const seniorPath = path.resolve(__dirname, 'public', 'senior.html');
+  res.sendFile(seniorPath);
+});
+
+// Redirect legacy login endpoints to main portal
+app.get(['/login', '/login.html'], (req, res) => {
+  res.redirect('/');
 });
 
 // Admin Manager Page

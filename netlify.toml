@@ -2,9 +2,19 @@
   publish = "public"
 
 [[redirects]]
-  from = "/login"
-  to = "/login.html"
+  from = "/senior"
+  to = "/senior.html"
   status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/"
+  status = 301
+
+[[redirects]]
+  from = "/login.html"
+  to = "/"
+  status = 301
 
 [[redirects]]
   from = "/*"

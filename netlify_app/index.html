@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charterly — Candidate Portal (Netlify Identity)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Netlify Identity Widget -->
+  <script type="text/javascript" src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="app-header">
+    <div class="header-brand">
+      <div class="brand-logo-text">
+        <span class="logo-title">Charte<span class="logo-accent">R</span>ly</span>
+        <span class="logo-tagline">Navigate your path to Chartership. Simply.</span>
+      </div>
+      <span class="badge-tag">Invite Only</span>
+    </div>
+
+    <div class="header-auth">
+      <!-- User profile chip (hidden when logged out) -->
+      <div id="userProfileChip" class="user-chip hidden">
+        <span class="user-avatar-icon">👤</span>
+        <span id="userEmailLabel" class="user-email"></span>
+      </div>
+
+      <!-- Login / Logout Actions -->
+      <button id="loginBtn" class="btn btn-primary" onclick="openLoginModal()">
+        <span>Sign In / Activate</span>
+      </button>
+      <button id="logoutBtn" class="btn btn-ghost hidden" onclick="handleLogout()">
+        <span>Sign Out</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+
+    <!-- Public / Logged Out View -->
+    <section id="publicView" class="hero-section">
+      <div class="hero-card">
+        <div class="hero-badge">🔒 Restricted Candidate Release</div>
+        <h1 class="hero-title">Welcome to Charterly</h1>
+        <p class="hero-desc">
+          Charterly provides an integrated portfolio workspace for civil engineering surveyors. Access to this platform is by invitation only. If you have received an invite email, click below to sign in or complete account activation.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-hero" onclick="openLoginModal()">
+            <span>Access Candidate Portal</span>
+            <span class="arrow-icon">→</span>
+          </button>
+        </div>
+        <div class="hero-features">
+          <div class="feature-item">
+            <span class="feat-icon">📑</span>
+            <div>
+              <strong>Competency Logging</strong>
+              <p>General, Core, and Specialist frameworks</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feat-icon">✍️</span>
+            <div>
+              <strong>Report Editor</strong>
+              <p>Experience reports with word tracking</p>
+            </div>
+          </div>
+          <div class="feature-item">
+            <span class="feat-icon">💾</span>
+            <div>
+              <strong>Portable State</strong>
+              <p>Self-contained JSON portfolio import/export</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Protected Dashboard (Revealed upon Netlify Identity Login) -->
+    <section id="protectedDashboard" class="dashboard-section hidden">
+      <div class="dashboard-header">
+        <div>
+          <span class="dash-subtitle">Candidate Portfolio Workspace</span>
+          <h2 class="dash-title">Welcome back, <span id="dashUserEmail">Candidate</span></h2>
+        </div>
+        <div class="dash-meta">
+          <span class="status-indicator">● Active Session</span>
+        </div>
+      </div>
+
+      <!-- Workspace Cards -->
+      <div class="dashboard-grid">
+        
+        <div class="dash-card">
+          <div class="card-top">
+            <span class="card-icon">🎯</span>
+            <span class="card-badge">Step 1</span>
+          </div>
+          <h3 class="card-title">Pathway & Framework</h3>
+          <p class="card-desc">Review your selected CICES or RICS pathway, sector specialization, and competency tier recommendations.</p>
+          <div class="card-footer">
+            <button class="btn btn-outline" onclick="alert('Navigating to Pathway Selection...')">View Pathway</button>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-top">
+            <span class="card-icon">📋</span>
+            <span class="card-badge">Step 2</span>
+          </div>
+          <h3 class="card-title">Competency Statements</h3>
+          <p class="card-desc">Track and draft level 1, 2, and 3 competency responses with live word count guidance and real-time rubrics.</p>
+          <div class="card-footer">
+            <button class="btn btn-primary" onclick="alert('Opening Competency Workspace...')">Open Competencies</button>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-top">
+            <span class="card-icon">📘</span>
+            <span class="card-badge">Step 3</span>
+          </div>
+          <h3 class="card-title">Experience Report</h3>
+          <p class="card-desc">Structured 1,500–2,000 word representative project writeup with appendix figures and cross-referencing.</p>
+          <div class="card-footer">
+            <button class="btn btn-outline" onclick="alert('Opening Experience Report Editor...')">Edit Report</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Session Info Box -->
+      <div class="info-box">
+        <div class="info-content">
+          <span class="info-icon">ℹ️</span>
+          <div>
+            <strong>Identity Managed Session</strong>
+            <p>Your access is authenticated directly via Netlify Identity. All portfolio drafting data remains private to your browser storage and exportable JSON files.</p>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="handleLogout()">Sign Out of Workspace</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
