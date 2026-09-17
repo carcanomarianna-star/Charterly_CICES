@@ -2519,6 +2519,8 @@ let S = {
   erChapters:  [],  // [{id, title, text}]
   erAppendices:  [],
   detailedCV:    "",
+  cvPersonal:    { fullName: "", dob: "", address: "", phone: "", email: "", cicesId: "" },
+  cvEducation:   [],
   activeComp:    null,
   activeSection: "mandatory",
   r2ActiveGroup: null,  // null = all groups; "mandatory"|"core"|"specialism"|"optional"|"technical"
@@ -4217,6 +4219,82 @@ function syncRefButtons(prefix, text) {
   });
 }
 
+let EDU_FORM_OPEN = false;
+let EDU_EDITING = null;
+
+function renderEduForm() {
+  saveState();
+  if (typeof rCVCices === "function") {
+    const C = document.getElementById("cices-content");
+    if (C) { C.innerHTML = ""; rCVCices(C); }
+  }
+}
+
+function eduNewEntry() {
+  EDU_EDITING = null;
+  EDU_FORM_OPEN = true;
+  renderEduForm();
+}
+
+function eduEdit(id) {
+  EDU_EDITING = id;
+  EDU_FORM_OPEN = true;
+  renderEduForm();
+}
+
+function eduCancelForm() {
+  EDU_FORM_OPEN = false;
+  EDU_EDITING = null;
+  renderEduForm();
+}
+
+function eduSaveForm() {
+  const degree = (document.getElementById("edu_degree")?.value || "").trim();
+  const institution = (document.getElementById("edu_institution")?.value || "").trim();
+  const year = (document.getElementById("edu_year")?.value || "").trim();
+  const type = (document.getElementById("edu_type")?.value || "").trim();
+
+  if (!degree || !institution) {
+    alert("Please enter both the Qualification / Degree and Institution.");
+    return;
+  }
+
+  if (!S.cvEducation) S.cvEducation = [];
+
+  if (EDU_EDITING) {
+    const idx = S.cvEducation.findIndex(e => e.id === EDU_EDITING);
+    if (idx !== -1) {
+      S.cvEducation[idx] = { ...S.cvEducation[idx], degree, institution, year, type };
+    }
+  } else {
+    S.cvEducation.push({
+      id: "edu_" + Date.now(),
+      degree,
+      institution,
+      year,
+      type
+    });
+  }
+
+  EDU_FORM_OPEN = false;
+  EDU_EDITING = null;
+  saveState();
+  renderEduForm();
+}
+
+function eduDelete(id) {
+  if (!confirm("Are you sure you want to delete this qualification record?")) return;
+  S.cvEducation = (S.cvEducation || []).filter(e => e.id !== id);
+  saveState();
+  renderEduForm();
+}
+
+function updCvPersonal(field, val) {
+  if (!S.cvPersonal) S.cvPersonal = { fullName: "", dob: "", address: "", phone: "", email: "", cicesId: "" };
+  S.cvPersonal[field] = val;
+  saveState();
+}
+
 function updDCV(val) {
   S.detailedCV = val;
   saveState();
@@ -4260,8 +4338,6 @@ function rCVCices(C) {
   const sp        = S.sel.cicesSpecialism;
   const dcvText   = S.detailedCV || "";
   const dcvN      = cw(dcvText);
-  const dcvPct    = Math.min((dcvN / 2000) * 100, 100);
-  const dcvCol    = dcvN > 2000 ? "#c0392b" : dcvN >= 1500 ? "#2e7d52" : "#b5651d";
   const cpdN      = (S.cpd||[]).length;
   const erWords   = cw(S.experienceReport||"");
   const cicesP    = cicesCompProgress(allComps);
@@ -4272,6 +4348,10 @@ function rCVCices(C) {
   const coreLabel = (sector && activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].label : null;
   const specComps = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].comps : [];
   const specLabel = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].label : "Specialist";
+
+  if (!S.cvPersonal) S.cvPersonal = { fullName: "", dob: "", address: "", phone: "", email: "", cicesId: "" };
+  if (!S.cvEducation) S.cvEducation = [];
+  const pers = S.cvPersonal;
 
   // ── 3-column layout ────────────────────────────────────────────────────
   const layout = document.createElement("div");
@@ -4344,15 +4424,128 @@ function rCVCices(C) {
   const titleEl = document.createElement("div");
   titleEl.innerHTML = `
     <h1 class="page-title" style="margin-bottom:4px;color:var(--cices)">Detailed CV</h1>
-    <p class="sub" style="margin-bottom:14px">1,500–2,000 words. A whole-career narrative covering education, qualifications, all employment periods, professional memberships, and key skills — with competency cross-references throughout your employment history.</p>
+    <p class="sub" style="margin-bottom:14px">Structured in 3 mandatory sections: Personal Details, Education & Qualifications, and Employment History (with competency cross-references).</p>
     <div class="cs-warn-box" style="border-left-color:#84B399">
-      📎 Use the <strong>left sidebar</strong> to insert competency references at your cursor — e.g.
+      📎 Use the <strong>left sidebar</strong> to insert competency references into role descriptions — e.g.
       <code style="font-size:11px;background:var(--cices-bg);padding:1px 5px;border-radius:3px;color:var(--cices)">(GEN05, GEN06 &amp; GEN09)</code>.
       Include <strong>all employment periods</strong>, even non-survey roles and career gaps.
     </div>`;
   main.appendChild(titleEl);
 
-  // ── Employment form (if open) — identical to RICS form, CICES accent ──────
+  // ── SECTION 1: PERSONAL DETAILS ──────────────────────────────────────────
+  const sec1 = document.createElement("div");
+  sec1.style.cssText = "margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)";
+  sec1.innerHTML = `
+    <div style="background:var(--cices,#2E4D3B);color:#fff;padding:12px 18px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px">
+      <span>Section 1: Personal Details</span>
+    </div>
+    <div style="padding:16px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Full Name</label>
+          <input type="text" class="field-input" value="${esc(pers.fullName||"")}" placeholder="e.g. John Doe" onchange="updCvPersonal('fullName', this.value)">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Date of Birth</label>
+          <input type="date" class="field-input" value="${esc(pers.dob||"")}" onchange="updCvPersonal('dob', this.value)">
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Home Address</label>
+        <input type="text" class="field-input" value="${esc(pers.address||"")}" placeholder="e.g. 123 High Street, London, UK" onchange="updCvPersonal('address', this.value)">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Contact Phone</label>
+          <input type="text" class="field-input" value="${esc(pers.phone||"")}" placeholder="e.g. +44 7700 900000" onchange="updCvPersonal('phone', this.value)">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Email Address</label>
+          <input type="email" class="field-input" value="${esc(pers.email||"")}" placeholder="e.g. candidate@example.com" onchange="updCvPersonal('email', this.value)">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">CICES Candidate ID</label>
+          <input type="text" class="field-input" value="${esc(pers.cicesId||"")}" placeholder="e.g. CICES-12345" onchange="updCvPersonal('cicesId', this.value)">
+        </div>
+      </div>
+    </div>`;
+  main.appendChild(sec1);
+
+  // ── SECTION 2: EDUCATION AND QUALIFICATIONS ──────────────────────────────
+  const sec2 = document.createElement("div");
+  sec2.style.cssText = "margin-bottom:24px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)";
+  
+  const eduList = S.cvEducation || [];
+  const eduEditingObj = EDU_EDITING ? eduList.find(e => e.id === EDU_EDITING) : null;
+  const ev = (f) => esc(eduEditingObj ? (eduEditingObj[f]||"") : "");
+
+  sec2.innerHTML = `
+    <div style="background:var(--cices,#2E4D3B);color:#fff;padding:12px 18px;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:space-between">
+      <span>Section 2: Education and Qualifications</span>
+      ${!EDU_FORM_OPEN ? `<button onclick="eduNewEntry()" style="background:#fff;color:#2E4D3B;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">+ Add Qualification</button>` : ''}
+    </div>
+    <div style="padding:16px 18px">
+      ${EDU_FORM_OPEN ? `
+        <div style="background:var(--surface);border:1px solid var(--cices);border-radius:8px;padding:14px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:12px;color:var(--cices);margin-bottom:10px">${eduEditingObj ? "Edit Qualification" : "New Qualification"}</div>
+          <div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr;gap:10px;margin-bottom:10px">
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Degree / Qualification *</label>
+              <input id="edu_degree" class="field-input" type="text" value="${ev('degree')}" placeholder="e.g. BSc (Hons) Geomatics">
+            </div>
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Institution / College *</label>
+              <input id="edu_institution" class="field-input" type="text" value="${ev('institution')}" placeholder="e.g. Newcastle University">
+            </div>
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Year</label>
+              <input id="edu_year" class="field-input" type="text" value="${ev('year')}" placeholder="e.g. 2018">
+            </div>
+            <div>
+              <label style="display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Category / Type</label>
+              <select id="edu_type" class="field-input">
+                <option value="Degree" ${ev('type')==='Degree'?'selected':''}>Degree</option>
+                <option value="Certification" ${ev('type')==='Certification'?'selected':''}>Certification</option>
+                <option value="Professional Membership" ${ev('type')==='Professional Membership'?'selected':''}>Professional Membership</option>
+                <option value="Training" ${ev('type')==='Training'?'selected':''}>Training</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="eduSaveForm()" style="font-size:11px;background:var(--cices,#2E4D3B)">✓ Save Qualification</button>
+            <button class="btn btn-ghost" onclick="eduCancelForm()" style="font-size:11px">Cancel</button>
+          </div>
+        </div>
+      ` : ''}
+
+      ${eduList.length === 0 ? `
+        <div style="font-size:12px;color:var(--muted);font-style:italic;text-align:center;padding:12px 0">No colleges/universities or qualifications added yet. Click "+ Add Qualification" above.</div>
+      ` : `
+        <div style="border:1px solid var(--border);border-radius:6px;overflow:hidden">
+          ${eduList.map((item, idx) => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;${idx < eduList.length - 1 ? 'border-bottom:1px solid var(--border);' : ''}">
+              <div>
+                <div style="font-size:12px;font-weight:700;color:var(--text)">${esc(item.degree||"")} <span style="font-weight:400;color:var(--muted)">at ${esc(item.institution||"")}</span></div>
+                <div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(item.year||"") ? 'Graduation/Year: ' + esc(item.year) + ' · ' : ''}${esc(item.type||"Degree")}</div>
+              </div>
+              <div style="display:flex;gap:6px">
+                <button onclick="eduEdit('${item.id}')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer;color:var(--text)">Edit</button>
+                <button onclick="eduDelete('${item.id}')" style="font-size:11px;padding:3px 8px;border:1px solid #fca5a5;border-radius:4px;background:#fff5f5;cursor:pointer;color:#b91c1c">✕</button>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `}
+    </div>`;
+  main.appendChild(sec2);
+
+  // ── SECTION 3: EMPLOYMENT HISTORY ─────────────────────────────────────────
+  const sec3Title = document.createElement("div");
+  sec3Title.style.cssText = "font-size:13px;font-weight:700;color:var(--cices,#2E4D3B);margin-bottom:8px;text-transform:uppercase;letter-spacing:.03em";
+  sec3Title.textContent = "Section 3: Employment History";
+  main.appendChild(sec3Title);
+
+  // ── Employment form (if open) ──────
   if (CV_FORM_OPEN) {
     const editing = CV_EDITING ? (S.cv||[]).find(e => e.id === CV_EDITING) : null;
     const v = (field) => esc(editing ? (editing[field]||"") : "");
@@ -4417,7 +4610,7 @@ function rCVCices(C) {
   banner.style.cssText = "background:var(--cices,#2E4D3B);border-radius:10px 10px 0 0;padding:14px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px";
   banner.innerHTML = `
     <div>
-      <div style="color:#fff;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">Employment History</div>
+      <div style="color:#fff;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">Employment Roles & Timeline</div>
       <div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:3px;font-family:'DM Sans',sans-serif">Most recent first. Include all roles and career gaps.</div>
     </div>
     ${!CV_FORM_OPEN ? `<button onclick="cvNewEntry()" style="flex-shrink:0;background:#fff;color:#2E4D3B;border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">+ Add Role</button>` : ""}`;
@@ -4450,6 +4643,22 @@ function rCVCices(C) {
   }
   main.appendChild(tableWrap);
 
+  // Whole Career Description textarea
+  const overallCard = document.createElement("div");
+  overallCard.style.cssText = "margin-bottom:20px;border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--card)";
+  overallCard.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <label style="font-size:12px;font-weight:700;color:var(--cices,#2E4D3B)">Whole Career Narrative & Summary</label>
+      <div id="dcv-wc" style="font-family:'DM Mono',monospace;font-size:11px;color:${dcvCol}">${dcvN} / 2,000 words</div>
+    </div>
+    <div style="background:var(--border);height:4px;border-radius:2px;margin-bottom:10px;overflow:hidden">
+      <div id="dcv-wbf" style="width:${dcvPct}%;height:100%;background:${dcvCol};transition:width .2s"></div>
+    </div>
+    <textarea id="detailedcv-ta" class="field-textarea" style="min-height:160px;width:100%"
+      oninput="updDCV(this.value)"
+      placeholder="Write your comprehensive career narrative (1,500-2,000 words). Incorporate competency IDs using the sidebar…">${esc(dcvText)}</textarea>`;
+  main.appendChild(overallCard);
+
   // ── COL 3: Guidance panel ───────────────────────────────────────────────
   const guide = document.createElement("div");
   guide.className = "cices-3col-guide";
@@ -4457,18 +4666,22 @@ function rCVCices(C) {
     <div class="cs-guide-title" style="color:var(--cices)">📋 Detailed CV Guidance</div>
 
     <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Purpose</div>
-      <div class="cs-guide-text">The Detailed CV demonstrates your knowledge, understanding, range of skills and experience through a <strong>whole career description</strong>. Assessors read it alongside your Experience Report.</div>
+      <div class="cs-guide-section-title">Structure</div>
+      <div class="cs-guide-text">The Detailed CV is split into 3 mandatory sections:<br><br>
+        <strong>Section 1:</strong> Personal Details<br>
+        <strong>Section 2:</strong> Education &amp; Qualifications<br>
+        <strong>Section 3:</strong> Employment History &amp; Whole Career Narrative
+      </div>
     </div>
     <hr class="cs-guide-divider">
     <div class="cs-guide-section">
       <div class="cs-guide-section-title">Length &amp; Format</div>
-      <div class="cs-guide-text"><strong>1,500–2,000 words.</strong> Use structured sections with headings. You may include short bullet lists within sections but ensure the key employment descriptions are written in full sentences.</div>
+      <div class="cs-guide-text"><strong>1,500–2,000 words.</strong> Use structured sections with headings. Key employment descriptions must be written in full sentences.</div>
     </div>
     <hr class="cs-guide-divider">
     <div class="cs-guide-section">
       <div class="cs-guide-section-title">Education &amp; Qualifications</div>
-      <div class="cs-guide-text">Include <strong>all colleges and universities attended</strong> and all qualifications gained — not just the most recent or most relevant.</div>
+      <div class="cs-guide-text">Include <strong>all colleges and universities attended</strong> and all qualifications gained — not just the most recent.</div>
     </div>
     <hr class="cs-guide-divider">
     <div class="cs-guide-section">
@@ -4484,11 +4697,6 @@ function rCVCices(C) {
     <div class="cs-guide-section">
       <div class="cs-guide-section-title">Cross-referencing</div>
       <div class="cs-guide-text">Add competency IDs inline within your job descriptions — exactly as in the Experience Report. E.g. <em>"To supervise and manage surveys <strong>(GEN05, GEN06 &amp; GEN09)</strong>"</em>. Use the left sidebar to insert at cursor.</div>
-    </div>
-    <hr class="cs-guide-divider">
-    <div class="cs-guide-section">
-      <div class="cs-guide-section-title">Typical Projects</div>
-      <div class="cs-guide-text">For key roles list 2–3 representative projects with a brief description of scope, equipment and your contribution.</div>
     </div>
     <hr class="cs-guide-divider">
     <div class="cs-guide-section">
@@ -4523,6 +4731,21 @@ function importJSON(input) {
   reader.onload = (e) => {
     try {
       const saved = JSON.parse(e.target.result);
+      if (typeof saved !== 'object' || !saved) throw new Error("Invalid JSON file");
+      
+      // Auto-detect Senior Route JSON
+      const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
+      if (isSeniorJSON) {
+        let seniorKey = "charterly_cices_senior_default";
+        if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.email) {
+          seniorKey = "charterly_cices_senior_" + CURRENT_USER.email;
+        }
+        localStorage.setItem(seniorKey, JSON.stringify(saved));
+        alert("🌟 Senior Applicant session file detected! Storing session and navigating to Senior Applicant Portal...");
+        window.location.href = "/senior.html";
+        return;
+      }
+
       Object.assign(S, saved);
       if (!S.elig) S.elig = {hasDegree:null,degreeLevel:null,degreeAccredited:null,expYears:null,
                              hasProfMembership:null,memberAccredited:null,exp5Years:null,
@@ -7611,11 +7834,16 @@ function r0(C) {
   C.innerHTML=`<div class="page-centre"><div class="panel">
     <h1 class="page-title">Select Pathway or Direct Portal Access</h1>
     <p class="sub">Choose the institution route you are seeking chartered membership with, or proceed directly to your submission workspace.</p>
-    <div class="choice-grid">
+    <div class="choice-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
       <div class="choice-card cices-card ${S.body==='CICES'?'selected':''}" onclick="selBody('CICES')">
-        <div class="choice-label" style="color:var(--cices-bright)">CICES</div>
-        <div class="choice-desc">Chartered Institution of Civil Engineering Surveyors</div>
+        <div class="choice-label" style="color:var(--cices-bright)">CICES Standard Route</div>
+        <div class="choice-desc">Standard Member Candidate Pathway (Competencies + Experience Report)</div>
         <div style="margin-top:10px"><span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border)">Find your Pathway</span></div>
+      </div>
+      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer;" onclick="window.location.href='/senior.html'">
+        <div class="choice-label" style="color:var(--accent)">CICES Senior Applicant</div>
+        <div class="choice-desc">Senior Member Candidate Portal for Experienced Senior Candidates</div>
+        <div style="margin-top:10px"><span class="badge" style="background:var(--acc-bg);color:var(--accent);border:1px solid var(--accent)">🌟 Senior Portal Launch</span></div>
       </div>
       <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface);" onclick="goDirectSubmission()">
         <div class="choice-label" style="color:var(--cices)">Direct to Portal</div>
@@ -10431,9 +10659,7 @@ function tryAdvance() { if (validate()) { S.activeComp=null; goStep(3); } else r
 
 // ──────────────────────────────────────────────── STEP 3 — Statements ────────
 
-// Categorise comps into two sections
-
-
+const SECTION_MAX = { mand: 1500, tech: 4000 };
 
 // ── Helper: calculate total words across competencies ────────────────────────
 function sectionWordCount(comps) {

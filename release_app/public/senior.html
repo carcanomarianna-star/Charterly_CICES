@@ -4038,7 +4038,9 @@ const DEFAULT_SENIOR_STATE = {
   compLevels: {},           // { [id]: 1|2|3 }
   narratives: {},           // { [id]: string }
   detailedCV: "",           // Whole career narrative (1,500 - 2,000 words)
-  cv: [],                   // Structured employment history records
+  cvPersonal: { fullName: "", dob: "", address: "", phone: "", email: "", cicesId: "" },
+  cvEducation: [],          // Qualifications & Education array
+  cv: [],                   // Structured employment history records (Section 3)
   cpdPlan: [],              // CPD Plan items
   cpd: [],                  // CPD Activity log entries
   activeSeniorTab: "narrative", // "narrative" | "cv" | "cpd"
@@ -4822,10 +4824,75 @@ function buildSeniorCVHtml() {
       ${renderSeniorSubNavTabs('cv')}
 
       <h1 class="page-title" style="margin-bottom:4px;color:var(--cices,#2E4D3B)">Detailed CV</h1>
-      <p class="sub" style="margin-bottom:16px">Structured employment history in CICES template format. Record all roles in reverse chronological order, accounting for continuous employment timeline and career breaks.</p>
+      <p class="sub" style="margin-bottom:16px">Complete your 3-part Detailed CV. Section 1 (Personal Details), Section 2 (Education &amp; Qualifications), and Section 3 (Employment History in reverse chronological order).</p>
 
+      <!-- SECTION 1: Personal Details -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--cices,#2E4D3B);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <span>👤 Section 1: Personal Details</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">Full Name</label>
+            <input type="text" value="${esc(S.cvPersonal?.fullName||'')}" placeholder="e.g. Jane Doe MCInstCES"
+              oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.fullName=this.value; saveState()"
+              style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">Date of Birth</label>
+            <input type="date" value="${esc(S.cvPersonal?.dob||'')}" onclick="if(this.showPicker) this.showPicker()"
+              oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.dob=this.value; saveState()"
+              style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">Contact Phone</label>
+            <input type="text" value="${esc(S.cvPersonal?.phone||'')}" placeholder="+44 7700 900123"
+              oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.phone=this.value; saveState()"
+              style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif">
+          </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">Email Address</label>
+            <input type="email" value="${esc(S.cvPersonal?.email||'')}" placeholder="jane.doe@example.com"
+              oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.email=this.value; saveState()"
+              style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif">
+          </div>
+          <div style="grid-column: 1 / -1">
+            <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">Home Address</label>
+            <input type="text" value="${esc(S.cvPersonal?.address||'')}" placeholder="123 Civil Engineering Way, London, UK"
+              oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.address=this.value; saveState()"
+              style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: Education & Qualifications -->
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:20px">
+        <div style="font-size:14px;font-weight:700;color:var(--cices,#2E4D3B);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+          <span>🎓 Section 2: Education &amp; Qualifications</span>
+          <button onclick="seniorEduNewEntry()" style="background:var(--cices,#2E4D3B);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">+ Add Qualification</button>
+        </div>
+
+        ${EDU_FORM_OPEN ? renderSeniorEduForm() : ''}
+
+        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          ${(S.cvEducation||[]).length === 0 ? `
+            <div style="padding:20px;text-align:center;color:var(--muted);font-size:12px;font-style:italic">No education or professional qualifications added yet. Click '+ Add Qualification'.</div>
+          ` : (S.cvEducation||[]).map((edu, idx) => `
+            <div style="padding:10px 14px;border-bottom:${idx < (S.cvEducation||[]).length - 1 ? '1px solid var(--border)' : 'none'};display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <strong style="font-size:13px;color:var(--text)">${esc(edu.degree)}</strong>
+                <span style="font-size:12px;color:var(--muted)"> — ${esc(edu.institution)} (${esc(edu.year)})</span>
+                ${edu.type ? `<span class="badge" style="margin-left:8px;font-size:10px;background:var(--cices-bg);color:var(--cices)">${esc(edu.type)}</span>` : ''}
+              </div>
+              <button onclick="seniorEduDelete(${idx})" style="border:none;background:none;color:#c0392b;cursor:pointer;font-size:13px" title="Delete">🗑</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <!-- SECTION 3: Employment History -->
       <div class="cs-warn-box" style="border-left-color:#84B399;margin-bottom:20px">
-        📎 Use the <strong>left sidebar</strong> to cross-reference your 6 selected competencies in each role's scope of duties. Include all career phases, including managerial progression.
+        💼 <strong>Section 3: Employment History</strong> — Use the left sidebar to cross-reference competencies in each role. Account for all career phases.
       </div>
 
       <!-- Role Form (if open) -->
@@ -4835,7 +4902,7 @@ function buildSeniorCVHtml() {
       <div style="margin-bottom:20px">
         <div style="background:var(--cices,#2E4D3B);border-radius:10px 10px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px">
           <div>
-            <div style="color:#fff;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">Structured Employment History</div>
+            <div style="color:#fff;font-size:14px;font-weight:700;font-family:'DM Sans',sans-serif">Section 3: Employment History Timeline</div>
             <div style="color:rgba(255,255,255,.75);font-size:12px;margin-top:2px;font-family:'DM Sans',sans-serif">Most recent first. ${cvEntries.length} role${cvEntries.length === 1 ? '' : 's'} recorded.</div>
           </div>
           <div style="display:flex;gap:8px">
@@ -4891,6 +4958,88 @@ function buildSeniorCVHtml() {
   </div>`;
 
   return html;
+}
+
+let EDU_FORM_OPEN = false;
+let CV_FORM_OPEN = false;
+let CV_EDITING = null;
+
+function renderSeniorEduForm() {
+  return `
+  <div style="background:#f8fafc;border:1px solid #84B399;border-radius:8px;padding:16px;margin-bottom:14px;">
+    <div style="font-size:13px;font-weight:700;color:#2E4D3B;margin-bottom:12px;">Add Education / Professional Qualification</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Qualification / Degree <span style="color:#b91c1c">*</span></label>
+        <input id="senior_edu_degree" type="text" placeholder="e.g. BSc (Hons) Civil Engineering" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Institution / Awarding Body <span style="color:#b91c1c">*</span></label>
+        <input id="senior_edu_inst" type="text" placeholder="e.g. University of Manchester" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Year Completed</label>
+        <input id="senior_edu_year" type="text" placeholder="e.g. 2012" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Type / Category</label>
+        <select id="senior_edu_type" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:#fff;">
+          <option value="Higher Education Degree">Higher Education Degree</option>
+          <option value="Professional Qualification / Certification">Professional Qualification / Certification</option>
+          <option value="Diploma / NVQ">Diploma / NVQ</option>
+          <option value="Professional Membership">Professional Membership</option>
+          <option value="Other Training">Other Training</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" onclick="seniorEduSave()" style="background:#2E4D3B;border:none;font-size:11px;padding:6px 14px;">✓ Save Qualification</button>
+      <button class="btn btn-ghost" onclick="seniorEduCancel()" style="font-size:11px;padding:6px 14px;">Cancel</button>
+    </div>
+  </div>`;
+}
+
+function seniorEduNewEntry() {
+  EDU_FORM_OPEN = true;
+  render();
+}
+
+function seniorEduCancel() {
+  EDU_FORM_OPEN = false;
+  render();
+}
+
+function seniorEduSave() {
+  const deg = document.getElementById("senior_edu_degree")?.value.trim();
+  const inst = document.getElementById("senior_edu_inst")?.value.trim();
+  const yr = document.getElementById("senior_edu_year")?.value.trim();
+  const typ = document.getElementById("senior_edu_type")?.value;
+
+  if (!deg || !inst) {
+    alert("Please enter qualification name and institution.");
+    return;
+  }
+
+  if (!S.cvEducation) S.cvEducation = [];
+  S.cvEducation.push({
+    id: "edu_" + Date.now(),
+    degree: deg,
+    institution: inst,
+    year: yr || "",
+    type: typ || "Higher Education Degree"
+  });
+
+  EDU_FORM_OPEN = false;
+  saveState();
+  render();
+}
+
+function seniorEduDelete(idx) {
+  if (!S.cvEducation) return;
+  if (!confirm("Delete this qualification entry?")) return;
+  S.cvEducation.splice(idx, 1);
+  saveState();
+  render();
 }
 
 function renderSeniorCVForm() {
@@ -5734,13 +5883,43 @@ function exportSeniorWordDocx() {
   addPageBreak();
 
   // ── SECTION 2: DETAILED CV ──
-  addH1("Section 2 — Detailed CV (Whole Career Description)");
-  addPara("A whole career description (1,500–2,000 words advisory target) covering education, qualifications gained, employment history, and explanation of any non-surveying periods or gaps.");
+  addH1("Section 2 — Detailed CV");
+  addPara("Comprehensive 3-part Detailed CV including Personal Details, Education & Qualifications, and Employment History timeline with competency cross-referencing.");
   addBlank();
 
-  // Employment Table
+  // Part 1: Personal Details
+  addH2("Section 1: Personal Details");
+  const pDet = S.cvPersonal || {};
+  ps.push(cTable([
+    cRow("Full Name", pDet.fullName || "—"),
+    cRow("Date of Birth", pDet.dob || "—"),
+    cRow("Contact Phone", pDet.phone || "—"),
+    cRow("Email Address", pDet.email || "—"),
+    cRow("Home Address", pDet.address || "—"),
+    cRow("CICES Candidate ID", pDet.cicesId || "—")
+  ].join("")));
+  addBlank();
+
+  // Part 2: Education & Qualifications
+  addH2("Section 2: Education & Qualifications");
+  if ((S.cvEducation || []).length > 0) {
+    (S.cvEducation || []).forEach(edu => {
+      ps.push(cTable([
+        cRow("Qualification / Degree", edu.degree || "—"),
+        cRow("Institution", edu.institution || "—"),
+        cRow("Year Completed", edu.year || "—"),
+        cRow("Category / Type", edu.type || "—")
+      ].join("")));
+      addBlank();
+    });
+  } else {
+    ps.push(para(run("[No education or professional qualifications recorded]", `<w:sz w:val="20"/><w:color w:val="AAAAAA"/><w:i/>`)));
+    addBlank();
+  }
+
+  // Part 3: Employment History
+  addH2("Section 3: Employment History Timeline");
   if ((S.cv || []).length > 0) {
-    addH2("Employment History Timeline");
     (S.cv || []).forEach(e => {
       ps.push(
         `<w:p><w:pPr><w:pBdr><w:left w:val="single" w:sz="12" w:color="${CBR}"/></w:pBdr><w:shd w:val="clear" w:color="auto" w:fill="${CML}"/>${spacing(100,40)}</w:pPr>` +
@@ -5750,13 +5929,15 @@ function exportSeniorWordDocx() {
       if (e.overview) addPara(e.overview, 240);
       addBlank();
     });
+  } else {
+    ps.push(para(run("[No employment history roles recorded]", `<w:sz w:val="20"/><w:color w:val="AAAAAA"/><w:i/>`)));
+    addBlank();
   }
 
-  addH2("Whole Career Narrative");
   if (S.detailedCV && S.detailedCV.trim()) {
+    addH2("Whole Career Narrative Summary");
     addPara(S.detailedCV);
-  } else {
-    ps.push(para(run("[Detailed CV narrative not yet completed]", `<w:sz w:val="20"/><w:color w:val="AAAAAA"/><w:i/>`)));
+    addBlank();
   }
   addPageBreak();
 
@@ -6007,6 +6188,20 @@ function importSeniorJSON(input) {
     try {
       const saved = JSON.parse(e.target.result);
       if (typeof saved !== 'object' || !saved) throw new Error('Invalid JSON format');
+      
+      // Auto-detect Standard Route JSON
+      const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
+      if (!isSeniorJSON && (saved.cicesSector || saved.body || saved.cicesGrades || saved.statements)) {
+        let stdKey = "rics_portal_v1";
+        if (typeof CURRENT_SENIOR_USER !== 'undefined' && CURRENT_SENIOR_USER && CURRENT_SENIOR_USER.email) {
+          stdKey = "rics_portal_" + CURRENT_SENIOR_USER.email;
+        }
+        localStorage.setItem(stdKey, JSON.stringify(saved));
+        alert("📋 Standard Candidate session file detected! Storing session and navigating to Standard Candidate Portal...");
+        window.location.href = "/index.html";
+        return;
+      }
+
       S = Object.assign(JSON.parse(JSON.stringify(DEFAULT_SENIOR_STATE)), saved);
       saveState();
       render();
@@ -6016,6 +6211,7 @@ function importSeniorJSON(input) {
     }
   };
   reader.readAsText(file);
+  input.value = "";
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -6169,6 +6365,8 @@ function proceedSeniorLogoutWithoutSaving() {
     showSeniorAuthGate();
   }
 }
+
+const SECTION_MAX = { mand: 1500, tech: 4000 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // MAIN DISPATCHER
