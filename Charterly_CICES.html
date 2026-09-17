@@ -1819,6 +1819,19 @@ YPE html>
     .header-btns .btn-ghost{display:none}
     .logo img{height:30px}
   }
+
+  /* ── Native Netlify Identity Auth Gate ── */
+  body.auth-locked .stepbar,
+  body.auth-locked main,
+  body.auth-locked .body-select-wrap,
+  body.auth-locked .content,
+  body.auth-locked #sec-content {
+    pointer-events: none !important;
+    user-select: none !important;
+    filter: blur(4px) !important;
+    opacity: 0.35 !important;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
 </style>
 </head>
 <body>
@@ -1836,11 +1849,12 @@ YPE html>
     </div>
     </div>
     <div class="header-btns">
+      <button id="auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
       <label class="btn btn-ghost header-btn" for="import-json-input" title="Import saved session (.json)">⬆ Import JSON</label>
       <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importJSON(this)">
       <button class="btn btn-ghost header-btn" onclick="exportJSON()" title="Export session data (.json)">⬇ Export JSON</button>
       <span id="user-display-pill" style="font-size:11px;font-family:'DM Mono',monospace;background:var(--acc-bg);border:1px solid var(--acc-border);color:var(--text);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">👤 <span id="user-email-text">User</span></span>
-      <button class="btn btn-ghost header-btn" onclick="handleUserLogout()" title="Sign out of your session" style="color:var(--red)">Sign Out</button>
+      <button id="header-logout-btn" class="btn btn-ghost header-btn" onclick="handleUserLogout()" title="Sign out of your session" style="color:var(--red)">Sign Out</button>
     </div>
   </div>
 </header>

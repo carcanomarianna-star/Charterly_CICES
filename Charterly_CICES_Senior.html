@@ -1824,6 +1824,17 @@
     .header-btns .btn-ghost{display:none}
     .logo img{height:30px}
   }
+
+  /* ── Native Netlify Identity Auth Gate ── */
+  body.auth-locked .stepbar,
+  body.auth-locked main,
+  body.auth-locked .content {
+    pointer-events: none !important;
+    user-select: none !important;
+    filter: blur(4px) !important;
+    opacity: 0.35 !important;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
 </style>
 
   <style>
@@ -1870,6 +1881,7 @@
   </div>
   <div class="header-right">
     <div class="header-btns">
+      <button id="senior-auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
       <button class="btn btn-ghost header-btn" onclick="exportSeniorWordDocx()" title="Export Word Document (.docx)" style="color:#2E4D3B;border-color:#84B399;">📄 Export Word</button>
       <button class="btn btn-ghost header-btn" onclick="exportSeniorJSON()" title="Export Senior Session (.json)">⬇ Export JSON</button>
       <button class="btn btn-ghost header-btn" onclick="window.location.href='/'" title="Return to standard route" style="color:#5a6a7a;">← Standard Portal</button>

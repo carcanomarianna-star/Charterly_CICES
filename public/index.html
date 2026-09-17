@@ -1819,6 +1819,19 @@
     .header-btns .btn-ghost{display:none}
     .logo img{height:30px}
   }
+
+  /* ── Native Netlify Identity Auth Gate ── */
+  body.auth-locked .stepbar,
+  body.auth-locked main,
+  body.auth-locked .body-select-wrap,
+  body.auth-locked .content,
+  body.auth-locked #sec-content {
+    pointer-events: none !important;
+    user-select: none !important;
+    filter: blur(4px) !important;
+    opacity: 0.35 !important;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
 </style>
 </head>
 <body>
@@ -1836,11 +1849,12 @@
     </div>
     </div>
     <div class="header-btns">
+      <button id="auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
       <label class="btn btn-ghost header-btn" for="import-json-input" title="Import saved session (.json)">⬆ Import JSON</label>
       <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importJSON(this)">
       <button class="btn btn-ghost header-btn" onclick="exportJSON()" title="Export session data (.json)">⬇ Export JSON</button>
       <span id="user-display-pill" style="font-size:11px;font-family:'DM Mono',monospace;background:var(--acc-bg);border:1px solid var(--acc-border);color:var(--text);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">👤 <span id="user-email-text">User</span></span>
-      <button class="btn btn-ghost header-btn" onclick="handleUserLogout()" title="Sign out of your session" style="color:var(--red)">Sign Out</button>
+      <button id="header-logout-btn" class="btn btn-ghost header-btn" onclick="handleUserLogout()" title="Sign out of your session" style="color:var(--red)">Sign Out</button>
     </div>
   </div>
 </header>
@@ -1900,28 +1914,16 @@
   </div>
 </div>
 
-<!-- Netlify Identity Auth Gate Overlay -->
-<div id="auth-gate-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(13,19,26,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#ffffff;color:#1e2530;border-radius:18px;max-width:480px;width:100%;padding:36px 32px;box-shadow:0 24px 60px rgba(0,0,0,0.35);border:1px solid #cdd8e0;text-align:center;animation:fadeUp .25s ease both;">
-    <div style="display:flex;justify-content:center;margin-bottom:18px;">
-      <span style="font-size:42px;">🧭</span>
-    </div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#1e2530;margin:0 0 8px 0;">Welcome to CharteRly</h2>
-    <p style="font-size:13.5px;color:#5a6a7a;line-height:1.55;margin:0 0 24px 0;">
-      Please sign in to access your chartership portal and saved competency logs.
-    </p>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <button class="btn btn-primary" onclick="openNetlifyModal()" style="background:#0d9488;border:none;color:#ffffff;font-size:15px;padding:13px 20px;justify-content:center;font-weight:600;width:100%;border-radius:8px;box-shadow:0 4px 14px rgba(13,148,136,0.3);cursor:pointer;transition:all .15s ease;" onmouseover="this.style.background='#0f766e';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#0d9488';this.style.transform='translateY(0)'">
-        🔑 Sign In with Netlify Identity
-      </button>
-    </div>
-    <p style="font-size:11.5px;color:#8898aa;margin:20px 0 0 0;line-height:1.4;">
-      Access is managed securely via Netlify Identity.
-    </p>
-  </div>
-</div>
+
 
 <!-- Senior Route Notice Modal -->
+
+<!-- Netlify Auth Prompt Banner (shown if modal closed while unauthenticated) -->
+<div id="auth-prompt-banner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;background:#1e2530;color:#ffffff;padding:12px 24px;border-radius:30px;box-shadow:0 8px 30px rgba(0,0,0,0.3);align-items:center;gap:14px;font-size:13.5px;font-weight:500;">
+  <span>🔒 Please sign in to access your chartership workspace</span>
+  <button onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="background:#0d9488;color:#fff;border:none;border-radius:20px;padding:6px 16px;font-weight:600;cursor:pointer;font-size:13px;">Log In</button>
+</div>
+
 <div id="senior-route-notice-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(13,19,26,0.78);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:20px;">
   <div style="background:#ffffff;color:#1e2530;border-radius:16px;max-width:560px;width:100%;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,0.35);border:1px solid #cdd8e0;animation:fadeUp .2s ease both;">
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
@@ -4790,14 +4792,25 @@ function loadState() {
   } catch(e) { return false; }
 }
 
-function showAuthGate() {
-  const overlay = document.getElementById('auth-gate-overlay');
-  if (overlay) overlay.style.display = 'flex';
-}
-
-function hideAuthGate() {
-  const overlay = document.getElementById('auth-gate-overlay');
-  if (overlay) overlay.style.display = 'none';
+function updateAuthStateUI(isAuth) {
+  const loginBtn = document.getElementById('auth-login-btn');
+  const userPill = document.getElementById('user-display-pill');
+  const logoutBtn = document.getElementById('header-logout-btn');
+  const banner = document.getElementById('auth-prompt-banner');
+  
+  if (isAuth) {
+    document.body.classList.remove('auth-locked');
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userPill) userPill.style.display = 'inline-flex';
+    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+    if (banner) banner.style.display = 'none';
+  } else {
+    document.body.classList.add('auth-locked');
+    if (loginBtn) loginBtn.style.display = 'inline-flex';
+    if (userPill) userPill.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (banner) banner.style.display = 'flex';
+  }
 }
 
 function openNetlifyModal() {
@@ -4818,7 +4831,7 @@ function applyUserSession(user) {
   const userText = document.getElementById('user-email-text');
   if (userText) userText.textContent = CURRENT_USER.email;
   
-  hideAuthGate();
+  updateAuthStateUI(true);
   closeLogoutModal();
   loadState();
   if (S.body) document.body.className = (S.body==="RICS"?"rics-mode":S.body==="CICES"?"cices-mode":"") + (isRPQRoute()?" rpq-mode":"");
@@ -4829,7 +4842,7 @@ async function initUserSession() {
   try {
     if (!window.netlifyIdentity) {
       console.warn('Netlify Identity widget not loaded.');
-      showAuthGate();
+      updateAuthStateUI(false);
       return;
     }
 
@@ -4838,31 +4851,29 @@ async function initUserSession() {
       if (user && user.email) {
         applyUserSession(user);
       } else {
-        // If there is an auth token in hash (invite, recovery, confirmation), let widget handle it
-        if (window.location.hash && (
-          window.location.hash.includes('_token=') || 
-          window.location.hash.includes('invite_token=') || 
-          window.location.hash.includes('confirmation_token=') || 
-          window.location.hash.includes('recovery_token=')
-        )) {
-          hideAuthGate();
-        } else {
-          showAuthGate();
-          window.netlifyIdentity.open('login');
-        }
+        updateAuthStateUI(false);
+        // Directly open native Netlify Identity modal without any blocking custom cards
+        window.netlifyIdentity.open('login');
       }
     });
 
     window.netlifyIdentity.on('login', user => {
-      applyUserSession(user);
       if (window.netlifyIdentity) window.netlifyIdentity.close();
+      applyUserSession(user);
     });
 
     window.netlifyIdentity.on('logout', () => {
       CURRENT_USER = null;
       closeLogoutModal();
-      showAuthGate();
+      updateAuthStateUI(false);
       window.netlifyIdentity.open('login');
+    });
+
+    window.netlifyIdentity.on('close', () => {
+      const currentUser = window.netlifyIdentity.currentUser();
+      if (!currentUser) {
+        updateAuthStateUI(false);
+      }
     });
 
     window.netlifyIdentity.on('error', err => {
@@ -4874,13 +4885,10 @@ async function initUserSession() {
     if (currentUser && currentUser.email) {
       applyUserSession(currentUser);
     } else {
-      if (!window.location.hash || !window.location.hash.includes('token=')) {
-        showAuthGate();
-      }
+      updateAuthStateUI(false);
     }
-  } catch(err) {
-    console.warn('Could not verify Netlify Identity session', err);
-    showAuthGate();
+  } catch(e) {
+    console.error('Auth initialization error:', e);
   }
 }
 

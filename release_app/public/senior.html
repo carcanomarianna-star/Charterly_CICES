@@ -1820,6 +1820,17 @@
     .header-btns .btn-ghost{display:none}
     .logo img{height:30px}
   }
+
+  /* ── Native Netlify Identity Auth Gate ── */
+  body.auth-locked .stepbar,
+  body.auth-locked main,
+  body.auth-locked .content {
+    pointer-events: none !important;
+    user-select: none !important;
+    filter: blur(4px) !important;
+    opacity: 0.35 !important;
+    transition: filter 0.3s ease, opacity 0.3s ease;
+  }
 </style>
 
   <style>
@@ -1863,12 +1874,13 @@
   </div>
   <div class="header-right">
     <div class="header-btns">
+      <button id="senior-auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
       <button class="btn btn-ghost header-btn" onclick="exportSeniorWordDocx()" title="Export Word Document (.docx)" style="color:#2E4D3B;border-color:#84B399;">📄 Export Word</button>
       <label class="btn btn-ghost header-btn" for="senior-import-json-input" title="Import saved session (.json)" style="color:#2E4D3B;border-color:#84B399;cursor:pointer;">⬆ Import JSON</label>
       <input type="file" id="senior-import-json-input" accept=".json" style="display:none" onchange="importSeniorJSON(this)">
       <button class="btn btn-ghost header-btn" onclick="exportSeniorJSON()" title="Export Senior Session (.json)">⬇ Export JSON</button>
       <span id="senior-user-display-pill" style="font-size:11px;font-family:'DM Mono',monospace;background:var(--cices-bg,#e4ede8);border:1px solid var(--cices-border,#84B399);color:var(--cices,#2E4D3B);padding:4px 10px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">👤 <span id="senior-user-email-text">User</span></span>
-      <button class="btn btn-ghost header-btn" onclick="handleSeniorLogout()" title="Sign out of your session" style="color:var(--red,#c0392b)">Sign Out</button>
+      <button id="senior-header-logout-btn" class="btn btn-ghost header-btn" onclick="handleSeniorLogout()" title="Sign out of your session" style="color:var(--red,#c0392b)">Sign Out</button>
     </div>
   </div>
 </header>
@@ -1926,26 +1938,7 @@
   </div>
 </div>
 
-<!-- Senior Netlify Identity Auth Gate Overlay -->
-<div id="senior-auth-gate-overlay" style="display:none;position:fixed;inset:0;z-index:9998;background:rgba(13,19,26,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#ffffff;color:#1e2530;border-radius:18px;max-width:480px;width:100%;padding:36px 32px;box-shadow:0 24px 60px rgba(0,0,0,0.35);border:1px solid #84B399;text-align:center;animation:fadeUp .25s ease both;">
-    <div style="display:flex;justify-content:center;margin-bottom:18px;">
-      <span style="font-size:42px;">👔</span>
-    </div>
-    <h2 style="font-family:'Playfair Display',serif;font-size:23px;font-weight:700;color:#2E4D3B;margin:0 0 8px 0;">CICES Senior Applicant Portal</h2>
-    <p style="font-size:13.5px;color:#5a6a7a;line-height:1.55;margin:0 0 24px 0;">
-      Please sign in to access your Senior Route submission documents and progress.
-    </p>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <button class="btn btn-primary" onclick="openSeniorNetlifyModal()" style="background:#0d9488;border:none;color:#ffffff;font-size:15px;padding:13px 20px;justify-content:center;font-weight:600;width:100%;border-radius:8px;box-shadow:0 4px 14px rgba(13,148,136,0.3);cursor:pointer;transition:all .15s ease;" onmouseover="this.style.background='#0f766e';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#0d9488';this.style.transform='translateY(0)'">
-        🔑 Sign In with Netlify Identity
-      </button>
-    </div>
-    <p style="font-size:11.5px;color:#8898aa;margin:20px 0 0 0;line-height:1.4;">
-      Access is managed securely via Netlify Identity.
-    </p>
-  </div>
-</div>
+
 
 <script>
 const CICES_SECTORS = {
@@ -6030,14 +6023,25 @@ function importSeniorJSON(input) {
 // ══════════════════════════════════════════════════════════════════════════════
 let CURRENT_SENIOR_USER = null;
 
-function showSeniorAuthGate() {
-  const overlay = document.getElementById('senior-auth-gate-overlay');
-  if (overlay) overlay.style.display = 'flex';
-}
-
-function hideSeniorAuthGate() {
-  const overlay = document.getElementById('senior-auth-gate-overlay');
-  if (overlay) overlay.style.display = 'none';
+function updateSeniorAuthStateUI(isAuth) {
+  const loginBtn = document.getElementById('senior-auth-login-btn');
+  const userPill = document.getElementById('senior-user-display-pill');
+  const logoutBtn = document.getElementById('senior-header-logout-btn');
+  const banner = document.getElementById('senior-auth-prompt-banner');
+  
+  if (isAuth) {
+    document.body.classList.remove('auth-locked');
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userPill) userPill.style.display = 'inline-flex';
+    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+    if (banner) banner.style.display = 'none';
+  } else {
+    document.body.classList.add('auth-locked');
+    if (loginBtn) loginBtn.style.display = 'inline-flex';
+    if (userPill) userPill.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+    if (banner) banner.style.display = 'flex';
+  }
 }
 
 function openSeniorNetlifyModal() {
@@ -6058,7 +6062,7 @@ function applySeniorUserSession(user) {
   const userText = document.getElementById('senior-user-email-text');
   if (userText) userText.textContent = CURRENT_SENIOR_USER.email;
   
-  hideSeniorAuthGate();
+  updateSeniorAuthStateUI(true);
   closeSeniorLogoutModal();
   S = loadSeniorState();
   render();
@@ -6068,7 +6072,7 @@ async function initSeniorUserSession() {
   try {
     if (!window.netlifyIdentity) {
       console.warn('Netlify Identity widget not loaded.');
-      showSeniorAuthGate();
+      updateSeniorAuthStateUI(false);
       return;
     }
 
@@ -6076,30 +6080,29 @@ async function initSeniorUserSession() {
       if (user && user.email) {
         applySeniorUserSession(user);
       } else {
-        if (window.location.hash && (
-          window.location.hash.includes('_token=') || 
-          window.location.hash.includes('invite_token=') || 
-          window.location.hash.includes('confirmation_token=') || 
-          window.location.hash.includes('recovery_token=')
-        )) {
-          hideSeniorAuthGate();
-        } else {
-          showSeniorAuthGate();
-          window.netlifyIdentity.open('login');
-        }
+        updateSeniorAuthStateUI(false);
+        // Directly open native Netlify Identity modal without any blocking custom cards
+        window.netlifyIdentity.open('login');
       }
     });
 
     window.netlifyIdentity.on('login', user => {
-      applySeniorUserSession(user);
       if (window.netlifyIdentity) window.netlifyIdentity.close();
+      applySeniorUserSession(user);
     });
 
     window.netlifyIdentity.on('logout', () => {
       CURRENT_SENIOR_USER = null;
       closeSeniorLogoutModal();
-      showSeniorAuthGate();
+      updateSeniorAuthStateUI(false);
       window.netlifyIdentity.open('login');
+    });
+
+    window.netlifyIdentity.on('close', () => {
+      const currentUser = window.netlifyIdentity.currentUser();
+      if (!currentUser) {
+        updateSeniorAuthStateUI(false);
+      }
     });
 
     window.netlifyIdentity.on('error', err => {
@@ -6110,13 +6113,10 @@ async function initSeniorUserSession() {
     if (currentUser && currentUser.email) {
       applySeniorUserSession(currentUser);
     } else {
-      if (!window.location.hash || !window.location.hash.includes('token=')) {
-        showSeniorAuthGate();
-      }
+      updateSeniorAuthStateUI(false);
     }
-  } catch(err) {
-    console.warn('Could not verify Netlify Identity session', err);
-    showSeniorAuthGate();
+  } catch(e) {
+    console.error('Senior auth initialization error:', e);
   }
 }
 
