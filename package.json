@@ -1,0 +1,8 @@
+{
+  "name": "charterly-cices",
+  "version": "1.0.0",
+  "description": "CharteRly - CICES Candidate & Senior Portal",
+  "scripts": {
+    "build": "echo 'Static build ready'"
+  }
+}

@@ -1,5 +1,6 @@
 [build]
   publish = "public"
+  command = "echo 'Deploying static site'"
 
 [[redirects]]
   from = "/senior"

@@ -1,0 +1,4 @@
+/senior      /senior.html      200
+/login       /                 301
+/login.html  /                 301
+/*           /index.html       200
