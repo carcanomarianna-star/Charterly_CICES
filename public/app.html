@@ -10526,6 +10526,9 @@ function r2Cices(C) {
         <div class="cices-sidebar-group-body">
           ${specComps.map(c=>`<div class="cices-sidebar-item" onclick="document.getElementById('cgrp-${c.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${c.id} <span style="color:var(--text);font-size:10px">${c.name}</span></div>`).join('')}
         </div>
+      </div>
+      <div style="margin-top:16px;text-align:center;">
+        <button class="btn btn-ghost" onclick="exportCicesComps()" style="font-size:12px;padding:8px 12px;width:100%;border:1px solid var(--border);">📥 Export Competencies</button>
       </div>`;
     compLayout.appendChild(navSide);
 
