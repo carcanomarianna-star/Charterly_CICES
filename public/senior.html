@@ -6249,7 +6249,16 @@ function importSeniorJSON(input) {
         return;
       }
 
-      S = Object.assign(JSON.parse(JSON.stringify(DEFAULT_SENIOR_STATE)), saved);
+            Object.assign(S, saved);
+      if (!S.cv) S.cv = [];
+      if (!S.cpd) S.cpd = [];
+      if (!S.narratives) S.narratives = {};
+      if (!S.compLevels) S.compLevels = {};
+      if (!S.selectedComps) S.selectedComps = [];
+      if (!S.cpdPlan) S.cpdPlan = [];
+      if (!S.cvEducation) S.cvEducation = [];
+      if (!S.cvPersonal) S.cvPersonal = { fullName: "", dob: "", address: "", phone: "", email: "", cicesId: "" };
+      if (!S.sel) S.sel = { cicesSector: null, cicesCore: null, cicesSpecialism: null };
       saveState();
       render();
       alert("Senior session data imported successfully.");

@@ -4721,9 +4721,9 @@ function importJSON(input) {
       // Auto-detect Senior Route JSON
       const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || saved.route === 'SENIOR_APPLICANT' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
       if (isSeniorJSON) {
-        let seniorKey = "charterly_cices_senior_default";
+        let seniorKey = "charterly_cices_senior_v1";
         if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.email) {
-          seniorKey = "charterly_cices_senior_" + CURRENT_USER.email;
+          seniorKey = "charterly_cices_senior_" + CURRENT_USER.email.replace(/[^a-zA-Z0-9_]/g, '_');
         }
         localStorage.setItem(seniorKey, JSON.stringify(saved));
         alert("🌟 Senior Applicant session file detected! Storing session and navigating to Senior Applicant Portal...");
