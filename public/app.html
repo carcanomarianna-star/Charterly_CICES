@@ -7898,7 +7898,7 @@ function r0(C) {
       </div>
 
       <!-- 2. Direct Access Senior Applicant -->
-      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="handleSeniorDirectAccess()">
+      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer; display:flex; flex-direction:column; justify-content:space-between; height:100%;" onclick="handleSeniorDirectAccess()">
         <div>
           <div class="choice-label" style="color:var(--accent);font-size:16px;font-weight:700">Direct Access Senior Applicant</div>
           <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Direct entry for Senior Applicants (10+ yrs experience). Access the senior portal or load an existing senior .json session.</div>
@@ -7910,7 +7910,7 @@ function r0(C) {
       </div>
 
       <!-- 3. Direct Access Standard Applicant -->
-      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface); cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="handleStandardDirectAccess()">
+      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface); cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; height:100%;" onclick="handleStandardDirectAccess()">
         <div>
           <div class="choice-label" style="color:var(--cices);font-size:16px;font-weight:700">Direct Access Standard Applicant</div>
           <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Direct workspace access for standard candidates. Load your saved .json file to resume your Competencies, CPD, and Report.</div>
@@ -10446,7 +10446,16 @@ function selCicesSpecialism(key) {
 // ─── CICES Step 2: Competency Tickbox ─────────────────────────────────────────
 
 function exportCicesComps() {
-  const { coreComps, specComps } = getPathwayComps();
+  const sectorKey = S.sel?.cicesSector;
+  const coreKey = S.sel?.cicesCore;
+  const spKey = S.sel?.cicesSpecialism;
+  if (!sectorKey || !CICES_SECTORS[sectorKey]) return;
+  
+  const sector = CICES_SECTORS[sectorKey];
+  const activeCoreKey = coreKey || (Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
+  const coreComps = activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].comps : [];
+  const specComps = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].comps : [];
+  
   const compsToExport = [...CICES_GENERAL, ...coreComps, ...specComps];
   
   let csv = "Candidate Name:," + (S.personal?.fullName || "Candidate") + "\n";
