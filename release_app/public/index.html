@@ -10444,7 +10444,37 @@ function selCicesSpecialism(key) {
 }
 
 // ─── CICES Step 2: Competency Tickbox ─────────────────────────────────────────
+
+function exportCicesComps() {
+  const { coreComps, specComps } = getPathwayComps();
+  const compsToExport = [...CICES_GENERAL, ...coreComps, ...specComps];
+  
+  let csv = "Candidate Name:," + (S.personal?.fullName || "Candidate") + "\n";
+  csv += "Export Date:," + new Date().toLocaleDateString() + "\n\n";
+  csv += "Competency ID,Competency Name,Type,Level\n";
+  
+  compsToExport.forEach(c => {
+    let type = "General";
+    if (coreComps.find(x => x.id === c.id)) type = "Core";
+    if (specComps.find(x => x.id === c.id)) type = "Specialist";
+    
+    let lvl = S.compLevels && S.compLevels[c.id] ? S.compLevels[c.id] : 1;
+    let name = c.name.replace(/,/g, " "); // escape commas
+    csv += `${c.id},${name},${type},${lvl}\n`;
+  });
+  
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "CICES_Competencies_Export.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
 function r2Cices(C) {
+
   const sectorKey = S.sel.cicesSector;
   const coreKey = S.sel.cicesCore;
   const spKey = S.sel.cicesSpecialism;
@@ -10526,6 +10556,9 @@ function r2Cices(C) {
         <div class="cices-sidebar-group-body">
           ${specComps.map(c=>`<div class="cices-sidebar-item" onclick="document.getElementById('cgrp-${c.id}')?.scrollIntoView({behavior:'smooth',block:'start'})">${c.id} <span style="color:var(--text);font-size:10px">${c.name}</span></div>`).join('')}
         </div>
+      </div>
+      <div style="margin-top:16px;text-align:center;">
+        <button class="btn btn-ghost" onclick="exportCicesComps()" style="font-size:12px;padding:8px 12px;width:100%;border:1px solid var(--border);">📥 Export Competencies</button>
       </div>`;
     compLayout.appendChild(navSide);
 
