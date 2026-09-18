@@ -4719,7 +4719,7 @@ function importJSON(input) {
       if (typeof saved !== 'object' || !saved) throw new Error("Invalid JSON file");
       
       // Auto-detect Senior Route JSON
-      const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
+      const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || saved.route === 'SENIOR_APPLICANT' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
       if (isSeniorJSON) {
         let seniorKey = "charterly_cices_senior_default";
         if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.email) {
