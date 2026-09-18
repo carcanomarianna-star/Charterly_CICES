@@ -6214,7 +6214,7 @@ function importSeniorJSON(input) {
       if (typeof saved !== 'object' || !saved) throw new Error('Invalid JSON format');
       
       // Auto-detect Standard Route JSON
-      const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
+      const isSeniorJSON = saved.seniorRoute === true || saved.route === 'senior' || saved.route === 'SENIOR_APPLICANT' || !!saved.seniorSector || (saved.seniorApplicant && !saved.cicesSector);
       if (!isSeniorJSON && (saved.cicesSector || saved.body || saved.cicesGrades || saved.statements)) {
         let stdKey = "rics_portal_v1";
         if (typeof CURRENT_SENIOR_USER !== 'undefined' && CURRENT_SENIOR_USER && CURRENT_SENIOR_USER.email) {
