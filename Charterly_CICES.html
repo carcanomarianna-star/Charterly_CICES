@@ -1850,6 +1850,7 @@ YPE html>
     </div>
     <div class="header-btns">
       <button id="auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
+      <button class="btn btn-ghost header-btn" onclick="window.open('mailto:charterlyadmin@gmail.com?subject=CharteRly%20Inquiry')" title="Contact Admin" style="display:inline-flex;align-items:center;gap:4px;">✉ Contact Admin</button>
       <label class="btn btn-ghost header-btn" for="import-json-input" title="Import saved session (.json)">⬆ Import JSON</label>
       <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importJSON(this)">
       <button class="btn btn-ghost header-btn" onclick="exportJSON()" title="Export session data (.json)">⬇ Export JSON</button>
@@ -4571,6 +4572,10 @@ function uploadCompCSV(input) {
 }
 
 function cpdDownloadCSV() {
+  if (S.body === "CICES") {
+    cicesCpdDownloadCSV();
+    return;
+  }
   const header = [
     "Title/Activity","Status","Start Date","Hours","Mins","RICS Content",
     "Activity Type","Other Type","Structured/Unstructured",
@@ -5128,18 +5133,19 @@ function cicesCpdUploadCSV(input) {
 
 function cicesCpdDownloadCSV() {
   const entries   = S.cpd || [];
+  const planItems = S.cpdPlan || [];
   const rows = [];
   rows.push(["CHARTERED INSTITUTION OF CIVIL ENGINEERING SURVEYORS"]);
-  rows.push(["Continuing Professional Development Record"]);
+  rows.push(["Continuing Professional Development Record — Standard Candidate Route"]);
   rows.push([]);
   rows.push(["CPD Plan"]);
-  rows.push(["Learning","Classification/Type","Objective","Start Date","Time Scale"]);
+  rows.push(["Learning / Topic","Classification","Objective","Start Date","Time Scale"]);
   planItems.forEach(p => rows.push([p.learning||"", p.type||"", p.objective||"", p.startDate||"", p.timeScale||""]));
   rows.push([]);
-  rows.push(["CPD Log"]);
-  rows.push(["Date","Duration / CPD Points","Classification / Type / Activity","Objective","Learning / Outcome / Benefits","Reflection"]);
+  rows.push(["CPD Activity Log"]);
+  rows.push(["Date","Duration / CPD Points","Activity Title","Classification","Outcomes & Benefits"]);
   entries.forEach(e => rows.push([
-    e.startDate||"", e.cpdPoints||"", e.activityType||"", e.objective||"", e.outcome||"", e.reflection||""
+    e.startDate||"", e.cpdPoints||"", e.title||"", e.activityType||"", e.outcome||""
   ]));
   const csv = rows.map(r => r.map(c => {
     const s = String(c||"");
@@ -6042,28 +6048,23 @@ function updDCV(val) {
 }
 
 function insertCompRefDCV(compId) {
-  let ta = document.getElementById("detailedcv-ta");
-  // If the detailed CV text area isn't found, check if the overview text area is active
+  let ta = document.getElementById("cv_overview");
   if (!ta) {
-    ta = document.getElementById("cv_overview");
+    alert("Open '+ Add Role' or 'Edit' a role to insert competency reference (" + compId + ") into its scope & responsibilities overview.");
+    return;
   }
-  if (!ta) return;
   const ref = "(" + compId + ")";
-  const start = ta.selectionStart;
-  const end   = ta.selectionEnd;
+  const start = (typeof ta.selectionStart === 'number') ? ta.selectionStart : ta.value.length;
+  const end   = (typeof ta.selectionEnd === 'number') ? ta.selectionEnd : ta.value.length;
   const before = ta.value.substring(0, start);
   const after  = ta.value.substring(end);
   const spaceBefore = (before.length > 0 && !/[\s\n]/.test(before[before.length-1])) ? ' ' : '';
-  ta.value = before + spaceBefore + ref + after;
-  const newPos = start + spaceBefore.length + ref.length;
+  const spaceAfter = (after.length > 0 && !/[\s\n]/.test(after[0])) ? ' ' : '';
+  ta.value = before + spaceBefore + ref + spaceAfter + after;
+  const newPos = start + spaceBefore.length + ref.length + spaceAfter.length;
   ta.selectionStart = ta.selectionEnd = newPos;
   ta.focus();
-  if (ta.id === "detailedcv-ta") {
-    updDCV(ta.value);
-  } else {
-    // Manually trigger an input event for "cv_overview" or handle syncing here
-    syncRefButtons("dcvref-btn-", ta.value);
-  }
+  syncRefButtons("dcvref-btn-", ta.value);
 }
 
 function rCVCices(C) {
@@ -6147,7 +6148,7 @@ function rCVCices(C) {
     </div>
     <div class="stab stab-cv active">
       Detailed CV
-      <span class="stab-count">${dcvN} words</span>
+      <span class="stab-count">${(S.cv||[]).length} role${(S.cv||[]).length===1?'':'s'}</span>
     </div>`;
   main.appendChild(tabsDiv);
 
@@ -8601,8 +8602,7 @@ function renderCicesEligResult(nodeId, wrap) {
   const footerHtml = node.id === "C_RESULT_SENIOR_ROUTE"
     ? "<div style=\"display:flex;flex-direction:column;gap:10px;align-items:flex-end;width:100%\">" +
         "<div style=\"display:flex;gap:10px;justify-content:flex-end;width:100%;flex-wrap:wrap;\">" +
-          "<button class=\"btn btn-ghost\" onclick=\"goStep(1)\" style=\"font-size:13px;color:#5a6a7a;border-color:#b8c8d4;\">Preview standard portal →</button>" +
-          "<button class=\"btn btn-primary\" onclick=\"handleSeniorRouteLaunch()\" style=\"background:" + colour + ";border:none;\">Launch Senior Applicant Portal →</button>" +
+          "<button class=\"btn btn-primary\" onclick=\"handleSeniorRouteLaunch()\" style=\"background:" + colour + ";border:none;padding:10px 22px;font-size:14px;font-weight:600;\">Launch Senior Applicant Portal →</button>" +
         "</div>" +
       "</div>"
     : canStart

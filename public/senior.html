@@ -1876,6 +1876,7 @@
     <div class="header-btns">
       <button id="senior-auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
       <button class="btn btn-ghost header-btn" onclick="exportSeniorWordDocx()" title="Export Word Document (.docx)" style="color:#2E4D3B;border-color:#84B399;">📄 Export Word</button>
+      <button class="btn btn-ghost header-btn" onclick="window.open('mailto:charterlyadmin@gmail.com?subject=CharteRly%20Senior%20Portal%20Inquiry')" title="Contact Admin" style="color:#2E4D3B;border-color:#84B399;display:inline-flex;align-items:center;gap:4px;">✉ Contact Admin</button>
       <label class="btn btn-ghost header-btn" for="senior-import-json-input" title="Import saved session (.json)" style="color:#2E4D3B;border-color:#84B399;cursor:pointer;">⬆ Import JSON</label>
       <input type="file" id="senior-import-json-input" accept=".json" style="display:none" onchange="importSeniorJSON(this)">
       <button class="btn btn-ghost header-btn" onclick="exportSeniorJSON()" title="Export Senior Session (.json)">⬇ Export JSON</button>
@@ -1936,9 +1937,11 @@
       </div>
     </div>
   </div>
+<!-- Netlify Auth Prompt Banner (shown if modal closed while unauthenticated) -->
+<div id="senior-auth-prompt-banner" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;background:#1e2530;color:#ffffff;padding:12px 24px;border-radius:30px;box-shadow:0 8px 30px rgba(0,0,0,0.3);align-items:center;gap:14px;font-size:13.5px;font-weight:500;">
+  <span>🔑 Please sign in to access your chartership workspace</span>
+  <button onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="background:#2E4D3B;color:#fff;border:none;border-radius:20px;padding:6px 16px;font-weight:600;cursor:pointer;font-size:13px;">Log In</button>
 </div>
-
-
 
 <script>
 const CICES_SECTORS = {
@@ -4807,16 +4810,7 @@ function buildSeniorCVHtml() {
   html += `
       </div>
 
-      <div style="margin-top:20px;padding-top:14px;border-top:1px solid var(--border)">
-        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;padding-left:2px">CSV Tools</div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <button class="btn btn-ghost" style="font-size:11px;padding:6px 10px;width:100%;text-align:left;color:var(--cices,#2E4D3B);border-color:#84B399" onclick="seniorCvDownloadCSV()">⬇ Download CV CSV</button>
-          <label class="btn btn-ghost" style="font-size:11px;padding:6px 10px;width:100%;text-align:left;cursor:pointer">
-            ⬆ Upload CV CSV
-            <input type="file" accept=".csv" style="display:none" onchange="seniorCvUploadCSV(this)">
-          </label>
-        </div>
-      </div>
+
     </div>
 
     <!-- COL 2: Main Content & Employment History -->
@@ -4856,6 +4850,12 @@ function buildSeniorCVHtml() {
               oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.email=this.value; saveState()"
               style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif">
           </div>
+          <div>
+            <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">CICES Candidate ID</label>
+            <input type="text" value="${esc(S.cvPersonal?.cicesId||'')}" placeholder="e.g. CICES-12345"
+              oninput="if(!S.cvPersonal) S.cvPersonal={}; S.cvPersonal.cicesId=this.value; saveState()"
+              style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif">
+          </div>
           <div style="grid-column: 1 / -1">
             <label style="font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px">Home Address</label>
             <input type="text" value="${esc(S.cvPersonal?.address||'')}" placeholder="123 Civil Engineering Way, London, UK"
@@ -4869,7 +4869,7 @@ function buildSeniorCVHtml() {
       <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 22px;margin-bottom:20px">
         <div style="font-size:14px;font-weight:700;color:var(--cices,#2E4D3B);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
           <span>🎓 Section 2: Education &amp; Qualifications</span>
-          <button onclick="seniorEduNewEntry()" style="background:var(--cices,#2E4D3B);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">+ Add Qualification</button>
+          ${!EDU_FORM_OPEN ? `<button onclick="seniorEduNewEntry()" style="background:var(--cices,#2E4D3B);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">+ Add Qualification</button>` : ''}
         </div>
 
         ${EDU_FORM_OPEN ? renderSeniorEduForm() : ''}
@@ -4884,7 +4884,10 @@ function buildSeniorCVHtml() {
                 <span style="font-size:12px;color:var(--muted)"> — ${esc(edu.institution)} (${esc(edu.year)})</span>
                 ${edu.type ? `<span class="badge" style="margin-left:8px;font-size:10px;background:var(--cices-bg);color:var(--cices)">${esc(edu.type)}</span>` : ''}
               </div>
-              <button onclick="seniorEduDelete(${idx})" style="border:none;background:none;color:#c0392b;cursor:pointer;font-size:13px" title="Delete">🗑</button>
+              <div style="display:flex;gap:6px">
+                <button onclick="seniorEduEdit('${edu.id}')" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface);cursor:pointer;color:var(--text)">Edit</button>
+                <button onclick="seniorEduDelete(${idx})" style="font-size:11px;padding:3px 8px;border:1px solid #fca5a5;border-radius:4px;background:#fff5f5;cursor:pointer;color:#b91c1c">✕</button>
+              </div>
             </div>
           `).join('')}
         </div>
@@ -4961,50 +4964,58 @@ function buildSeniorCVHtml() {
 }
 
 let EDU_FORM_OPEN = false;
-let CV_FORM_OPEN = false;
-let CV_EDITING = null;
+let EDU_EDITING = null;
 
 function renderSeniorEduForm() {
+  const editing = EDU_EDITING ? (S.cvEducation || []).find(e => e.id === EDU_EDITING) : null;
   return `
   <div style="background:#f8fafc;border:1px solid #84B399;border-radius:8px;padding:16px;margin-bottom:14px;">
-    <div style="font-size:13px;font-weight:700;color:#2E4D3B;margin-bottom:12px;">Add Education / Professional Qualification</div>
+    <div style="font-size:13px;font-weight:700;color:#2E4D3B;margin-bottom:12px;">${editing ? 'Edit Qualification' : 'Add Education / Professional Qualification'}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
       <div>
         <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Qualification / Degree <span style="color:#b91c1c">*</span></label>
-        <input id="senior_edu_degree" type="text" placeholder="e.g. BSc (Hons) Civil Engineering" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+        <input id="senior_edu_degree" type="text" value="${esc(editing?.degree || '')}" placeholder="e.g. BSc (Hons) Civil Engineering" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Institution / Awarding Body <span style="color:#b91c1c">*</span></label>
-        <input id="senior_edu_inst" type="text" placeholder="e.g. University of Manchester" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+        <input id="senior_edu_inst" type="text" value="${esc(editing?.institution || '')}" placeholder="e.g. University of Manchester" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Year Completed</label>
-        <input id="senior_edu_year" type="text" placeholder="e.g. 2012" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
+        <input id="senior_edu_year" type="text" value="${esc(editing?.year || '')}" placeholder="e.g. 2012" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:600;display:block;margin-bottom:4px;color:var(--muted)">Type / Category</label>
         <select id="senior_edu_type" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:12px;background:#fff;">
-          <option value="Higher Education Degree">Higher Education Degree</option>
-          <option value="Professional Qualification / Certification">Professional Qualification / Certification</option>
-          <option value="Diploma / NVQ">Diploma / NVQ</option>
-          <option value="Professional Membership">Professional Membership</option>
-          <option value="Other Training">Other Training</option>
+          <option value="Higher Education Degree" ${(editing?.type==='Higher Education Degree')?'selected':''}>Higher Education Degree</option>
+          <option value="Professional Qualification / Certification" ${(editing?.type==='Professional Qualification / Certification')?'selected':''}>Professional Qualification / Certification</option>
+          <option value="Diploma / NVQ" ${(editing?.type==='Diploma / NVQ')?'selected':''}>Diploma / NVQ</option>
+          <option value="Professional Membership" ${(editing?.type==='Professional Membership')?'selected':''}>Professional Membership</option>
+          <option value="Other Training" ${(editing?.type==='Other Training')?'selected':''}>Other Training</option>
         </select>
       </div>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-primary" onclick="seniorEduSave()" style="background:#2E4D3B;border:none;font-size:11px;padding:6px 14px;">✓ Save Qualification</button>
+      <button class="btn btn-primary" onclick="seniorEduSave()" style="background:#2E4D3B;border:none;font-size:11px;padding:6px 14px;">✓ ${editing ? 'Update Qualification' : 'Save Qualification'}</button>
       <button class="btn btn-ghost" onclick="seniorEduCancel()" style="font-size:11px;padding:6px 14px;">Cancel</button>
     </div>
   </div>`;
 }
 
 function seniorEduNewEntry() {
+  EDU_EDITING = null;
+  EDU_FORM_OPEN = true;
+  render();
+}
+
+function seniorEduEdit(id) {
+  EDU_EDITING = id;
   EDU_FORM_OPEN = true;
   render();
 }
 
 function seniorEduCancel() {
+  EDU_EDITING = null;
   EDU_FORM_OPEN = false;
   render();
 }
@@ -5021,13 +5032,25 @@ function seniorEduSave() {
   }
 
   if (!S.cvEducation) S.cvEducation = [];
-  S.cvEducation.push({
-    id: "edu_" + Date.now(),
-    degree: deg,
-    institution: inst,
-    year: yr || "",
-    type: typ || "Higher Education Degree"
-  });
+
+  if (EDU_EDITING) {
+    const existing = S.cvEducation.find(e => e.id === EDU_EDITING);
+    if (existing) {
+      existing.degree = deg;
+      existing.institution = inst;
+      existing.year = yr || "";
+      existing.type = typ || "Higher Education Degree";
+    }
+    EDU_EDITING = null;
+  } else {
+    S.cvEducation.push({
+      id: "edu_" + Date.now(),
+      degree: deg,
+      institution: inst,
+      year: yr || "",
+      type: typ || "Higher Education Degree"
+    });
+  }
 
   EDU_FORM_OPEN = false;
   saveState();
@@ -6129,16 +6152,40 @@ function exportSeniorWordHtml() {
 
   // Detailed CV
   doc += `
-    <h1>Section 2 — Detailed CV (Whole Career Description)</h1>
-    <h2>Structured Employment History</h2>
+    <h1>Section 2 — Detailed CV</h1>
+    <h2>Section 1: Personal Details</h2>
+    <table>
+      <tbody>
+        <tr><td style="width:30%"><strong>Full Name</strong></td><td>${esc(S.cvPersonal?.fullName || '—')}</td></tr>
+        <tr><td><strong>Date of Birth</strong></td><td>${esc(S.cvPersonal?.dob || '—')}</td></tr>
+        <tr><td><strong>Contact Phone</strong></td><td>${esc(S.cvPersonal?.phone || '—')}</td></tr>
+        <tr><td><strong>Email Address</strong></td><td>${esc(S.cvPersonal?.email || '—')}</td></tr>
+        <tr><td><strong>Home Address</strong></td><td>${esc(S.cvPersonal?.address || '—')}</td></tr>
+        <tr><td><strong>CICES Candidate ID</strong></td><td>${esc(S.cvPersonal?.cicesId || '—')}</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Section 2: Education & Qualifications</h2>
+    ${(S.cvEducation || []).length > 0 ? `
+    <table>
+      <thead><tr><th>Qualification / Degree</th><th>Institution / Body</th><th>Year</th><th>Category</th></tr></thead>
+      <tbody>
+        ${(S.cvEducation || []).map(edu => `<tr><td><strong>${esc(edu.degree)}</strong></td><td>${esc(edu.institution)}</td><td>${esc(edu.year || '—')}</td><td>${esc(edu.type || '—')}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    ` : `<p><em>[No education or professional qualifications recorded]</em></p>`}
+
+    <h2>Section 3: Employment History Timeline</h2>
     <table>
       <thead><tr><th>Position / Role</th><th>Employer</th><th>Dates</th><th>Scope & Responsibilities</th></tr></thead>
       <tbody>
-        ${(S.cv || []).map(e => `<tr><td>${esc(e.position)}</td><td>${esc(e.employer)}</td><td>${esc(e.dateFrom)} – ${esc(e.dateTo||'Present')}</td><td>${esc(e.overview||'')}</td></tr>`).join('')}
+        ${(S.cv || []).map(e => `<tr><td><strong>${esc(e.position)}</strong></td><td>${esc(e.employer)}</td><td>${esc(e.dateFrom)} – ${esc(e.dateTo||'Present')}</td><td>${esc(e.overview||'')}</td></tr>`).join('')}
       </tbody>
     </table>
-    <h2>Whole Career Narrative (1,500–2,000 words target)</h2>
-    <p>${esc(S.detailedCV || '').replace(/\n/g, '<br>') || '<em>[Detailed CV not yet written]</em>'}</p>
+    ${S.detailedCV && S.detailedCV.trim() ? `
+    <h3>Whole Career Narrative Summary</h3>
+    <p>${esc(S.detailedCV).replace(/\n/g, '<br>')}</p>
+    ` : ''}
     <div class="page-break"></div>
   `;
 

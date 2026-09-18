@@ -1850,6 +1850,7 @@
     </div>
     <div class="header-btns">
       <button id="auth-login-btn" class="btn btn-primary header-btn" onclick="window.netlifyIdentity && window.netlifyIdentity.open('login')" style="display:none;background:#0d9488;border:none;color:#ffffff;font-weight:600;padding:6px 14px;border-radius:6px;box-shadow:0 2px 8px rgba(13,148,136,0.25);cursor:pointer;">🔑 Log In</button>
+      <button class="btn btn-ghost header-btn" onclick="window.open('mailto:charterlyadmin@gmail.com?subject=CharteRly%20Inquiry')" title="Contact Admin" style="display:inline-flex;align-items:center;gap:4px;">✉ Contact Admin</button>
       <label class="btn btn-ghost header-btn" for="import-json-input" title="Import saved session (.json)">⬆ Import JSON</label>
       <input type="file" id="import-json-input" accept=".json" style="display:none" onchange="importJSON(this)">
       <button class="btn btn-ghost header-btn" onclick="exportJSON()" title="Export session data (.json)">⬇ Export JSON</button>
@@ -1947,12 +1948,9 @@
       <button class="btn btn-primary" onclick="launchSeniorPortal();" style="background:#2E4D3B;font-size:14px;padding:12px 18px;justify-content:center;font-weight:600;">
         Launch Senior Applicant Portal →
       </button>
-      <button class="btn btn-ghost" onclick="closeSeniorRouteModal(); goStep(1);" style="justify-content:center;font-size:13px;color:#5a6a7a;">
-        Or Continue to Standard Submission Portal →
-      </button>
       <div style="display:flex;gap:10px;margin-top:4px;">
-        <button class="btn btn-ghost" onclick="window.open('mailto:membership@cices.eu?subject=CICES%20Senior%20Applicant%20Route%20Inquiry')" style="flex:1;justify-content:center;font-size:13px;color:#2E4D3B;border-color:#84B399;">
-          ✉ Contact CICES
+        <button class="btn btn-ghost" onclick="window.open('mailto:charterlyadmin@gmail.com?subject=CharteRly%20Senior%20Applicant%20Route%20Inquiry')" style="flex:1;justify-content:center;font-size:13px;color:#2E4D3B;border-color:#84B399;">
+          ✉ Contact Admin
         </button>
         <button class="btn btn-ghost" onclick="closeSeniorRouteModal()" style="flex:1;justify-content:center;font-size:13px;color:#5a6a7a;">
           Return to Assessment
@@ -2762,6 +2760,10 @@ function uploadCompCSV(input) {
 }
 
 function cpdDownloadCSV() {
+  if (S.body === "CICES") {
+    cicesCpdDownloadCSV();
+    return;
+  }
   const header = [
     "Title/Activity","Status","Start Date","Hours","Mins","RICS Content",
     "Activity Type","Other Type","Structured/Unstructured",
@@ -3319,18 +3321,19 @@ function cicesCpdUploadCSV(input) {
 
 function cicesCpdDownloadCSV() {
   const entries   = S.cpd || [];
+  const planItems = S.cpdPlan || [];
   const rows = [];
   rows.push(["CHARTERED INSTITUTION OF CIVIL ENGINEERING SURVEYORS"]);
-  rows.push(["Continuing Professional Development Record"]);
+  rows.push(["Continuing Professional Development Record — Standard Candidate Route"]);
   rows.push([]);
   rows.push(["CPD Plan"]);
-  rows.push(["Learning","Classification/Type","Objective","Start Date","Time Scale"]);
+  rows.push(["Learning / Topic","Classification","Objective","Start Date","Time Scale"]);
   planItems.forEach(p => rows.push([p.learning||"", p.type||"", p.objective||"", p.startDate||"", p.timeScale||""]));
   rows.push([]);
-  rows.push(["CPD Log"]);
-  rows.push(["Date","Duration / CPD Points","Classification / Type / Activity","Objective","Learning / Outcome / Benefits","Reflection"]);
+  rows.push(["CPD Activity Log"]);
+  rows.push(["Date","Duration / CPD Points","Activity Title","Classification","Outcomes & Benefits"]);
   entries.forEach(e => rows.push([
-    e.startDate||"", e.cpdPoints||"", e.activityType||"", e.objective||"", e.outcome||"", e.reflection||""
+    e.startDate||"", e.cpdPoints||"", e.title||"", e.activityType||"", e.outcome||""
   ]));
   const csv = rows.map(r => r.map(c => {
     const s = String(c||"");
@@ -4224,9 +4227,8 @@ let EDU_EDITING = null;
 
 function renderEduForm() {
   saveState();
-  if (typeof rCVCices === "function") {
-    const C = document.getElementById("cices-content");
-    if (C) { C.innerHTML = ""; rCVCices(C); }
+  if (typeof render === "function") {
+    render();
   }
 }
 
@@ -4309,28 +4311,23 @@ function updDCV(val) {
 }
 
 function insertCompRefDCV(compId) {
-  let ta = document.getElementById("detailedcv-ta");
-  // If the detailed CV text area isn't found, check if the overview text area is active
+  let ta = document.getElementById("cv_overview");
   if (!ta) {
-    ta = document.getElementById("cv_overview");
+    alert("Open '+ Add Role' or 'Edit' a role to insert competency reference (" + compId + ") into its scope & responsibilities overview.");
+    return;
   }
-  if (!ta) return;
   const ref = "(" + compId + ")";
-  const start = ta.selectionStart;
-  const end   = ta.selectionEnd;
+  const start = (typeof ta.selectionStart === 'number') ? ta.selectionStart : ta.value.length;
+  const end   = (typeof ta.selectionEnd === 'number') ? ta.selectionEnd : ta.value.length;
   const before = ta.value.substring(0, start);
   const after  = ta.value.substring(end);
   const spaceBefore = (before.length > 0 && !/[\s\n]/.test(before[before.length-1])) ? ' ' : '';
-  ta.value = before + spaceBefore + ref + after;
-  const newPos = start + spaceBefore.length + ref.length;
+  const spaceAfter = (after.length > 0 && !/[\s\n]/.test(after[0])) ? ' ' : '';
+  ta.value = before + spaceBefore + ref + spaceAfter + after;
+  const newPos = start + spaceBefore.length + ref.length + spaceAfter.length;
   ta.selectionStart = ta.selectionEnd = newPos;
   ta.focus();
-  if (ta.id === "detailedcv-ta") {
-    updDCV(ta.value);
-  } else {
-    // Manually trigger an input event for "cv_overview" or handle syncing here
-    syncRefButtons("dcvref-btn-", ta.value);
-  }
+  syncRefButtons("dcvref-btn-", ta.value);
 }
 
 function rCVCices(C) {
@@ -4338,16 +4335,18 @@ function rCVCices(C) {
   const sp        = S.sel.cicesSpecialism;
   const dcvText   = S.detailedCV || "";
   const dcvN      = cw(dcvText);
+  const dcvPct    = Math.min(100, (dcvN / 2000) * 100);
+  const dcvCol    = dcvN >= 2000 ? "#c0392b" : dcvN >= 1500 ? "#2E4D3B" : "#999";
   const cpdN      = (S.cpd||[]).length;
   const erWords   = cw(S.experienceReport||"");
   const cicesP    = cicesCompProgress(allComps);
   const sector = S.sel.cicesSector ? CICES_SECTORS[S.sel.cicesSector] : null;
   const activeCoreKey = S.sel.cicesCore || (sector && Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
-  const isStandalone = sp && sector.specialisms[sp] && sector.specialisms[sp].standalone;
-  const coreComps = (sector && activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].comps : [];
-  const coreLabel = (sector && activeCoreKey && !isStandalone && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].label : null;
-  const specComps = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].comps : [];
-  const specLabel = sector && sp && sector.specialisms[sp] ? sector.specialisms[sp].label : "Specialist";
+  const isStandalone = Boolean(sp && sector && sector.specialisms && sector.specialisms[sp] && sector.specialisms[sp].standalone);
+  const coreComps = (sector && activeCoreKey && !isStandalone && sector.cores && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].comps : [];
+  const coreLabel = (sector && activeCoreKey && !isStandalone && sector.cores && sector.cores[activeCoreKey]) ? sector.cores[activeCoreKey].label : null;
+  const specComps = (sector && sp && sector.specialisms && sector.specialisms[sp]) ? sector.specialisms[sp].comps : [];
+  const specLabel = (sector && sp && sector.specialisms && sector.specialisms[sp]) ? sector.specialisms[sp].label : "Specialist";
 
   if (!S.cvPersonal) S.cvPersonal = { fullName: "", dob: "", address: "", phone: "", email: "", cicesId: "" };
   if (!S.cvEducation) S.cvEducation = [];
@@ -4416,7 +4415,7 @@ function rCVCices(C) {
     </div>
     <div class="stab stab-cv active">
       Detailed CV
-      <span class="stab-count">${dcvN} words</span>
+      <span class="stab-count">${(S.cv||[]).length} role${(S.cv||[]).length===1?'':'s'}</span>
     </div>`;
   main.appendChild(tabsDiv);
 
@@ -4643,21 +4642,7 @@ function rCVCices(C) {
   }
   main.appendChild(tableWrap);
 
-  // Whole Career Description textarea
-  const overallCard = document.createElement("div");
-  overallCard.style.cssText = "margin-bottom:20px;border:1px solid var(--border);border-radius:10px;padding:16px;background:var(--card)";
-  overallCard.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <label style="font-size:12px;font-weight:700;color:var(--cices,#2E4D3B)">Whole Career Narrative & Summary</label>
-      <div id="dcv-wc" style="font-family:'DM Mono',monospace;font-size:11px;color:${dcvCol}">${dcvN} / 2,000 words</div>
-    </div>
-    <div style="background:var(--border);height:4px;border-radius:2px;margin-bottom:10px;overflow:hidden">
-      <div id="dcv-wbf" style="width:${dcvPct}%;height:100%;background:${dcvCol};transition:width .2s"></div>
-    </div>
-    <textarea id="detailedcv-ta" class="field-textarea" style="min-height:160px;width:100%"
-      oninput="updDCV(this.value)"
-      placeholder="Write your comprehensive career narrative (1,500-2,000 words). Incorporate competency IDs using the sidebar…">${esc(dcvText)}</textarea>`;
-  main.appendChild(overallCard);
+// Whole Career Narrative div removed as requested - CV structured cleanly across Sections 1, 2 and 3
 
   // ── COL 3: Guidance panel ───────────────────────────────────────────────
   const guide = document.createElement("div");
@@ -4670,7 +4655,7 @@ function rCVCices(C) {
       <div class="cs-guide-text">The Detailed CV is split into 3 mandatory sections:<br><br>
         <strong>Section 1:</strong> Personal Details<br>
         <strong>Section 2:</strong> Education &amp; Qualifications<br>
-        <strong>Section 3:</strong> Employment History &amp; Whole Career Narrative
+        <strong>Section 3:</strong> Employment History Timeline (with inline competency references)
       </div>
     </div>
     <hr class="cs-guide-divider">
@@ -5777,6 +5762,42 @@ function _buildWordDoc() {
       });
     } else {
       ps.push(para(run("[No CV entries recorded]", `<w:sz w:val="22"/><w:color w:val="AAAAAA"/><w:i/>`)));
+    }
+
+    addPageBreak();
+
+    // ── SECTION 3: 2-YEAR CONTINUING PROFESSIONAL DEVELOPMENT (CPD) ──────
+    cHead("Section 3 — Continuing Professional Development (CPD Record)");
+    addPara("Records of continuing professional development undertaken over the last two years in line with CICES template requirements.");
+    addBlank();
+
+    if ((S.cpdPlan || []).length > 0) {
+      addH2("CPD Plan (Learning Objectives)");
+      (S.cpdPlan || []).forEach(p => {
+        ps.push(cTable([
+          cRow("Topic / Learning", p.learning || "—"),
+          cRow("Classification", p.type || "—"),
+          cRow("Objective", p.objective || "—"),
+          cRow("Start Date & Time Scale", (p.startDate || "") + (p.timeScale ? " (" + p.timeScale + ")" : ""))
+        ].join("")));
+        addBlank();
+      });
+    }
+
+    addH2("CPD Activity Log (Past 24 Months)");
+    if ((S.cpd || []).length > 0) {
+      (S.cpd || []).forEach(e => {
+        ps.push(cTable([
+          cRow("Date", e.startDate || "—"),
+          cRow("Duration / CPD Points", e.cpdPoints ? String(e.cpdPoints) : "—"),
+          cRow("Activity Description", e.title || e.activity || "—"),
+          cRow("Classification / Type", e.activityType || "—"),
+          cRow("Learning & Outcomes", e.outcome || "—")
+        ].join("")));
+        addBlank();
+      });
+    } else {
+      ps.push(para(run("[No CPD activities recorded]", `<w:sz w:val="20"/><w:color w:val="AAAAAA"/><w:i/>`)));
     }
 
     addPageBreak();
@@ -7217,8 +7238,7 @@ function renderCicesEligResult(nodeId, wrap) {
   const footerHtml = node.id === "C_RESULT_SENIOR_ROUTE"
     ? "<div style=\"display:flex;flex-direction:column;gap:10px;align-items:flex-end;width:100%\">" +
         "<div style=\"display:flex;gap:10px;justify-content:flex-end;width:100%;flex-wrap:wrap;\">" +
-          "<button class=\"btn btn-ghost\" onclick=\"goStep(1)\" style=\"font-size:13px;color:#5a6a7a;border-color:#b8c8d4;\">Preview standard portal →</button>" +
-          "<button class=\"btn btn-primary\" onclick=\"handleSeniorRouteLaunch()\" style=\"background:" + colour + ";border:none;\">Launch Senior Applicant Portal →</button>" +
+          "<button class=\"btn btn-primary\" onclick=\"handleSeniorRouteLaunch()\" style=\"background:" + colour + ";border:none;padding:10px 22px;font-size:14px;font-weight:600;\">Launch Senior Applicant Portal →</button>" +
         "</div>" +
       "</div>"
     : canStart
@@ -7867,25 +7887,104 @@ function r0(C) {
   C.innerHTML=`<div class="page-centre"><div class="panel">
     <h1 class="page-title">Select Pathway or Direct Portal Access</h1>
     <p class="sub">Choose the institution route you are seeking chartered membership with, or proceed directly to your submission workspace.</p>
-    <div class="choice-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
-      <div class="choice-card cices-card ${S.body==='CICES'?'selected':''}" onclick="selBody('CICES')">
-        <div class="choice-label" style="color:var(--cices-bright)">CICES Standard Route</div>
-        <div class="choice-desc">Standard Member Candidate Pathway (Competencies + Experience Report)</div>
-        <div style="margin-top:10px"><span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border)">Find your Pathway</span></div>
+    <div class="choice-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
+      <!-- 1. CICES Pathway -->
+      <div class="choice-card cices-card ${S.body==='CICES'?'selected':''}" onclick="selBody('CICES')" style="cursor:pointer">
+        <div>
+          <div class="choice-label" style="color:var(--cices-bright);font-size:16px;font-weight:700">CICES Pathway</div>
+          <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Take the interactive pathway discovery to find the most suitable route, core competencies, and specialism for you.</div>
+        </div>
+        <div style="margin-top:14px"><span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border);font-weight:600">➔ Find your Pathway</span></div>
       </div>
-      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer;" onclick="window.location.href='/senior.html'">
-        <div class="choice-label" style="color:var(--accent)">CICES Senior Applicant</div>
-        <div class="choice-desc">Senior Member Candidate Portal for Experienced Senior Candidates</div>
-        <div style="margin-top:10px"><span class="badge" style="background:var(--acc-bg);color:var(--accent);border:1px solid var(--accent)">🌟 Senior Portal Launch</span></div>
+
+      <!-- 2. Direct Access Senior Applicant -->
+      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="handleSeniorDirectAccess()">
+        <div>
+          <div class="choice-label" style="color:var(--accent);font-size:16px;font-weight:700">Direct Access Senior Applicant</div>
+          <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Direct entry for Senior Applicants (10+ yrs experience). Access the senior portal or load an existing senior .json session.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge" style="background:var(--acc-bg);color:var(--accent);border:1px solid var(--accent);font-weight:600">🌟 Senior Portal Launch</span>
+          <span class="badge" style="background:#fff;color:var(--accent);border:1px solid var(--accent);font-weight:600">⬆ Load Senior .json</span>
+        </div>
       </div>
-      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface);" onclick="goDirectSubmission()">
-        <div class="choice-label" style="color:var(--cices)">Direct to Portal</div>
-        <div class="choice-desc">Jump straight to your Submission Documents workspace, Competency Logs, and Report Editor.</div>
-        <div style="margin-top:10px"><span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border)">⚡ Workspace Quick Launch</span></div>
+
+      <!-- 3. Direct Access Standard Applicant -->
+      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface); cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="handleStandardDirectAccess()">
+        <div>
+          <div class="choice-label" style="color:var(--cices);font-size:16px;font-weight:700">Direct Access Standard Applicant</div>
+          <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Direct workspace access for standard candidates. Load your saved .json file to resume your Competencies, CPD, and Report.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge" style="background:var(--cices-bg);color:var(--cices);border:1px solid var(--cices-border);font-weight:600">⚡ Direct Workspace</span>
+          <span class="badge" style="background:#fff;color:var(--cices);border:1px solid var(--cices-border);font-weight:600">⬆ Load .json</span>
+        </div>
       </div>
     </div>
 
   </div></div>`;
+}
+
+function handleSeniorDirectAccess() {
+  // Check if senior session already exists in localStorage
+  let seniorKey = "charterly_cices_senior_default";
+  if (typeof CURRENT_USER !== 'undefined' && CURRENT_USER && CURRENT_USER.email) {
+    seniorKey = "charterly_cices_senior_" + CURRENT_USER.email.replace(/[^a-zA-Z0-9_]/g, '_');
+  }
+  const existingSeniorRaw = localStorage.getItem(seniorKey) || localStorage.getItem("charterly_cices_senior_v1");
+  let hasSeniorData = false;
+  if (existingSeniorRaw) {
+    try {
+      const parsed = JSON.parse(existingSeniorRaw);
+      if (parsed && (parsed.selectedComps?.length > 0 || parsed.sel?.cicesSector || parsed.cv?.length > 0)) {
+        hasSeniorData = true;
+      }
+    } catch(e) {}
+  }
+
+  if (hasSeniorData) {
+    window.location.href = "/senior.html";
+    return;
+  }
+
+  // Otherwise prompt user to load their senior .json file or configure pathway
+  openSeniorImportPrompt();
+}
+
+function openSeniorImportPrompt() {
+  const modal = document.createElement("div");
+  modal.id = "senior-json-prompt-modal";
+  modal.style.cssText = "position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.65);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;";
+  modal.innerHTML = `
+    <div style="background:#ffffff;border-radius:16px;max-width:520px;width:100%;padding:32px;box-shadow:0 20px 50px rgba(0,0,0,0.2);border:1px solid #84B399;animation:fadeUp .2s ease;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:44px;height:44px;border-radius:10px;background:#e4ede8;display:flex;align-items:center;justify-content:center;font-size:22px;">👔</div>
+        <div>
+          <h3 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1e2530;margin:0;">Direct Access — Senior Applicant</h3>
+          <p style="font-size:12px;color:#5a6a7a;margin:2px 0 0;">Load your saved Senior Applicant session (.json) or start a new senior assessment.</p>
+        </div>
+      </div>
+      <p style="font-size:13.5px;color:#334155;line-height:1.6;margin-bottom:24px;">
+        Please <strong>import your saved Senior Applicant .json file</strong> to resume your executive portfolio, or <strong>launch the Senior Portal</strong> directly to set up your pathway.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button onclick="document.getElementById('senior-json-prompt-modal').remove(); triggerJsonImport();" class="btn btn-primary" style="background:#2E4D3B;border:none;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:13.5px;border-radius:8px;color:#fff;cursor:pointer;font-weight:600;">
+          ⬆ Import Senior Portfolio .json
+        </button>
+        <button onclick="document.getElementById('senior-json-prompt-modal').remove(); window.location.href='/senior.html';" class="btn btn-ghost" style="border:1.5px solid #84B399;background:#f0f7f4;padding:11px;font-size:13.5px;border-radius:8px;color:#2E4D3B;cursor:pointer;font-weight:600;">
+          🌟 Launch Senior Portal Directly →
+        </button>
+        <button onclick="document.getElementById('senior-json-prompt-modal').remove();" style="background:transparent;border:none;color:#5a6a7a;font-size:12px;margin-top:6px;cursor:pointer;text-decoration:underline;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function handleStandardDirectAccess() {
+  goDirectSubmission();
 }
 function goDirectSubmission() {
   if (!S.body) S.body = "CICES";
