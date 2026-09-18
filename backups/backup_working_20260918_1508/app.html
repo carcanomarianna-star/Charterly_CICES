@@ -7884,10 +7884,10 @@ function renderEligResult(nodeId, wrap) {
 // ──────────────────────────────────────────────── STEP 0 — Body ─────────────
 
 function r0(C) {
-  C.innerHTML=`<div class="page-centre" style="max-width:1200px;"><div class="panel" style="padding:36px 40px;">
+  C.innerHTML=`<div class="page-centre"><div class="panel">
     <h1 class="page-title">Select Pathway or Direct Portal Access</h1>
     <p class="sub">Choose the institution route you are seeking chartered membership with, or proceed directly to your submission workspace.</p>
-    <div class="choice-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items:stretch;">
+    <div class="choice-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px;">
       <!-- 1. CICES Pathway -->
       <div class="choice-card cices-card ${S.body==='CICES'?'selected':''}" onclick="selBody('CICES')" style="cursor:pointer">
         <div>
@@ -7898,7 +7898,7 @@ function r0(C) {
       </div>
 
       <!-- 2. Direct Access Senior Applicant -->
-      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer; display:flex; flex-direction:column; justify-content:space-between; height:100%;" onclick="handleSeniorDirectAccess()">
+      <div class="choice-card" style="border: 2px solid var(--accent); background: var(--surface); cursor: pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="handleSeniorDirectAccess()">
         <div>
           <div class="choice-label" style="color:var(--accent);font-size:16px;font-weight:700">Direct Access Senior Applicant</div>
           <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Direct entry for Senior Applicants (10+ yrs experience). Access the senior portal or load an existing senior .json session.</div>
@@ -7910,7 +7910,7 @@ function r0(C) {
       </div>
 
       <!-- 3. Direct Access Standard Applicant -->
-      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface); cursor:pointer; display:flex; flex-direction:column; justify-content:space-between; height:100%;" onclick="handleStandardDirectAccess()">
+      <div class="choice-card" style="border: 2px solid var(--cices-border); background: var(--surface); cursor:pointer; display:flex; flex-direction:column; justify-content:space-between;" onclick="handleStandardDirectAccess()">
         <div>
           <div class="choice-label" style="color:var(--cices);font-size:16px;font-weight:700">Direct Access Standard Applicant</div>
           <div class="choice-desc" style="margin-top:6px;font-size:12.5px;line-height:1.5">Direct workspace access for standard candidates. Load your saved .json file to resume your Competencies, CPD, and Report.</div>
@@ -10446,42 +10446,23 @@ function selCicesSpecialism(key) {
 // ─── CICES Step 2: Competency Tickbox ─────────────────────────────────────────
 
 function exportCicesComps() {
-  const sectorKey = S.sel?.cicesSector;
-  const coreKey = S.sel?.cicesCore;
-  const spKey = S.sel?.cicesSpecialism;
-  if (!sectorKey || !CICES_SECTORS[sectorKey]) { alert('No pathway selected. Please select a pathway first.'); return; }
-
-  const sector = CICES_SECTORS[sectorKey];
-  const activeCoreKey = coreKey || (Object.keys(sector.cores).length === 1 ? Object.keys(sector.cores)[0] : null);
-  const coreComps = activeCoreKey && sector.cores[activeCoreKey] ? sector.cores[activeCoreKey].comps : [];
-  const specComps = spKey && sector.specialisms[spKey] ? sector.specialisms[spKey].comps : [];
+  const { coreComps, specComps } = getPathwayComps();
   const compsToExport = [...CICES_GENERAL, ...coreComps, ...specComps];
-
-  const GRADE_LABEL = { A: 'Appreciation', K: 'Knowledge', E: 'Experience', B: 'Ability' };
-
+  
   let csv = "Candidate Name:," + (S.personal?.fullName || "Candidate") + "\n";
   csv += "Export Date:," + new Date().toLocaleDateString() + "\n\n";
-  csv += "Competency ID,Competency Name,Activity Ref,Activity Description,Type,Optimum Standard,Your Grade,Met?\n";
-
+  csv += "Competency ID,Competency Name,Type,Level\n";
+  
   compsToExport.forEach(c => {
     let type = "General";
     if (coreComps.find(x => x.id === c.id)) type = "Core";
     if (specComps.find(x => x.id === c.id)) type = "Specialist";
-    const compName = c.name.replace(/,/g, ";");
-
-    c.activities.forEach(act => {
-      const gradeKey = c.id + "_" + act.ref;
-      const achieved = (S.cicesGrades && S.cicesGrades[gradeKey]) || "";
-      const optStd = act.std;
-      const gradeOrder = { A: 0, K: 1, E: 2, B: 3 };
-      const met = achieved && gradeOrder[achieved] >= gradeOrder[optStd] ? "Yes" : (achieved ? "No" : "Not Graded");
-      const desc = act.desc.replace(/,/g, ";");
-      const gradeLabel = achieved ? GRADE_LABEL[achieved] || achieved : "Not Graded";
-      const optLabel = GRADE_LABEL[optStd] || optStd;
-      csv += `${c.id},${compName},${act.ref},"${desc}",${type},${optLabel} (${optStd}),${gradeLabel} (${achieved || '-'}),${met}\n`;
-    });
+    
+    let lvl = S.compLevels && S.compLevels[c.id] ? S.compLevels[c.id] : 1;
+    let name = c.name.replace(/,/g, " "); // escape commas
+    csv += `${c.id},${name},${type},${lvl}\n`;
   });
-
+  
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
